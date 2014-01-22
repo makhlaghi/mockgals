@@ -31,11 +31,11 @@ along with fitsarrayvv. If not, see <http://www.gnu.org/licenses/>.
 #include "fitsio.h"
 #include "fitsarrayvv.h"
 
+/*
+ * Get the FITS name and add an extension to it as asked
+ */
 char *
 add_extension_to_fits_name(char *fits_name, int exten)
-/**********************************************************
- ** Get the FITS name and add an extension to it as asked**
- **********************************************************/
 {
     /* Declaration: */
     char ext_str[20];
@@ -58,14 +58,13 @@ add_extension_to_fits_name(char *fits_name, int exten)
  *************************************************************
  *************************************************************
  *************************************************************/
-
-void 
-fits_to_array_float(char *fits_name, void **array0, 
-        size_t *size1, size_t *size2)
 /*
  * Read a float FITS image into an array and 
  * save the size of the image. 
  */
+void 
+fits_to_array_float(char *fits_name, void **array0, 
+        size_t *size1, size_t *size2)
 {
     /* Declarations: */
     int datatype;
@@ -102,74 +101,61 @@ fits_to_array_float(char *fits_name, void **array0,
     fits_report_error(stderr, status);
 }
 
-void 
-fits_to_array_long(char *fits_name, void **array0, 
-        size_t *size1, size_t *size2)
 /*
  * Like fits_to_array_float, but for TSHORT FITS images.
  */
+void 
+fits_to_array_long(char *fits_name, void **array0, 
+        size_t *size1, size_t *size2)
 {
-    /* Declarations: */
     int datatype;
     fitsfile *fptr;
     float *nulval=NULL;
     long fpixel[2]={1,1}, naxes[2];
     int status=0, anynul=0, maxdim=2;
 
-    /* Set data type to float: */
     long **array=(long **)array0;
 
     datatype=TLONG;
     
-    /* Open the FITS file: */
     fits_open_file(&fptr, fits_name, READONLY, &status);
 
-    /* Get the size of the data */
     fits_get_img_size(fptr, maxdim, naxes, &status);
 
-    /* Allocate space for the FITS data: */
     *size1=naxes[1];
     *size2=naxes[0];    
     *array=malloc(sizeof(long)* *size1 * *size2);
     assert(*array!=NULL);
 
-    /* Read the fits file into the float_matrix data */
     fits_read_pix(fptr, datatype, fpixel, naxes[0]*naxes[1], nulval, 
             *array, &anynul, &status);
 
-    /* Close the FITS file: */
     fits_close_file(fptr, &status);
 
-    /* Report any possible errors: */
     fits_report_error(stderr, status);
 }
 
-void 
-fits_to_array_short(char *fits_name, void **array0, 
-        size_t *size1, size_t *size2)
 /*
  * Like fits_to_array_float, but for TSHORT FITS images.
  */
+void 
+fits_to_array_short(char *fits_name, void **array0, 
+        size_t *size1, size_t *size2)
 {
-    /* Declarations: */
     int datatype;
     fitsfile *fptr;
     float *nulval=NULL;
     long fpixel[2]={1,1}, naxes[2];
     int status=0, anynul=0, maxdim=2;
 
-    /* Set data type to float: */
     short **array=(short **)array0;
 
     datatype=TSHORT;
     
-    /* Open the FITS file: */
     fits_open_file(&fptr, fits_name, READONLY, &status);
 
-    /* Get the size of the data */
     fits_get_img_size(fptr, maxdim, naxes, &status);
 
-    /* Allocate space for the FITS data: */
     *size1=naxes[1];
     *size2=naxes[0];    
     *array=malloc(sizeof(short)* *size1 * *size2);
@@ -186,12 +172,12 @@ fits_to_array_short(char *fits_name, void **array0,
     fits_report_error(stderr, status);
 }
 
-void 
-fits_to_array_uchar(char *fits_name, void **array0, 
-        size_t *size1, size_t *size2)
 /*
  * Like fits_to_array_float, but for TBYTE FITS images.
  */
+void 
+fits_to_array_uchar(char *fits_name, void **array0, 
+        size_t *size1, size_t *size2)
 {
     /* Declarations: */
     int datatype;
@@ -297,15 +283,15 @@ fits_to_array(char *fits_name, int exten, char *fitstype,
  *************************************************************
  *************************************************************/
 
-void
-array_to_fits_float(char *fits_name, void *array0, 
-        struct keywords *keys, char *EXTname, 
-        size_t size1, size_t size2)
 /*
  * Convert a float array to a float FITS image.
  * Note that for a float:
  * bitpix=FLOAT_IMG;        datatype=TFLOAT;
  */
+void
+array_to_fits_float(char *fits_name, void *array0, 
+        struct keywords *keys, char *EXTname, 
+        size_t size1, size_t size2)
 {
     /* Declarations: */
     size_t i;
@@ -353,10 +339,6 @@ array_to_fits_float(char *fits_name, void *array0,
     fits_report_error(stderr, status);
 }
 
-void
-array_to_fits_long(char *fits_name, void *array0, 
-        struct keywords *keys, char *EXTname, 
-        size_t size1, size_t size2)
 /*
  * Convert a long array to a long FITS image.
  * Note that for a long:
@@ -364,6 +346,10 @@ array_to_fits_long(char *fits_name, void *array0,
  * to array_to_fits_float() that is why there is no 
  * comments in this function.
  */
+void
+array_to_fits_long(char *fits_name, void *array0, 
+        struct keywords *keys, char *EXTname, 
+        size_t size1, size_t size2)
 {
     size_t i;
     fitsfile *fptr;

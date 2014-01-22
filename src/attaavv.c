@@ -1,5 +1,4 @@
 /*********************************************************************
-
 attaavv - ascii table to array and vice versa.
 Library to read ascii tables of any size into 1D C arrays.
 
@@ -27,12 +26,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <string.h>
 #include "attaavv.h"
 
+/*
+ *  Get the comments string, add it to the
+ *  comments array of pointers.
+ */
 void 
 ForComments(char *comments, long int *buff_comments, char *str)
-/********************************************
- *  Get the comments string, add it to the  *
- *  comments array of pointers.             *
- ********************************************/
 {
     /* If it is getting longer than the actual length, 
     make the comments array longer: */
@@ -52,13 +51,13 @@ ForComments(char *comments, long int *buff_comments, char *str)
     strcat(comments, str);
 }
 
+/*
+ *  Get the first data string and see how
+ *  many columns of data there are in it.
+ */
 void 
 CountCols(char *str, int *s1, double **table, 
         long int buff_num_rows)
-/********************************************
- *  Get the first data string and see how   *
- *  many columns of data there are in it.   * 
- ********************************************/
 {
     /* The original string is copied, because strtok
     will be used on it again in a later function. */
@@ -81,15 +80,15 @@ CountCols(char *str, int *s1, double **table,
     }
 }
 
+/*
+ *  This function will print a message
+ *  notifying the user that a replacement
+ *  has taken place because the specified
+ *  element in the data was not a number
+ */
 void 
 replacenan(struct ArrayInfo *intable, int col, char *strdata, 
         long int *buff_num_replacements)
-/********************************************
- *  This function will print a message      *
- *  notifying the user that a replacement   *
- *  has taken place because the specified   * 
- *  element in the data was not a number    *
- ********************************************/
 {
     int *temp_i_pt;
  
@@ -139,13 +138,13 @@ replacenan(struct ArrayInfo *intable, int col, char *strdata,
     }
 }
 
+/*
+ *  Knowing the number of columns, this
+ *  function will read in each row
+ */
 void 
 AddRow(struct ArrayInfo *intable, long int *buff_num_rows, 
         long int *buff_num_replacements, char *str)
-/********************************************
- *  Knowing the number of columns, this     *
- *  function will read in each row          *
- ********************************************/
 {
     /* Declarations: */ 
     int num_cols=1, z_index;
@@ -219,13 +218,13 @@ AddRow(struct ArrayInfo *intable, long int *buff_num_rows,
     }
 }
 
+/*
+ * All of the arrays have some extra space
+ * correct this so all of them finish on 
+ * their last valuable element
+ */
 void
 correctsizes(struct ArrayInfo *intable)
-/********************************************
- * All of the arrays have some extra space  *
- * correct this so all of them finish on    *
- * their last valuable element              *
- ********************************************/
 {
     /* Shrink the data array to the correct size: */
     if (intable->s0!=0 && intable->s1!=0)
@@ -263,19 +262,18 @@ correctsizes(struct ArrayInfo *intable)
 }
 
 
-void 
-readasciitable (const char *filename, struct ArrayInfo *intable)
-/****************************************************
- *  Read an ascii table into an array and also      *
- *  give the number of rows and columns in the      *
- *  array. In order to use this function you        *
- *  have to initialize the comments and table       *
- *  variables,                                      *
- *                                                  *
- *  Example program (using this and the header file)*
- *  reading and writing file.                       *
---------------------------------------------------- */
+/*
+ *  Read an ascii table into an array and also
+ *  give the number of rows and columns in the
+ *  array. In order to use this function you
+ *  have to initialize the comments and table
+ *  variables,
+
+ *  Example program (using this and the header file)
+ *  reading and writing file.
+ */
 #if 0   
+---------------------------------------------------
 this is just for the preprocesser, ignore it!
 ---------------------------------------------------
 #include <stdlib.h>
@@ -305,7 +303,8 @@ int main (void)
     return 0;
 }
 #endif
- /***************************************************/
+void 
+readasciitable (const char *filename, struct ArrayInfo *intable)
 {
     /* Declarations: */
     long line_counter=0;
@@ -383,15 +382,15 @@ int main (void)
     printf("----------------------\n\n");
 }
 
+/*
+ * This function gets the formatting settings
+ * of the array as required by writeasciitable
+ * and makes an array of formatting conditions
+ * that is suitable for printing.
+ */
 void 
 DoFormatting(int numcols, char **fmt, char *fmt_all, int *int_cols, 
         int *accu_cols, int *space, int *prec)
-/****************************************************
- ** This function gets the formatting settings     **
- ** of the array as required by writeasciitable    **
- ** and makes an array of formatting conditions    **
- ** that is suitable for printing.                 **
- ****************************************************/
 {
     int i,j, found=0;
     char intstr[10], eacustr[10], otherstr[10];
@@ -436,34 +435,32 @@ DoFormatting(int numcols, char **fmt, char *fmt_all, int *int_cols,
     }
 }
 
+/*
+ *  Write an array to an ascii file
+ *  The example bellow assumes your array
+ *  has come from readasciitable.
+ *  Explanations of the input format arrays:
+ *  int_colss: The columns that are integers
+ *  accu_rows: The columns that require
+ *             extra accuracy.
+ *  NOTE: For the two arrays above, the
+ *        last element has to be -1.
+ *  space: The minimum field width given to
+ *         the three kinds of numbers, the
+ *         first element is the space for
+ *         integers, the second for floats
+ *         (normal numbers) and the third
+ *         is for those numbers that require
+ *         more accuracy.
+ *  prec:  This is only for the last two 
+ *         kinds of numbers, it shows the
+ *         decimal point precision that will
+ *         be used for their printing in
+ *         order.
+ */
 void 
 writeasciitable(const char *filename, struct ArrayInfo *intable, 
         int *int_cols, int *accu_cols, int *space, int *prec)
-/********************************************
- *  Write an array to an ascii file         * 
- *  The example bellow assumes your array   *
- *  has come from readasciitable            *
- *  Explanations of the input format arrays:*
- *  int_colss: The columns that are integers*
- *  accu_rows: The columns that require     *
- *             extra accuracy               *
- *  NOTE: For the two arrays above, the     *
- *        last element has to be -1.
- *  space: The minimum field width given to *
- *         the three kinds of numbers, the  *
- *         first element is the space for   *
- *         integers, the second for floats  *
- *         (normal numbers) and the third   *
- *         is for those numbers that require*
- *         more accuracy                    *
- *  prec:  This is only for the last two    *
- *         kinds of numbers, it shows the   *
- *         decimal point precision that will*
- *         be used for their printing in    *
- *         order.                           *
- * EXAMPLE:
- *     look at the example in readasciitable*
-********************************************/
 {
 
     /* Make an array of strings to hold the 
@@ -510,12 +507,12 @@ writeasciitable(const char *filename, struct ArrayInfo *intable,
     fclose(fp);    
 }
 
+/*
+ * Free the space that was created by
+ * during readasciitable.
+ */
 void 
 freeasciitable (struct ArrayInfo *intable)
-/********************************************
- ** Free the space that was created by     **
- ** during readasciitable                  **
- ********************************************/
 {
     free(intable->d); 
     if (intable->nr>0) free(intable->r); 

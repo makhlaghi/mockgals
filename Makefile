@@ -11,7 +11,7 @@ CFLAGS=-Wall -W -ansi -pedantic -I$(src)
 LDFLAGS=-L/usr/lib64/atlas/
 LDLIBS=-lcfitsio -lfftw3 -pthread -lcblas -lgsl -lm
 
-mockprofile: $(objects) 
+mockgals: $(objects) 
 	@$(CC) -o mockgals $(LDFLAGS) $(objects) $(LDLIBS) 
 	@rm *.o
 
