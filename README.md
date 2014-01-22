@@ -101,6 +101,16 @@ used to convolve the image or the output image size, is to modify
 the `./scr/main.c` file. The necessary parameters are nicely named
 to define their use.
 
+###Viewing Multi extension FITS files:
+I recommend `ds9` to view your FITS files, ordinarily opening a
+FITS file in `ds9` will only open the first extension.
+In order to view all extensions you can open `ds9`, then:
+`file` -> `open other` -> `Open Multi Ext Cube...` or 
+`Open Multi Ext Multi Frames` and then choose the file.
+You can alternatively open `ds9` on the command line with
+the option: `-medatacube`, for example: `ds9 -medatacube mock.fits`.
+This second method is the most convenient.
+
 Future updates:
 ------------
 1. Work on a better user experience.
