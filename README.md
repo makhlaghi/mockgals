@@ -14,4 +14,8 @@ and convolve them with a Moffat PSF (beta=3, FWHM=3 pixels).
 An example random set of mock galaxies with 50 mock galaxies
 placed randomly in the image can be seen below:
 
-[!No noise](./jpgs/nonoise.jp)
+<img src="https://raw.github.com/makhlaghi/mockgals/master/jpgs/nonoise.jpg"
+    width=300 />
+<img src="https://raw.github.com/makhlaghi/mockgals/master/jpgs/withnoise.jpeg"
+    width=300 />
+
