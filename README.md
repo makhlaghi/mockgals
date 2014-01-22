@@ -10,5 +10,8 @@ set of mock galaxies in a simple `C` array. The unique
 aspect of `mockgals` is integration of the central regions
 of the mock profiles and the PSFs. If asked to make random
 profiles, it will make random Sersic profiles (of galaxies) 
-and convolve them with a PSF. An example random set of
-mock galaxies with 
+and convolve them with a Moffat PSF (beta=3, FWHM=3 pixels). 
+An example random set of mock galaxies with 50 mock galaxies
+placed randomly in the image can be seen below:
+
+[!No noise](./jpgs/nonoise.jp)
