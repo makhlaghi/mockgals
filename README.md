@@ -87,13 +87,13 @@ For the cases that "won't be used" you can just define a zero
 in the input file.
 
 ###Histogram
-If you activate the header macro: `MOCKHIST`, then another output
-text file will be created, a 3 column data file showing the left
-histogram bin value in the first column, the number of pixels in 
-that bin in the no noised image on the second column and the number
-of pixels in that bin for the noised image. You can use this
-as input into any bar plotting program you would like to generate
-a histogram.
+If you activate the header macro: `MOCKHIST` in `./src/mock.h`, 
+then another output text file will be created, a 3 column data 
+file showing the left histogram bin value in the first column, 
+the number of pixels in that bin in the no noised image on the 
+second column and the number of pixels in that bin for the 
+noised image. You can use this as input into any bar plotting 
+program you would like to generate a histogram.
 
 ###Setting other parameters:
 Currently the only way to change other paramters, e.g., the PSF 

@@ -25,8 +25,10 @@ along with mockgals. If not, see <http://www.gnu.org/licenses/>.
 #define MOCK_H
 
 
-#define ONLYONEPROFILE 0
+
 #define MOCKHIST 0
+
+#define ONLYONEPROFILE 0
 #define ONGRID 0
 
 

@@ -27,9 +27,6 @@ along with mockgals. If not, see <http://www.gnu.org/licenses/>.
 #include "attaavv.h"
 #include "mock.h"
 
-/*
- * Make 100 random profiles. 
- */
 int
 main(int argc, char *argv[])
 {
@@ -37,7 +34,7 @@ main(int argc, char *argv[])
     double *params=NULL;
     struct ArrayInfo intable;
     float psf_p1=3, psf_p2=3, sky=10000;
-    size_t size1=200, size2=200, nummock=20;
+    size_t size1=200, size2=200, nummock=50;
 
     if(argc>1){
         if(!isdigit(argv[1][0])){
