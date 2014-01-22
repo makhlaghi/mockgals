@@ -639,9 +639,6 @@ saveimgandinfo(double *prflprms, size_t nummock, size_t numprflprms,
 #define REPORTMOCK 1
 #define MINFLOAT 1e-6f
 #define SAVEFITS 1
-#define MOCKHISTNUMBINS 200
-#define MOCKHISTMIN -250
-#define MOCKHISTMAX 700
 void
 mockimg(size_t size1, size_t size2, float sky, size_t nummock, 
         double *prflprms, float psf_fwhm, float psf_beta, 

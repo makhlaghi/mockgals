@@ -27,6 +27,9 @@ along with mockgals. If not, see <http://www.gnu.org/licenses/>.
 
 
 #define MOCKHIST 0
+#define MOCKHISTNUMBINS 200
+#define MOCKHISTMIN -250
+#define MOCKHISTMAX 700
 
 #define ONLYONEPROFILE 0
 #define ONGRID 0

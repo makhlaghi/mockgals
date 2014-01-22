@@ -95,6 +95,12 @@ second column and the number of pixels in that bin for the
 noised image. You can use this as input into any bar plotting 
 program you would like to generate a histogram.
 
+The options for the histogram are also chosen based on the
+macros: `MOCKHISTNUMBINS`, `MOCKHISTMIN` AND `MOCKHISTMAX`,
+their names show their purpose. Since the range of flux in
+the pre-noise and post-noise images will change, it is best
+to set the two extremes of the histogram before hand.
+
 ###Setting other parameters:
 Currently the only way to change other paramters, e.g., the PSF 
 used to convolve the image or the output image size, is to modify 
