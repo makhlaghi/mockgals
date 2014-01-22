@@ -3,7 +3,7 @@ mockgals
 
 Make mock galaxy(s) in a C array or FITS image and add noise to it.
 
-About this tool:
+Description:
 ------------
 `mockgals` is a tool to make a pre-defined or random
 set of mock galaxies in a simple `C` array or a FITS image.
