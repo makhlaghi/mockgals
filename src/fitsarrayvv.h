@@ -23,6 +23,7 @@ along with fitsarrayvv. If not, see <http://www.gnu.org/licenses/>.
 #ifndef FITSMATRIX_H
 #define FITSMATRIX_H
 
+#define MAXFITSNAME 500
 
 /* This structure is used to keep any additional keywords
    to add to the final output FITS image:                      */

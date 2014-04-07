@@ -23,7 +23,11 @@ along with freqdomain. If not, see <http://www.gnu.org/licenses/>.
 #ifndef FREQDOMAIN_H
 #define FREQDOMAIN_H
 
-#define CONVOLVECHECK 0    /* 1: Check all steps of convolution. */
+#define DFTCHECK 0    /* 1: Check all steps of the 
+                      descrete fourier transform in convolve(). */
+
+#define CONVFUNCCHECK 0 /* Check the convolution kernel in 
+                           convolve_function(). */
 
 /* Function declarations: */
 void

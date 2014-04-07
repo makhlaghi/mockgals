@@ -23,43 +23,43 @@ along with forqsort. If not, see <http://www.gnu.org/licenses/>.
 int 
 intdecreasing(const void * a, const void * b)
 {
-    return ( *(int*)b - *(int*)a );
+  return ( *(int*)b - *(int*)a );
 }
 
 int 
 intincreasing(const void * a, const void * b)
 {
-    return ( *(int*)a - *(int*)b );
+  return ( *(int*)a - *(int*)b );
 }
 
 int
 floatdecreasing(const void * a, const void * b)
 {
-    float ta=*(float*)a;
-    float tb=*(float*)b;
-    return (tb > ta) - (tb < ta);
+  float ta=*(float*)a;
+  float tb=*(float*)b;
+  return (tb > ta) - (tb < ta);
 }
 
 int
 floatincreasing(const void * a, const void * b)
 {
-    float ta=*(float*)a;
-    float tb=*(float*)b;
-    return (ta > tb) - (ta < tb);
+  float ta=*(float*)a;
+  float tb=*(float*)b;
+  return (ta > tb) - (ta < tb);
 }
 
 int 
 doubledecreasing(const void * a, const void * b)
 {
-    double ta=*(double*)a;
-    double tb=*(double*)b;
-    return (tb > ta) - (tb < ta);
+  double ta=*(double*)a;
+  double tb=*(double*)b;
+  return (tb > ta) - (tb < ta);
 }
 
 int
 doubleincreasing(const void * a, const void * b)
 {
-    double ta=*(double*)a;
-    double tb=*(double*)b;
-    return (ta > tb) - (ta < tb);
+  double ta=*(double*)a;
+  double tb=*(double*)b;
+  return (ta > tb) - (ta < tb);
 }

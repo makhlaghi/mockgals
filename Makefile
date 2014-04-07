@@ -7,7 +7,7 @@ vpath %.h $(src)
 vpath %.c $(src)
 
 CC=gcc
-CFLAGS=-Wall -W -ansi -pedantic -I$(src)
+CFLAGS=-Wall -W -pedantic -I$(src)
 LDFLAGS=-L/usr/lib64/atlas/
 LDLIBS=-lcfitsio -lfftw3 -pthread -lcblas -lgsl -lm
 

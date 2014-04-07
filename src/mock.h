@@ -24,18 +24,17 @@ along with mockgals. If not, see <http://www.gnu.org/licenses/>.
 #ifndef MOCK_H
 #define MOCK_H
 
-
-
 #define MOCKHIST 0
 #define MOCKHISTNUMBINS 200
-#define MOCKHISTMIN -250
-#define MOCKHISTMAX 700
 
-#define ONLYONEPROFILE 0
-#define ONGRID 0
+#define EMPTYIMAGE 0
+#define ONLYONEPROFILE 1
+#define ONGRIDNTIMESTEN 40
 
 
 /* 
+   The parameters:
+
    Sersic: p1: n. p2: re. trunc*re;
    Moffat: p1: beta. p2: (input)fwhm, (processing)later alpha.
            (FWHM/2)*trunc.
@@ -54,19 +53,19 @@ struct mockparams
     double    s;    /* Sine of the position angle. */
     double    q;    /* axis ratio of the position angle.*/
     double pa_r;    /* Profile position angle in radians.*/
-    double   p1;    /* Parameter 1. */
-    double   p2;    /* Parameter 2.*/
+    double   p1;    /* Parameter 1, see above. */
+    double   p2;    /* Parameter 2, see above. */
     double   co;    /* The constant in any profile. */
     double (*profile)(double, double, double);
 };
 
 /* 
    x_c and y_c: Only the fractional part matter, the 
-    central pixel will be used. 
-   p1, p2:    Look above.
+                central pixel will be used. 
+   p1, p2:    See above.
    pa_d:      Position angle in degrees.
    q:         Axis ratio.
-   trunc:     Look above.
+   trunc:     See above.
    integaccu: Accuracy to do integration. This is the 
               point where integration will stop and the
               pixel centers will be used.
@@ -85,7 +84,7 @@ oneprofile(float x_c, float y_c, float p1, float p2, float pa_d,
 
 void
 mockimg(size_t size1, size_t size2, float sky, size_t nummock, 
-        double *prflprms, float psf_fwhm, float psf_beta, 
-        float **mock);
+        double *prflprms, float psf_fwhm, float psf_beta, int vpsf,
+        float **mock, char *outname, char *infoname);
 
 #endif
