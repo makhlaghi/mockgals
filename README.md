@@ -46,27 +46,16 @@ Installing and running:
 To install this `mockgals`, after downloading or cloning it,
 all you have to do is to run `make` in the downloaded directory.
 To run it with default (50 random Sersic profiles) you just have
-to run: `./mockgals`. A FITS image titled `mock.fits` will be created
-along with a text file listing all the parameters of the mock profiles.
+to run: `./mockgals`. Some command line options can be given so 
+you can customize the output, to learn them, run `./mockgals -h`.
+A full list of all the options will be provided.
 
-###Set number of random galaxies
-In case you want a certain number of random mock galaxies, 
-then simply add that number as an option to `./mockgals`, for example
-for 100 mock galaxies you can run: `./mockgals 100`.
-
-The random values are taken from a uniform distribution, with the range 
-of parameters that are defined in the function `setprflprms()` that is 
-defined in `./src/mock.c`. There are three headers in `mock.h` that will 
-facilitate particular cases, their names are fairly descriptive:
-
-- `ONLYONEPROFILE`: if `1`, then only one profile with the parameters
-  set in `setprflprms()` will be created.
-- `ONGRID`: if `1` then 25 mock profiles are created on a grid.
-  Their parameters can be set in `setprflprms()`.
+The output is a two extension FITS file, the first is the image 
+prior to adding noise, the second is after adding noise.
 
 
 ###Input file
-You can alternatively define an ASCII file as input into the program.
+You can define an ASCII file as input into the program.
 In this case the `mockgals` will read the number and properties of 
 the mock galaxies from this table. In short, it has to have the same
 number of columns as the `mock.txt` file generated for random mock
@@ -119,6 +108,7 @@ This second method is the most convenient.
 
 Future updates:
 ------------
+0. Make a nice documentation.
 1. Work on a better user experience.
 2. Fix any bugs I have not found yet!
 
