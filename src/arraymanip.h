@@ -68,7 +68,7 @@ floatsetabovetomax(float *in, size_t size, float max);
 
 
 void
-convertftd(float *f, size_t size, double *d);
+convertftd(float *f, size_t size, double **d);
 
 
 
@@ -92,6 +92,12 @@ floatarrcpymask(float *in, size_t size,
         unsigned char *mask, size_t *nsize, 
         float **out);
 
+void
+uchararrcpy(unsigned char *in, size_t size, unsigned char *out);
+
+void
+longarrcpy(long *in, size_t size, long *out);
+
 
 
 
@@ -107,11 +113,6 @@ masklfarray(float *in, long *mask, size_t size, long f1_b0);
 
 
 
-void
-uchararrcpy(unsigned char *in, size_t size, unsigned char *out);
-
-
-
 
 
 void
@@ -123,6 +124,9 @@ floatarrswith(float *in, size_t size, float a);
 
 
 
+void
+checkifinarray(int *x1, int *y1, int *x2, int *y2, 
+	       int s0, int s1);
 
 void
 floatshrinkarray(float **in, int size1, int size2,

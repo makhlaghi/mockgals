@@ -74,6 +74,19 @@ encloseellipse(double a, double b, double theta_rad,
 
 
 
+float 
+elraddist(struct elraddistp *e, double x, double y)
+{
+  double x_n, y_n;		/* For readability */
+  x_n = (e->xc-x)*e->cos + (e->yc-y)*e->sin;
+  y_n = (e->yc-y)*e->cos - (e->xc-x)*e->sin;
+  return sqrt(x_n*x_n+y_n*y_n/e->q/e->q);
+}
+
+
+
+
+
 /* Find the correct size of the output image of an elliptical profile
    and malloc the array to keep the elliptical profile. Don't forget
    to free it later.  It is made for radial profiles, so it will fill

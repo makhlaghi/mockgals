@@ -365,12 +365,12 @@ readasciitable (const char *filename, struct ArrayInfo *intable)
   /* Close the file and return 0 (meaning success)  */
   fclose(fp);
 
-  /* Report the result: */
+  /* Report the result: 
   printf("\n\n----------------------\n");
   printf("Completed reading %s\n", filename);
   printf("   Shape of table: (%d, %d).\n", intable->s0, intable->s1);
   printf("   Number of replaced elements: %ld.\n", intable->nr);
-  printf("----------------------\n\n");
+  printf("----------------------\n\n");*/
 }
 
 

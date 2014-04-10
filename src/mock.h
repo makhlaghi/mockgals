@@ -24,9 +24,6 @@ along with mockgals. If not, see <http://www.gnu.org/licenses/>.
 #ifndef MOCK_H
 #define MOCK_H
 
-#define MOCKHIST 0
-#define MOCKHISTNUMBINS 200
-
 #define EMPTYIMAGE 0
 #define ONLYONEPROFILE 1
 #define ONGRIDNTIMESTEN 40
@@ -44,19 +41,19 @@ along with mockgals. If not, see <http://www.gnu.org/licenses/>.
 
 struct mockparams
 {
-    double   xl;    /* lower  x boundary */
-    double   xh;    /* higher x boundary */
-    double    y;    /* y value when integrating over x.*/
-    double   yl;    /* lower  y boundary */
-    double   yh;    /* higher y boundary */
-    double    c;    /* Cosine of the position angle. */
-    double    s;    /* Sine of the position angle. */
-    double    q;    /* axis ratio of the position angle.*/
-    double pa_r;    /* Profile position angle in radians.*/
-    double   p1;    /* Parameter 1, see above. */
-    double   p2;    /* Parameter 2, see above. */
-    double   co;    /* The constant in any profile. */
-    double (*profile)(double, double, double);
+  double   xl;    /* lower  x boundary */
+  double   xh;    /* higher x boundary */
+  double    y;    /* y value when integrating over x.*/
+  double   yl;    /* lower  y boundary */
+  double   yh;    /* higher y boundary */
+  double    c;    /* Cosine of the position angle. */
+  double    s;    /* Sine of the position angle. */
+  double    q;    /* axis ratio of the position angle.*/
+  double pa_r;    /* Profile position angle in radians.*/
+  double   p1;    /* Parameter 1, see above. */
+  double   p2;    /* Parameter 2, see above. */
+  double   co;    /* The constant in any profile. */
+  double (*profile)(double, double, double);
 };
 
 /* 
@@ -83,8 +80,10 @@ oneprofile(float x_c, float y_c, float p1, float p2, float pa_d,
         size_t *y_w, size_t *numpixs);
 
 void
-mockimg(size_t size1, size_t size2, float sky, size_t nummock, 
-        double *prflprms, float psf_fwhm, float psf_beta, int vpsf,
-        float **mock, char *outname, char *infoname);
+mockimg(size_t s0, size_t s1, float sky, size_t nummock, 
+        double *prflprms, float psf_fwhm, float psf_beta, 
+	int vpsf, int vnoconv, int vconv, int vhist, 
+	float histmin, float histmax, float **mock, 
+	char *outname, char *infoname);
 
 #endif

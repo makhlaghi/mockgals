@@ -499,12 +499,12 @@ histogram(float *in, size_t size, size_t numbins,
     {
       min=tmp[(size_t)(minq*size)];
       max=tmp[(size_t)((1-minq)*(size-1))]; 
-      max+=0.01*max;
     }
   binwidth=(max-min)/numbins;
 
   for(i=0;i<numbins+1;i++) 
     hist[i*numcols]=min+i*binwidth;
+
   if(abinonzero)
     {
       for(i=0;i<numbins+1;i++) 

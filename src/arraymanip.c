@@ -313,6 +313,23 @@ uchararrcpy(unsigned char *in, size_t size, unsigned char **out)
 
 
 
+void
+longarrcpy(long *in, size_t size, long **out)
+{
+  long *ipt, *opt, *fpt;
+  ipt=in;
+  *out=malloc(size*sizeof(long));
+  assert(*out!=NULL);
+  fpt=*out+size;
+  opt=*out;
+  while(opt<fpt) 
+    *opt++=*ipt++;
+}
+
+
+
+
+
 
 
 
@@ -504,25 +521,50 @@ floatsetabovetomax(float *in, size_t size, float max)
 /*********************************************************************
  **********************      Shrink Array       **********************
  *********************************************************************/
+/* Check to see if a box defined by the two points (x1,y1) and (x2,y2)
+   is inside an array of size size1 and size2. If it doesn't overlap,
+   then x1=x2 and y1=y2.*/
+void
+checkifinarray(int *x1, int *y1, int *x2, int *y2, int s0, int s1)
+{
+  int temp;
+  if(*x1==*x2 && *y1==*y2) return;        
+
+  if(*x2<*x1){temp=*x1;*x1=*x2;*x2=temp;} 
+  if(*y2<*y1){temp=*y1;*y1=*y2;*y2=temp;}
+
+  if(*x1<0) *x1=0;    if(*x1>s0) *x1=s0;
+  if(*y1<0) *y1=0;    if(*y1>s1) *y1=s1;
+  if(*x2<0) *x2=0;    if(*x2>s0) *x2=s0;
+  if(*y2<0) *y2=0;    if(*y2>s1) *y2=s1;
+}
+
+
+
+
+
 /* We have a large array of size (size1*size2). We want to shrink this
     array, such that (x1,y1) comes down to point (0,0) and the new
     array now only extends to the old (x2,y2). So the size of the new
-    array is: w1*w2 where w1=x2-x1 and w2=y2-y1.  */
+    array is: w1*w2 where w1=x2-x1 and w2=y2-y1. 
+
+    If the desired region is totally out of the array, a NULL pointer
+    is returned.*/
 void
 floatshrinkarray(float **in, int size1, int size2,
         int x1, int y1, int x2, int y2)
 {
-  int temp;
   float *ifpt, *ofpt, *rowstart;
   size_t i, ux1, uy1, us2, w1, w2;
 
-  assert(x1!=x2);                     /* Conditions to make sure   */
-  assert(y1!=y2);                     /* the function will operate */
-  if(x2<x1){temp=x1;x1=x2;x2=temp;}   /* even if bad input is fed. */
-  if(y2<y1){temp=y1;y1=y2;y2=temp;}
-  if(x1<0) x1=0;    if(y1<0) y1=0;
-  if(x2>size1) x2=size1;
-  if(y2>size2) y2=size2;
+  checkifinarray(&x1, &y1, &x2, &y2, size1, size2);
+  if(x1==x2 || y1==y2) 		/* The required region does not */
+    {				/* overlap with the array. */
+      free(*in);
+      *in=NULL;
+      return;
+    }
+  /* The region covers the whole image, no need for the next step. */
   if(x1==0 && y1==0 && x2==size1 && y2==size2) return;
 
   w1=x2-x1;  w2=y2-y1;
@@ -554,37 +596,32 @@ floatshrinkarraytonew(float *in, int size1, int size2,
 		      int x1, int y1, int x2, int y2, 
 		      float **out)
 {
-  int temp;
   float *ifpt, *ofpt, *rowstart;
   size_t i, ux1, uy1, us2, w1, w2;
 
-  assert(x1!=x2);                     /* Conditions to make sure   */
-  assert(y1!=y2);                     /* the function will operate */
-  if(x2<x1){temp=x1;x1=x2;x2=temp;}   /* even if bad input is fed. */
-  if(y2<y1){temp=y1;y1=y2;y2=temp;}
-  if(x1<0) x1=0;    
-  if(y1<0) y1=0;
-  if(x2>size1) x2=size1;
-  if(y2>size2) y2=size2;
-  if(x1==0 && y1==0 && x2==size1 && y2==size2) return;
+  checkifinarray(&x1, &y1, &x2, &y2, size1, size2);
+  if(x1==x2 || y1==y2) 	
+    {			      
+      *out=NULL;
+      return;
+    }
+  if(x1==0 && y1==0 && x2==size1 && y2==size2)
+    {
+      floatarrcpy(in, size1*size2, out);
+      return;
+    }
 
   w1=x2-x1;  w2=y2-y1;
   *out=malloc(w1*w2*sizeof **out);
   assert(*out!=NULL);
 
-  ux1=x1; uy1=y1; us2=size2;  /* The inputs are int (can be negative,
-				 which is allowed: will become zero).
-				 but pointers are unsigned, so to 
-				 faciliate the process in the loop, 
-				 they are converted to size_t. */
-
+  ux1=x1; uy1=y1; us2=size2; 
   for(i=0;i<w1;i++)
     {
       ofpt=rowstart=*out+i*w2;
       ifpt=in+(ux1+i)*us2+uy1;
       while(ofpt<rowstart+w2)
-	*ofpt++=*ifpt++;
- 
+	*ofpt++=*ifpt++; 
     }      
 }
 
@@ -597,19 +634,20 @@ longshrinkarraytonew(long *in, int size1, int size2,
 		      int x1, int y1, int x2, int y2, 
 		      long **out)
 {
-  int temp;
   long *ifpt, *ofpt, *rowstart;
   size_t i, ux1, uy1, us2, w1, w2;
 
-  assert(x1!=x2); 
-  assert(y1!=y2); 
-  if(x2<x1){temp=x1;x1=x2;x2=temp;}  
-  if(y2<y1){temp=y1;y1=y2;y2=temp;}
-  if(x1<0) x1=0;    
-  if(y1<0) y1=0;
-  if(x2>size1) x2=size1;
-  if(y2>size2) y2=size2;
-  if(x1==0 && y1==0 && x2==size1 && y2==size2) return;
+  checkifinarray(&x1, &y1, &x2, &y2, size1, size2);
+  if(x1==x2 || y1==y2) 	
+    {			 
+      *out=NULL;
+      return;
+    }
+  if(x1==0 && y1==0 && x2==size1 && y2==size2)
+    {
+      longarrcpy(in, size1*size2, out);
+      return;
+    }
 
   w1=x2-x1;  w2=y2-y1;
   *out=malloc(w1*w2*sizeof **out);

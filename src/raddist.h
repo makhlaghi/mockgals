@@ -22,9 +22,26 @@ along with raddist. If not, see <http://www.gnu.org/licenses/>.
 #ifndef RADDIST_H
 #define RADDIST_H
 
+/* This is used to find the radial distance of a point in position
+   (x,y) from a point in position (m,n) in the elliptical space
+   defined by cos(theta_rad), sin(theta_rad) and q. theta_rad is the
+   position angle in radians.*/
+struct elraddistp
+{
+  double xc;			/* Center x position */
+  double yc;			/* Center y position */
+  double t;			/* Theta(in radians) */
+  double cos;			/* cos(theta) */
+  double sin;			/* sin(theta) */
+  double q;			/* axis ratio */
+};
+
 void
 encloseellipse(double a, double b, double theta_rad, 
         size_t *x_w, size_t *y_w);
+
+float 
+elraddist(struct elraddistp *e, double x, double y);
 
 void
 makecanvas(double a, double b, double theta_rad, float x_c, 
