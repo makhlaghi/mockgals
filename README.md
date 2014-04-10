@@ -48,9 +48,13 @@ all you have to do is to run `make` in the downloaded directory.
 To run it with default (50 random Sersic profiles) you just have
 to run: `./mockgals`. Some command line options can be given so 
 you can customize the output, to learn them, run `./mockgals -h`.
-A full list of all the options will be provided.
+A full list of all the options will be provided, nealy all the 
+operation of `mockgals` can be defined by these input options 
+and their arguments. In the future long arguments and an 
+configuration file will also be provided for user customization.
 
-The output is a two extension FITS file, the first is the image 
+The output is a possibly multi extension FITS file (depending 
+on what you ask for in the options), the first is the image 
 prior to adding noise, the second is after adding noise.
 
 
@@ -76,25 +80,13 @@ For the cases that "won't be used" you can just define a zero
 in the input file.
 
 ###Histogram
-If you activate the header macro: `MOCKHIST` in `./src/mock.h`, 
-then another output text file will be created, a 3 column data 
-file showing the left histogram bin value in the first column, 
-the number of pixels in that bin in the no noised image on the 
-second column and the number of pixels in that bin for the 
-noised image. You can use this as input into any bar plotting 
-program you would like to generate a histogram.
-
-The options for the histogram are also chosen based on the
-macros: `MOCKHISTNUMBINS`, `MOCKHISTMIN` AND `MOCKHISTMAX`,
-their names show their purpose. Since the range of flux in
-the pre-noise and post-noise images will change, it is best
-to set the two extremes of the histogram before hand.
-
-###Setting other parameters:
-Currently the only way to change other paramters, e.g., the PSF 
-used to convolve the image or the output image size, is to modify 
-the `./scr/main.c` file. The necessary parameters are nicely named
-to define their use.
+If you want a histogram of the image before and after noise is
+added you can do so with the `-t`, `-c` and `-d` arguments to
+the program. By default the first is zero, this means that no
+histogram will be made. But if you give it any positive value,
+it will make a histogram in the range of the values you give
+to `-c` and `-d`, with the number of bins between the two being
+the value of `-t`.
 
 ###Viewing Multi extension FITS files:
 I recommend `ds9` to view your FITS files, ordinarily opening a
