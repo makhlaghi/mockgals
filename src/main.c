@@ -1,7 +1,5 @@
 /*********************************************************************
-mockgals - Detect and deblend objects.
-
-Make any number of mock profiles in an array.
+mockgals - Make mock galaxies in a FITS image.
 
 Copyright (C) 2014 Mohammad Akhlaghi
 Tohoku University Astronomical Institute, Sendai, Japan.
