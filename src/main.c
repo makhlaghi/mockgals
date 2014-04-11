@@ -1,5 +1,6 @@
 /*********************************************************************
-mockgals - Make mock galaxies in a FITS image.
+mockgals - Make mock astronomical profiles (galaxy, star, ...) 
+           in a FITS file
 
 Copyright (C) 2014 Mohammad Akhlaghi
 Tohoku University Astronomical Institute, Sendai, Japan.
@@ -20,12 +21,8 @@ along with mockgals. If not, see <http://www.gnu.org/licenses/>.
 
 **********************************************************************/
 #include <time.h>
-#include <ctype.h>
 #include <stdio.h>
-#include <errno.h>
-#include <string.h>
 #include <stdlib.h>
-#include <assert.h>
 #include <sys/time.h>
 
 #include "mock.h"

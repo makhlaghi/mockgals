@@ -1,5 +1,6 @@
 /*********************************************************************
-mockgals - Make mock galaxies in a FITS image.
+mockgals - Make mock astronomical profiles (galaxy, star, ...) 
+           in a FITS file
 
 Copyright (C) 2014 Mohammad Akhlaghi
 Tohoku University Astronomical Institute, Sendai, Japan.

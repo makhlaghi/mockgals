@@ -1,7 +1,7 @@
 mockgals
 =========
 
-Make mock galaxy(s) in a C array or FITS image and add noise to it.
+Make mock astronomical profiles (galaxy, star, ...) in a FITS file.
 
 Description:
 ------------
