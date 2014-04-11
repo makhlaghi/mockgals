@@ -7,14 +7,14 @@ Description:
 ------------
 
 `mockgals` is a tool to make a pre-defined or random set of mock
-galaxies in a simple `C` array or a FITS image.  As an option, this
-program will also produce histograms of the no noised and noised
-images.  The unique aspect of `mockgals` is integration of the central
-regions of the mock profiles and the PSFs.  If asked to make random
-profiles, it will make random Sersic profiles (of galaxies) and
-convolve them with a Moffat PSF (beta=3, FWHM=3 pixels).  An example
-random set of mock galaxies with 50 mock galaxies placed randomly in
-the image can be seen below:
+galaxies in a simple `C` array or a FITS image.  The unique aspect of
+`mockgals` is integration of the central regions of the mock profiles
+and the PSFs.  If asked to make random profiles (no options are
+input), it will make random Sersic profiles (of galaxies) and convolve
+them with a Moffat PSF. As an option, `mockgals` will also produce
+histograms of the no noised and noised images.  An example random set
+of mock galaxies with 50 mock galaxies placed randomly in the image
+can be seen below:
 
 <img src="https://raw.github.com/makhlaghi/mockgals/master/jpgs/nonoise.jpg"
     width=300 />
@@ -22,8 +22,7 @@ the image can be seen below:
     width=300 />
     
 The noise for every pixel is a random value taken from a Gaussian
-distribution with sigma=sqrt(sky+pixel value) and mean of zero (which
-you can think of as sky subtracted).
+distribution with sigma=sqrt(sky+pixel value) and mean=sky+pixel value.
 
 
 Prerequisits:
@@ -51,11 +50,11 @@ you can customize the output, to learn them, run `./mockgals -h`.  A
 full list of all the options will be provided, nealy all the operation
 of `mockgals` can be defined by these input options and their
 arguments. In the future long arguments and an configuration file will
-also be provided for user customization.
+also be provided for user customization. The [POSIX argument syntax 
+conventions](http://www.gnu.org/software/libc/manual/html_node/Argument-Syntax.html#Argument-Syntax) apply.
 
 The output is a possibly multi extension FITS file (depending on what
-you ask for in the options), the first is the image prior to adding
-noise, the second is after adding noise.
+you ask for in the options).
 
 
 ###Input file
@@ -67,7 +66,7 @@ columns as the `mock.txt` file generated for random mock galaxies with
 the same column definitions:
 
 1. ID (Won't be used!)
-2. 0: Sersic, 1: Moffat, 2: Gaussian
+2. 0: Sersic, 1: Moffat, 2: Gaussian, 3: Point source
 3. X position (FITS standard, not C)
 4. Y position (FITS standard, not C)
 5. Sersic n, Moffat beta or Gaussian sigma.
@@ -78,7 +77,7 @@ the same column definitions:
 10. Total flux (Won't be used)
 
 For the cases that "won't be used" you can just define a zero in the
-input file.
+input file. The last column will be filled once `mockgals` is finished.
 
 ###Histogram
 
@@ -97,13 +96,18 @@ all extensions you can open `ds9`, then: `file` -> `open other` ->
 `Open Multi Ext Cube...` or `Open Multi Ext Multi Frames` and then
 choose the file.  You can alternatively open `ds9` on the command line
 with the option: `-medatacube`, for example: `ds9 -medatacube
-mock.fits`.  This second method is the most convenient.
+mock.fits`.  This second method is the most convenient. On a linux
+system you can even set this command to be run when you double click
+only any fits file, if it has several extensions you can go through them
+and if it doesn't, it will open just like normal (this is how I have 
+personally configured my linux system).
 
 Future updates:
 ------------
 0. Make a nice documentation.
-1. Work on a better user experience.
-2. Fix any bugs I have not found yet!
+1. Add more functionality.
+2. Work on a better user experience.
+3. Fix any bugs I have not found yet!
 
 Comments and suggestions:
 ----------------------------------------
