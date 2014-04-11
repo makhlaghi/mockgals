@@ -5,26 +5,25 @@ Make mock galaxy(s) in a C array or FITS image and add noise to it.
 
 Description:
 ------------
-`mockgals` is a tool to make a pre-defined or random
-set of mock galaxies in a simple `C` array or a FITS image.
-As an option, this program will also produce histograms of
-the no noised and noised images.
-The unique aspect of `mockgals` is integration of the central 
-regions of the mock profiles and the PSFs. 
-If asked to make random profiles, it will make random Sersic 
-profiles (of galaxies) and convolve them with a Moffat PSF 
-(beta=3, FWHM=3 pixels). 
-An example random set of mock galaxies with 50 mock galaxies
-placed randomly in the image can be seen below:
+
+`mockgals` is a tool to make a pre-defined or random set of mock
+galaxies in a simple `C` array or a FITS image.  As an option, this
+program will also produce histograms of the no noised and noised
+images.  The unique aspect of `mockgals` is integration of the central
+regions of the mock profiles and the PSFs.  If asked to make random
+profiles, it will make random Sersic profiles (of galaxies) and
+convolve them with a Moffat PSF (beta=3, FWHM=3 pixels).  An example
+random set of mock galaxies with 50 mock galaxies placed randomly in
+the image can be seen below:
 
 <img src="https://raw.github.com/makhlaghi/mockgals/master/jpgs/nonoise.jpg"
     width=300 />
 <img src="https://raw.github.com/makhlaghi/mockgals/master/jpgs/withnoise.jpeg"
     width=300 />
     
-The noise for every pixel is a random value taken from a 
-Gaussian distribution with sigma=sqrt(sky+pixel value) and
-mean of zero (which you can think of as sky subtracted). 
+The noise for every pixel is a random value taken from a Gaussian
+distribution with sigma=sqrt(sky+pixel value) and mean of zero (which
+you can think of as sky subtracted).
 
 
 Prerequisits:
@@ -43,27 +42,29 @@ machine, installing them is easy and straightforward.
 
 Installing and running:
 ------------
-To install this `mockgals`, after downloading or cloning it,
-all you have to do is to run `make` in the downloaded directory.
-To run it with default (50 random Sersic profiles) you just have
-to run: `./mockgals`. Some command line options can be given so 
-you can customize the output, to learn them, run `./mockgals -h`.
-A full list of all the options will be provided, nealy all the 
-operation of `mockgals` can be defined by these input options 
-and their arguments. In the future long arguments and an 
-configuration file will also be provided for user customization.
 
-The output is a possibly multi extension FITS file (depending 
-on what you ask for in the options), the first is the image 
-prior to adding noise, the second is after adding noise.
+To install this `mockgals`, after downloading or cloning it, all you
+have to do is to run `make` in the downloaded directory.  To run it
+with default (45 random Sersic profiles and 5 random stars) you just
+have to run: `./mockgals`. Some command line options can be given so
+you can customize the output, to learn them, run `./mockgals -h`.  A
+full list of all the options will be provided, nealy all the operation
+of `mockgals` can be defined by these input options and their
+arguments. In the future long arguments and an configuration file will
+also be provided for user customization.
+
+The output is a possibly multi extension FITS file (depending on what
+you ask for in the options), the first is the image prior to adding
+noise, the second is after adding noise.
 
 
 ###Input file
-You can define an ASCII file as input into the program.
-In this case the `mockgals` will read the number and properties of 
-the mock galaxies from this table. In short, it has to have the same
-number of columns as the `mock.txt` file generated for random mock
-galaxies with the same column definitions:
+
+You can define an ASCII file as input into the program.  In this case
+the `mockgals` will read the number and properties of the mock
+galaxies from this table. In short, it has to have the same number of
+columns as the `mock.txt` file generated for random mock galaxies with
+the same column definitions:
 
 1. ID (Won't be used!)
 2. 0: Sersic, 1: Moffat, 2: Gaussian
@@ -76,27 +77,27 @@ galaxies with the same column definitions:
 9. Signal to noise (average profile flux to sqrt(sky))
 10. Total flux (Won't be used)
 
-For the cases that "won't be used" you can just define a zero 
-in the input file.
+For the cases that "won't be used" you can just define a zero in the
+input file.
 
 ###Histogram
-If you want a histogram of the image before and after noise is
-added you can do so with the `-t`, `-c` and `-d` arguments to
-the program. By default the first is zero, this means that no
-histogram will be made. But if you give it any positive value,
-it will make a histogram in the range of the values you give
-to `-c` and `-d`, with the number of bins between the two being
-the value of `-t`.
+
+If you want a histogram of the image before and after noise is added
+you can do so with the `-t`, `-c` and `-d` arguments to the
+program. By default the first is zero, this means that no histogram
+will be made. But if you give it any positive value, it will make a
+histogram in the range of the values you give to `-c` and `-d`, with
+the number of bins between the two being the value of `-t`.
 
 ###Viewing Multi extension FITS files:
-I recommend `ds9` to view your FITS files, ordinarily opening a
-FITS file in `ds9` will only open the first extension.
-In order to view all extensions you can open `ds9`, then:
-`file` -> `open other` -> `Open Multi Ext Cube...` or 
-`Open Multi Ext Multi Frames` and then choose the file.
-You can alternatively open `ds9` on the command line with
-the option: `-medatacube`, for example: `ds9 -medatacube mock.fits`.
-This second method is the most convenient.
+
+I recommend `ds9` to view your FITS files, ordinarily opening a FITS
+file in `ds9` will only open the first extension.  In order to view
+all extensions you can open `ds9`, then: `file` -> `open other` ->
+`Open Multi Ext Cube...` or `Open Multi Ext Multi Frames` and then
+choose the file.  You can alternatively open `ds9` on the command line
+with the option: `-medatacube`, for example: `ds9 -medatacube
+mock.fits`.  This second method is the most convenient.
 
 Future updates:
 ------------
@@ -106,9 +107,11 @@ Future updates:
 
 Comments and suggestions:
 ----------------------------------------
-I hope `mockgals` will be useful for you. If you find any problems in 
-this program please contact me so I can correct them. I would also be 
-very glad to hear any suggestions or comments you might have, thank you.
+
+I hope `mockgals` will be useful for you. If you find any problems in
+this program please contact me so I can correct them. I would also be
+very glad to hear any suggestions or comments you might have, thank
+you.
 
 makhlaghi@gmail.com 
 
