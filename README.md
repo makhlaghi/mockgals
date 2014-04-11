@@ -18,7 +18,7 @@ the image can be seen below:
 
 <img src="https://raw.github.com/makhlaghi/mockgals/master/jpgs/nonoise.jpg"
     width=300 />
-<img src="https://raw.github.com/makhlaghi/mockgals/master/jpgs/withnoise.jpeg"
+<img src="https://raw.github.com/makhlaghi/mockgals/master/jpgs/withnoise.jpg"
     width=300 />
     
 The noise for every pixel is a random value taken from a Gaussian
