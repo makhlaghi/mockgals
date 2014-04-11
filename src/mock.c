@@ -182,7 +182,7 @@ Point(double j1, double j2, double j3)
    grid. While the ellipse of the profile is rotated and has axis
    ratio q. i,j: positions on the grid. */
 double
-rot_ell(double x, struct mockparams *p)
+rot_ell(double x, struct integparams *p)
 {
   double c=p->c, s=p->s;
   double r;
@@ -200,8 +200,8 @@ rot_ell(double x, struct mockparams *p)
 double
 twod_over_x(double x, void *params)
 {
-  struct mockparams *p;
-  p=(struct mockparams *)params;
+  struct integparams *p;
+  p=(struct integparams *)params;
 
   return rot_ell(x, params);
 }
@@ -217,13 +217,13 @@ twod_over_xy(double y, void *params)
   gsl_function F;
   static double abserr;
   static size_t neval=0;
-  struct mockparams *p;
+  struct integparams *p;
   double epsabs=0, epsrel=EPSREL_FOR_INTEG, result;
 
   F.function = &twod_over_x;
   F.params = params;
 
-  p=(struct mockparams *)params;
+  p=(struct integparams *)params;
   p->y=y;
   gsl_integration_qng(&F, p->xl, p->xh, epsabs, epsrel, 
 		      &result, &abserr, &neval);
@@ -235,7 +235,7 @@ twod_over_xy(double y, void *params)
 
 /* 2D integration of a profile.*/
 double
-integ2d(struct mockparams *params)
+integ2d(struct integparams *params)
 {
     gsl_function F;
     static double abserr;
@@ -256,12 +256,8 @@ integ2d(struct mockparams *params)
 void
 setintegparams(int s0_m1_g2_p3, float p1, float p2, float pa_d, 
 	       float q, float trunc, float *trunc_r, char *profletter, 
-	       struct mockparams **outparams)
+	       struct integparams *p)
 {
-  struct mockparams *p;
-
-  assert( (p=malloc(sizeof *p)) != NULL);
-
   switch(s0_m1_g2_p3)
     {
     case 0: /* Sersic: p1: n, p2: re */
@@ -302,8 +298,6 @@ setintegparams(int s0_m1_g2_p3, float p1, float p2, float pa_d,
   p->c=cos(p->pa_r);
   p->s=sin(p->pa_r);
   p->q=q;
-
-  *outparams=p;
 }
 
 
@@ -327,7 +321,7 @@ setintegparams(int s0_m1_g2_p3, float p1, float p2, float pa_d,
  *****************       One profile:        ********************
  ****************************************************************/
 void
-fillmock(float **mock, float x_c, float y_c, struct mockparams *p, 
+fillmock(float **mock, float x_c, float y_c, struct integparams *p, 
         float integaccu, float trunc_r, size_t *x_w, size_t *y_w, 
         double *totalflux, size_t *numpixs)
 {
@@ -409,7 +403,7 @@ oneprofile(float x_c, float y_c, float p1, float p2, float pa_d,
   float trunc_r;
   char profletter;
   double totalflux=0;
-  struct mockparams *p;
+  struct integparams p;
   int is0_m1_g2_p3=s0_m1_g2_p3;
   static size_t fitscounter=1;
   char fitsname[100];
@@ -417,7 +411,7 @@ oneprofile(float x_c, float y_c, float p1, float p2, float pa_d,
   setintegparams(is0_m1_g2_p3, p1, p2, pa_d, q, trunc, &trunc_r, 
 		 &profletter, &p);
 
-  fillmock(mock, x_c, y_c, p, integaccu, trunc_r, 
+  fillmock(mock, x_c, y_c, &p, integaccu, trunc_r, 
 	   x_w, y_w, &totalflux, numpixs);
 
   /* if av0_tot1==0, flux corresponds to the average flux,
@@ -435,7 +429,6 @@ oneprofile(float x_c, float y_c, float p1, float p2, float pa_d,
       array_to_fits(fitsname, NULL, "MOCK", "FLOAT", 
 		    *mock, *x_w, *y_w);
     }
-  free(p);
 }
 
 
@@ -513,22 +506,23 @@ setunifrandvalues(double *array, size_t num_rand, size_t stride,
 
 /* Set the profile parameters needed for the mock image. */
 void
-setprflprms(double **prflprms, size_t numprflprms, size_t *nummock,
-	    int size1, int size2)
+setprflprms(double **prflprms, size_t numprflprms, 
+	    size_t nummock, int size1, int size2)
 {
   size_t i;  
   double *pprflprms;
+  double starSN[5]={400, 150, 1000, 300, 110};
   float randparamranges[14]={-20,+20,-20,+20,0.5,8,1,30,
 			     0,360,0.2,1,0.001,0.02};
   randparamranges[1]+=size1;
   randparamranges[3]+=size2;
     
-  *prflprms=malloc(numprflprms * *nummock*sizeof(double));
+  *prflprms=malloc(numprflprms * nummock*sizeof(double));
   assert(*prflprms!=NULL);
   pprflprms=*prflprms;
     
   /* We will assume all desired profiles are Sersic: */
-  for(i=0;i<*nummock;i++)
+  for(i=0;i<nummock;i++)
     {
       pprflprms[i*numprflprms]=i+1;
       pprflprms[i*numprflprms+1]=0;
@@ -538,9 +532,16 @@ setprflprms(double **prflprms, size_t numprflprms, size_t *nummock,
   /* Note that the last column is set for the total flux
      which is filled after the profile has been made. */
   for(i=2;i<numprflprms-1;i++)
-    setunifrandvalues(&pprflprms[i], *nummock, numprflprms, 
+    setunifrandvalues(&pprflprms[i], nummock, numprflprms, 
 		      randparamranges[(i-2)*2], 
                       randparamranges[(i-2)*2+1]);
+
+  /* Put 5 stars in the image: */
+  for(i=0;i<5;i++)
+    {
+      pprflprms[i*numprflprms+1]=3;
+      pprflprms[i*numprflprms+8]=starSN[i];
+    }
 }
 
 
@@ -704,18 +705,18 @@ findstartingpixel(struct pix *D, size_t s0, size_t s1, float truncr,
      y1=y2*/
   checkifinarray(&x1, &y1, &x2, &y2, s0, s1);
   if(x1==x2 || y1==y2)	    
-    {			       /* The profile's region is */
-      *p=NULL;		       /* Completely out of the image. */
-      return;		       /* Return NULL. */
+    {			     /* The profile's region is */
+      *p=NULL;		     /* Completely out of the image. */
+      return;		     /* Return NULL. */
     }
-  else			       /* The profile and the image overlap */
-    {			       /* Find the point on the side of the */
-      rmin=1e10;	       /* image with the smallest radius. */
-      if(x1==0)		       /* This is important, because the  */
-	for(j=y1;j<y2;j++)     /* first check later will be  */
+  else			     /* The profile and the image overlap */
+    {			     /* Find the point on the side of the */
+      rmin=1e10;	     /* image with the smallest radius. */
+      if(x1==0)		     /* This is important, because the  */
+	for(j=y1;j<y2;j++)   /* first check later will be  */
 	  if(elraddist(e, 0, j)<rmin)
-	    {		       /* integration and we want to be sure  */
-              xmin=0; ymin=j;  /* we start with the smallest radius. */
+	    {		     /* integration and we want to be sure  */
+              xmin=0; ymin=j; /* we start with the smallest radius. */
 	      rmin=elraddist(e, 0, j); /* in the image. */
 	    }
       if(x2==is0)		       
@@ -775,7 +776,7 @@ findstartingpixel(struct pix *D, size_t s0, size_t s1, float truncr,
    the queue, but it's byt value will be set to one and a value of
    zero will be put into its D[i]->v value.
  */
-void
+int
 makeprofile(float *img, unsigned char *byt, size_t *bytind, 
 	    struct pix *D, size_t s0, size_t s1, float trunc, 
 	    float integaccu, float s0_m1_g2_p3, float x_c, float y_c, 
@@ -787,7 +788,7 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
   char profletter;
   struct elraddistp e;
   size_t j, counter=0;
-  struct mockparams *ip;
+  struct integparams ip;
   struct pixlist *Q=NULL;
   double sum=0, area=0, co;
   double (*func)(double, double, double);
@@ -805,10 +806,7 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
 
   findstartingpixel(D, s0, s1, truncr, &e, &p);
   if(p==NULL)
-    {
-      free(ip);
-      return;
-    }
+    return 0;			/* Profile is completely out. */
 
   if(s0_m1_g2_p3==0)
     {
@@ -820,17 +818,17 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
   else if(s0_m1_g2_p3==3)
     {
       img[p->i]=avflux;
-      free(ip);
-      return;
+      *totflux=avflux;
+      return 1;			/* Successful. */
     }
 
   addtopixlist(&Q, p);
 
   maxir=truncr;
-  co=ip->co;
-  func=ip->profile;
-  p1=ip->p1;
-  p2=ip->p2;
+  co=ip.co;
+  func=ip.profile;
+  p1=ip.p1;
+  p2=ip.p2;
 
   while(Q!=NULL)
     {
@@ -856,9 +854,9 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
       if(r<maxir)		
 	{
 	  t_i-=x_c;             t_j-=y_c;
-	  ip->xl=t_i-0.5;       ip->xh=t_i+0.5;
-	  ip->yl=t_j-0.5;       ip->yh=t_j+0.5;
-	  integ=integ2d(ip);	  
+	  ip.xl=t_i-0.5;       ip.xh=t_i+0.5;
+	  ip.yl=t_j-0.5;       ip.yh=t_j+0.5;
+	  integ=integ2d(&ip);	  
 	  if (fabs(integ-tmp)/integ>integaccu) 
 	    tmp=integ;
 	  else maxir=r;
@@ -873,7 +871,7 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
   /* Clean the byt image for the next profile. */
   for(j=0;j<counter;j++)
     byt[bytind[j]]=0;
-  free(ip);
+  return 1;
 }
 
 
@@ -901,8 +899,7 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
 /* If the mock image is to be saved, save the information
    of the galaxies and the actual mock image. */
 void
-savemockinfo(double *prflprms, size_t nummock, size_t numprflprms, 
-	     float sky, float trunc, char *infoname)
+savemockinfo(struct mockparams *p)
 {
   char temp[1000];
   struct ArrayInfo ai;
@@ -911,16 +908,16 @@ savemockinfo(double *prflprms, size_t nummock, size_t numprflprms,
 
   ai.c=malloc(MAXALLCOMMENTSLENGTH*sizeof(char));
   assert(ai.c!=NULL);
-  ai.s0=nummock;
-  ai.s1=numprflprms;
-  ai.d=prflprms;
+  ai.s0=p->nummock;
+  ai.s1=p->numppcols;
+  ai.d=p->profileparams;
 
-  sprintf(temp, "# Properties of %lu mock galaxies.\n", nummock);
+  sprintf(temp, "# Properties of %lu mock galaxies.\n", p->nummock);
   strcpy(ai.c, temp);
-  sprintf(temp, "# The sky valued is assumed to be: %.2f\n", sky);
+  sprintf(temp, "# The sky valued is assumed to be: %.2f\n", p->sky);
   strcat(ai.c, temp);
   sprintf(temp, "# Truncation at %.2f * radial parameter\n# \n", 
-	  trunc);
+	  p->trunc);
   strcat(ai.c, temp);
   strcat(ai.c, "# 0: ID.\n");
   strcat(ai.c, "# 1: 0: Sersic, 1: Moffat, 2: Gaussian.\n");
@@ -934,7 +931,8 @@ savemockinfo(double *prflprms, size_t nummock, size_t numprflprms,
   strcat(ai.c, "(average profile flux-sky)/sqrt(sky).\n");    
   strcat(ai.c, "# 9: Total flux (Sky subtracted).\n\n"); 
 
-  writeasciitable (infoname, &ai, int_cols, accu_cols, space, prec);
+  writeasciitable (p->infoname, &ai, int_cols, 
+		   accu_cols, space, prec);
 }
 
 
@@ -1006,11 +1004,7 @@ printmockhist(float *img, size_t size, int numbins, float histmin,
 
 
 /****************************************************************
- ****************************************************************
- *****************                           ********************
  *****************     Main output program   ********************
- *****************                           ********************
- ****************************************************************
  ****************************************************************/
 /* Put one or more mock profiles into and image, convolve it and add
    noise to the final result.  The convolution is going to make the
@@ -1024,101 +1018,117 @@ printmockhist(float *img, size_t size, int numbins, float histmin,
    NUMMOCK, which are pure error, so they will all be set to zero. */
 #define MINFLOAT 1e-8f
 void
-mockimg(size_t s0, size_t s1, float sky, size_t nummock, 
-        double *prflprms, float psf_fwhm, float psf_beta, 
-	int vpsf, int vnoconv, int vconv, int vhist, 
-	float histmin, float histmax, float **mock, 
-	char *outname, char *infoname)
+mockimg(struct mockparams *p)
 {
   struct pix *D;
-  int free_1_0=0;
+  double *pp, ss;
   unsigned char *byt;
-  size_t hs0, hs1, *bytind;
-  float *nonoisehist, *preconv;
+  int extcounter=0, suc;
   int psf_smg=1, psf_av0_tot1=1;
-  float integaccu=0.01, psfsum=1;
-  size_t i, psf_s0, psf_s1, junk;
-  size_t ns0, ns1, numprflprms=10;
-  float *psf, psf_q=1, psf_pa=0, trunc=10;
+  float *img, integaccu=0.01, psfsum=1;
+  float *nonoisehist, *preconv, trunc=10;
+  size_t i, psf_s0, psf_s1, junk, ns0, ns1;
+  size_t nc, nsize, size, hs0, hs1, *bytind;
+  float *psf, psf_q=1, psf_pa=0, psf_trunc=3;
 
-  oneprofile(0.0f, 0.0f, psf_beta, psf_fwhm, psf_pa, psf_q, 
-	     trunc, integaccu, psf_av0_tot1, psfsum, psf_smg, 
+  oneprofile(0.0f, 0.0f, p->psf_p1, p->psf_p2, psf_pa, psf_q, 
+	     psf_trunc, integaccu, psf_av0_tot1, psfsum, psf_smg, 
 	     &psf, &psf_s0, &psf_s1, &junk);
-  if(vpsf)
+  if(p->vpsf)
     array_to_fits("PSF.fits", NULL, "PSF", "FLOAT", 
 		  psf, psf_s0, psf_s1);
 
-  hs0=psf_s0/2;       hs1=psf_s1/2;
-  ns0=s0+2*hs0;       ns1=s1+2*hs1;
+  hs0=psf_s0/2;          hs1=psf_s1/2;
+  ns0=p->s0+2*hs0;       ns1=p->s1+2*hs1;
+  size=p->s0*p->s1;		/* Shorter name ;-). */
+  nsize=ns0*ns1;		/* Shorter name ;-). */
+  nc=p->numppcols;		/* Shorter name ;-). */
+  pp=p->profileparams;		/* Shorter name ;-). */
+  ss=sqrt(p->sky);		/* Shorter name ;-). */
 
-  if(prflprms==NULL)
-    {
-      free_1_0=1;
-      /* Note that the input table has to be in FITS standard not in C
-       standard. That is why the sides of the iamge are reversed.*/
-      setprflprms(&prflprms, numprflprms, &nummock, s1, s0);
-    }
-
-  *mock=calloc(ns0*ns1,sizeof **mock);
-  assert(*mock!=NULL);
-
-  byt=calloc(ns0*ns1,sizeof *byt);
-  assert(byt!=NULL);
-  bytind=malloc(ns0*ns1*sizeof *bytind);
-  assert(byt!=NULL);
+  assert( (img=calloc(nsize,sizeof *img))!=NULL );
+  assert( (byt=calloc(nsize,sizeof *byt))!=NULL );
+  assert( (bytind=malloc(nsize*sizeof *bytind))!=NULL );
 
   imgtopix(ns0, ns1, &D);
- 
-  for(i=0;i<nummock;i++)
-    makeprofile(*mock, byt, bytind, D, ns0, ns1, trunc, integaccu, 
-		 prflprms[i*numprflprms+1],   /* Profile function. */
-		 prflprms[i*numprflprms+3]+hs0-1, /* x_c (C format) */
-		 prflprms[i*numprflprms+2]+hs1-1, /* y_c (C format) */
-		 prflprms[i*numprflprms+4],   /* p1: sersic n. */
-		 prflprms[i*numprflprms+5],   /* p2: sersic re. */
-                 prflprms[i*numprflprms+6],   /* position angle. */
-		 prflprms[i*numprflprms+7],   /* axis ratio. */
-		 sqrt(sky)*prflprms[i*numprflprms+8], /* average flux.*/
-		&prflprms[i*numprflprms+9]); /*Total flux of profile*/ 
-  if(vnoconv)
+
+  if(p->verb)
     {
-      floatshrinkarraytonew(*mock, ns0, ns1, hs0, hs1, 
-			    s0+hs0, s1+hs1, &preconv);
-      array_to_fits(outname, NULL, "NOCONV", 
-		    "FLOAT", preconv, s0, s1);
-      free(preconv);
+      printf("(x,y): profile position.\n");
+      printf("\t Y : At least part of it was in the image.\n");
+      printf("\t-*-: Profile was not in the image.\n");
     }
-  convolve(*mock, ns0, ns1, psf, psf_s0, psf_s1);
 
-  floatshrinkarray(mock, ns0, ns1, hs0, hs1, 
-		   s0+hs0, s1+hs1);
+  for(i=0;i<p->nummock;i++)
+    {
+      suc=makeprofile(img, byt, bytind, D, ns0, 
+		      ns1, trunc, integaccu, 
+		      pp[i*nc+1],	  /* Profile function. */
+		      pp[i*nc+3]+hs0-1,   /* x_c (C format) */
+		      pp[i*nc+2]+hs1-1,   /* y_c (C format) */
+		      pp[i*nc+4],	  /* p1: sersic n. */
+		      pp[i*nc+5],	  /* p2: sersic re. */
+		      pp[i*nc+6],	  /* position angle. */
+		      pp[i*nc+7],	  /* axis ratio. */
+		      ss*pp[i*nc+8],	  /* average flux.*/
+		      &pp[i*nc+9]);	  /* Total flux of profile*/ 
+      if(p->verb)
+	printf(" - (%-.2f, %-.2f)\t%s\n", pp[i*nc+2], pp[i*nc+3], 
+	       suc ? " Y" : "-*-");
+    }
+  if(p->verb)
+    printf("\n\n");
+  
+  if(p->vnoconv)
+    {
+      floatshrinkarraytonew(img, ns0, ns1, hs0, hs1, 
+			    p->s0+hs0, p->s1+hs1, &preconv);
+      array_to_fits(p->outname, NULL, "NOCONV", 
+		    "FLOAT", preconv, p->s0, p->s1);
+      free(preconv);
 
-  floatsetbelowtozero(*mock, s0*s1, MINFLOAT);
+      if(p->verb)
+	printf("- Not convolved profiles saved in '%s' (ext %d)\n",
+	       p->outname, extcounter++);
+    }
 
-  if(vconv)
-    array_to_fits(outname, NULL, "NONOISE", 
-		"FLOAT", *mock, s0, s1);
+  convolve(img, ns0, ns1, psf, psf_s0, psf_s1);
+
+  floatshrinkarray(&img, ns0, ns1, hs0, hs1, p->s0+hs0, p->s1+hs1);
+
+  floatsetbelowtozero(img, size, MINFLOAT);
+
+  if(p->vconv)
+    {
+      array_to_fits(p->outname, NULL, "NONOISE", 
+		    "FLOAT", img, p->s0, p->s1);
+      if(p->verb)
+	printf("- Convolved profiles saved in '%s' (ext %d)\n",
+	       p->outname, extcounter++);
+    }
    
-  if(vhist)
-    histogram(*mock, s0*s1, vhist, &histmin, &histmax, 
-	      &nonoisehist, 1, 0, 0);
+  if(p->vhist)
+    histogram(img, size, p->vhist, &p->histmin, 
+	      &p->histmax, &nonoisehist, 1, 0, 0);
 
-  addnoise(*mock, s0*s1, sky);
+  addnoise(img, size, p->sky);
 
-  array_to_fits(outname, NULL, "WITHNOISE", 
-		"FLOAT", *mock, s0, s1);
+  array_to_fits(p->outname, NULL, "WITHNOISE", 
+		"FLOAT", img, p->s0, p->s1);
+  if(p->verb)
+    printf("- Noised image saved in '%s' (ext %d)\n",
+	   p->outname, extcounter++);
    
-  if(vhist)
-    printmockhist(*mock, s0*s1, vhist, histmin, 
-		  histmax, nonoisehist);
+  if(p->vhist)
+    printmockhist(img, size, p->vhist, p->histmin, 
+		  p->histmax, nonoisehist);
 
-  savemockinfo(prflprms, nummock, numprflprms, 
-	       sky, trunc, infoname);
-   
-  if(free_1_0==1) 
-    free(prflprms);    
+  savemockinfo(p);
+  if(p->verb)
+    printf("- Profile info saved in '%s'\n\n", p->infoname);
 
   free(psf);
+  free(img);
   free(byt);
   free(bytind);
   freepixarray(D);

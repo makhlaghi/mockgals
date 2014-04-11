@@ -21,59 +21,20 @@ You should have received a copy of the GNU General Public License
 along with mockgals. If not, see <http://www.gnu.org/licenses/>.
 
 **********************************************************************/
-#include <time.h>
-#include <ctype.h>
-#include <stdio.h>
-#include <errno.h>
-#include <string.h>
-#include <stdlib.h>
-#include <assert.h>
-#include <sys/time.h>
+#ifndef UI_H
+#define UI_H
 
-#include "mock.h"
-#include "attaavv.h"
-#include "ui.h"
+void
+setdefaultoptions(struct mockparams *p);
 
+void
+readinputinfo(struct mockparams *p);
 
+void
+checkremoveoutimage(char *outname);
 
+void
+getsaveoptions(struct mockparams *p, 
+	       int argc, char *argv[]);
 
-
-int
-main(int argc, char *argv[])
-{
-  time_t rawtime;
-  struct mockparams p;
-  struct timeval t0, t1;
-
-  time(&rawtime);
-  gettimeofday(&t0, NULL);
-
-  setdefaultoptions(&p);
-
-  getsaveoptions(&p, argc, argv);
-
-  if(p.verb)
-    {
-      printf("\n\n--------------------------\n");
-      printf("mockgals started on %s\n", ctime(&rawtime));
-    }
-
-  readinputinfo(&p);
-
-  checkremoveoutimage(p.outname);
-
-  mockimg(&p);
-  
-  free(p.profileparams);
-
-  if(p.verb)
-    {
-      gettimeofday(&t1, NULL);
-      printf("mockgals finished in %.4f (seconds)\n",
-	     ((double)t1.tv_sec+(double)t1.tv_usec/1e6) - 
-	     ((double)t0.tv_sec+(double)t0.tv_usec/1e6));
-      printf("--------------------------\n\n");
-    }
-
-  return 0;
-}
+#endif

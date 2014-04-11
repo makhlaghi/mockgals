@@ -29,6 +29,29 @@ along with mockgals. If not, see <http://www.gnu.org/licenses/>.
 #define ONGRIDNTIMESTEN 40
 
 
+struct mockparams
+{
+  char *infoname;		/* Name of file with galaxy info. */
+  char *outname;		/* Name of output FITS file. */
+  size_t s0;			/* C standard axis 0 size. */
+  size_t s1;			/* C standard axis 1 size. */
+  float sky;			/* Sky value in the image. */
+  float trunc;			/* Truncation radius of the profiles. */
+  float psf_p1;			/* First parameter of PSF. */
+  float psf_p2;			/* Second parameter of PSF. */
+  int vhist;			/* View histogram (>0) or not(0)? */
+  float histmin;		/* Minimum of histogram. */
+  float histmax;		/* Maximum of histogram. */
+  int verb;			/* Verbatim mode (if ==1). */
+  int vpsf;			/* View the PSF used. */
+  int vnoconv;			/* View the not convolved image. */
+  int vconv;			/* View the convolved image. */
+  double *profileparams;	/* Table of profile parameters. */
+  size_t numppcols;		/* Number of columns in the above. */
+  size_t nummock;		/* Number of mock profiles. */
+};
+
+
 /* 
    The parameters:
 
@@ -38,8 +61,7 @@ along with mockgals. If not, see <http://www.gnu.org/licenses/>.
    Gaussian: p1: sigma. p2: nothing (you can set it to zero).
            sigma*trunc.    
 */
-
-struct mockparams
+struct integparams
 {
   double   xl;    /* lower  x boundary */
   double   xh;    /* higher x boundary */
@@ -80,10 +102,10 @@ oneprofile(float x_c, float y_c, float p1, float p2, float pa_d,
         size_t *y_w, size_t *numpixs);
 
 void
-mockimg(size_t s0, size_t s1, float sky, size_t nummock, 
-        double *prflprms, float psf_fwhm, float psf_beta, 
-	int vpsf, int vnoconv, int vconv, int vhist, 
-	float histmin, float histmax, float **mock, 
-	char *outname, char *infoname);
+setprflprms(double **prflprms, size_t numprflprms, 
+	    size_t nummock, int size1, int size2);
+
+void
+mockimg(struct mockparams *p);
 
 #endif
