@@ -37,6 +37,7 @@ along with mockgals. If not, see <http://www.gnu.org/licenses/>.
  *****************     Small functions used    ******************
  *********************      in main()      **********************
  ****************************************************************/
+/* Set the default values for the inputs into mockimg() (mock.h). */
 void
 setdefaultoptions(struct mockparams *p)
 {
@@ -69,8 +70,9 @@ setdefaultoptions(struct mockparams *p)
 
 
 
-/* If the input table exists, read it, if not, just make a file with
-   that input name. */
+/* If the input table exists, read it and put its pointer into
+   mockparams. If it doesn't exist, then let prflprms(), which is
+   is mock.c, make a random set of parameters. */
 void
 readinputinfo(struct mockparams *p)
 {
@@ -154,18 +156,18 @@ checkremoveoutimage(char *outname)
 /****************************************************************
  *****************        Read options:      ********************
  ****************************************************************/
-/* Check to two size paramters */
+/* Check if the two size paramters are positive. */
 void
 checksize(char *optarg, size_t *var, int opt)
 {
   long tmp;
   char *tailptr;
   tmp=strtol(optarg, &tailptr, 0);
-  if(tmp<0)
+  if(tmp<=0)
     {
       printf("\n\n Error: argument to -%c ", opt); 
       printf("should be positive\n\n");
-      exit(1);
+      exit(EXIT_FAILURE);
     }
   *var=tmp;  
 }

@@ -46,7 +46,6 @@ ForComments(char *comments, long int *buff_comments, char *str)
       assert(comments != NULL);
     }
 
-  /* Copy the string into the */
   strcat(comments, str);
 }
 
@@ -72,7 +71,6 @@ CountCols(char *str, int *s1, double **table,
       (*s1)++;
     }
 
-  /* Assign space to the table:  */
   *table=malloc(buff_num_rows*(*s1)*sizeof(double)); 
   if (*table==NULL)
     { 
@@ -150,7 +148,6 @@ void
 AddRow(struct ArrayInfo *intable, long int *buff_num_rows, 
         long int *buff_num_replacements, char *str)
 {
-  /* Declarations: */ 
   int num_cols=1, z_index;
   char *strdata, *tempstr="";
   char **ExtraString=&tempstr;
@@ -212,7 +209,8 @@ AddRow(struct ArrayInfo *intable, long int *buff_num_rows,
   if (intable->s0>=*buff_num_rows)
     {
       *buff_num_rows+=BUFFER_NUM;
-      temp_d_pt=realloc(intable->d, *buff_num_rows*intable->s1*sizeof(double));
+      temp_d_pt=realloc(intable->d, 
+			*buff_num_rows*intable->s1*sizeof(double));
       if(temp_d_pt!=NULL) intable->d=temp_d_pt;
       else 
         {
@@ -297,7 +295,6 @@ correctsizes(struct ArrayInfo *intable)
 void 
 readasciitable (const char *filename, struct ArrayInfo *intable)
 {
-  /* Declarations: */
   long line_counter=0;
   long buff_num_rows=BUFFER_NUM;
   long buff_comments=BUFFER_NUM;

@@ -738,7 +738,8 @@ floatvmerge(float *a, float *b, size_t numrows, float **out)
 /*********************************************************************
  **********************       Print array       **********************
  *********************************************************************/
-/* Print a 2D array into an ascii file. Note that s0 and s1 are one larger than the actual number of columns and number of rows.  */
+/* Print a 2D array into an ascii file. Note that s0 and s1 are
+   onelarger than the actual number of columns and number of rows.  */
 void
 printfarray(float *array, size_t s0, size_t s1, 
 	    char *comment, char *filename, int decimals)

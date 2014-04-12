@@ -301,16 +301,15 @@ array_to_fits_long(char *fits_name, void *array0,
 
 
 
-
-void
-array_to_fits_short(char *fits_name, void *array0, 
-        struct keywords *keys, char *EXTname, 
-        size_t size1, size_t size2)
 /* Convert a short array to a short FITS image.
    Note that for a short:
    bitpix=SHORT_IMG;        datatype=TSHORT;
    to array_to_fits_float() that is why there is no 
    comments in this function.  */
+void
+array_to_fits_short(char *fits_name, void *array0, 
+        struct keywords *keys, char *EXTname, 
+        size_t size1, size_t size2)
 {
   size_t i;
   fitsfile *fptr;
@@ -357,16 +356,16 @@ array_to_fits_short(char *fits_name, void *array0,
 
 
 
-void
-array_to_fits_uchar(char *fits_name, void *array0, 
-        struct keywords *keys, char *EXTname, 
-        size_t size1, size_t size2)
 /* Convert an unsigned char array to a byte FITS image.
    Note that for an unsigned char:
    bitpix=BYTE_IMG;        datatype=TBYTE;
    All the steps in the function are identical 
    to array_to_fits_float() that is why there is no 
    comments in this function.  */
+void
+array_to_fits_uchar(char *fits_name, void *array0, 
+        struct keywords *keys, char *EXTname, 
+        size_t size1, size_t size2)
 {
   size_t i;
   fitsfile *fptr;

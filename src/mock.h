@@ -23,11 +23,11 @@ along with mockgals. If not, see <http://www.gnu.org/licenses/>.
 #ifndef MOCK_H
 #define MOCK_H
 
-#define EMPTYIMAGE 0
-#define ONLYONEPROFILE 1
-#define ONGRIDNTIMESTEN 40
 
 
+
+
+/* Inputs into mockimg(). */
 struct mockparams
 {
   char *infoname;		/* Name of file with galaxy info. */
@@ -51,15 +51,17 @@ struct mockparams
 };
 
 
-/* 
-   The parameters:
 
-   Sersic: p1: n. p2: re. trunc*re;
-   Moffat: p1: beta. p2: (input)fwhm, (processing)later alpha.
+
+
+/* Inputs into the 2D integration routine: integ2d();
+   The parameters for the various profiles:
+   - Sersic: p1: n. p2: re. trunc*re;
+   - Moffat: p1: beta. p2: (input)fwhm, (processing)later alpha.
            (FWHM/2)*trunc.
-   Gaussian: p1: sigma. p2: nothing (you can set it to zero).
+   - Gaussian: p1: sigma. p2: nothing (you can set it to zero).
            sigma*trunc.    
-*/
+   - Point: none matter! */
 struct integparams
 {
   double   xl;    /* lower  x boundary */
@@ -77,7 +79,11 @@ struct integparams
   double (*profile)(double, double, double);
 };
 
-/* 
+
+
+
+
+/*Inputs of oneprofile(): 
    x_c and y_c: Only the fractional part matter, the 
                 central pixel will be used. 
    p1, p2:    See above.
@@ -92,18 +98,26 @@ struct integparams
    s0_m1_g2:  Sersic (0), Moffat (1) or Gaussian (2).
    mock:      Address of the pointer keeping the array to be made.
    x_w, y_w:  Number of rows and columns respectively of the output.
-   numpixs:   Number of pixels in the object.
-*/
+   numpixs:   Number of pixels in the object.*/
 void
 oneprofile(float x_c, float y_c, float p1, float p2, float pa_d, 
         float q, float trunc, float integaccu, int av0_tot1, 
         float flux, float s0_m1_g2, float **mock, size_t *x_w, 
         size_t *y_w, size_t *numpixs);
 
+
+
+
+/* Make random profile parameters. */
 void
 setprflprms(double **prflprms, size_t numprflprms, 
 	    size_t nummock, int size1, int size2);
 
+
+
+
+/* Make any number of profiles inside an image. The inputs are
+   discribed above struct mockparams. */
 void
 mockimg(struct mockparams *p);
 

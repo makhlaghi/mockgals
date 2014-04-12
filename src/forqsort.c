@@ -26,11 +26,19 @@ intdecreasing(const void * a, const void * b)
   return ( *(int*)b - *(int*)a );
 }
 
+
+
+
+
 int 
 intincreasing(const void * a, const void * b)
 {
   return ( *(int*)a - *(int*)b );
 }
+
+
+
+
 
 int
 floatdecreasing(const void * a, const void * b)
@@ -40,6 +48,10 @@ floatdecreasing(const void * a, const void * b)
   return (tb > ta) - (tb < ta);
 }
 
+
+
+
+
 int
 floatincreasing(const void * a, const void * b)
 {
@@ -48,6 +60,10 @@ floatincreasing(const void * a, const void * b)
   return (ta > tb) - (ta < tb);
 }
 
+
+
+
+
 int 
 doubledecreasing(const void * a, const void * b)
 {
@@ -55,6 +71,11 @@ doubledecreasing(const void * a, const void * b)
   double tb=*(double*)b;
   return (tb > ta) - (tb < ta);
 }
+
+
+
+
+
 
 int
 doubleincreasing(const void * a, const void * b)

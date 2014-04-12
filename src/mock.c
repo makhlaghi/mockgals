@@ -236,22 +236,23 @@ twod_over_xy(double y, void *params)
 double
 integ2d(struct integparams *params)
 {
-    gsl_function F;
-    static double abserr;
-    static size_t neval=0;
-    double epsabs=0, epsrel=EPSREL_FOR_INTEG, result; 
+  gsl_function F;
+  static double abserr;
+  static size_t neval=0;
+  double epsabs=0, epsrel=EPSREL_FOR_INTEG, result; 
 
-    F.function = &twod_over_xy;
-    F.params = params;   
-    gsl_integration_qng(&F, params->yl, params->yh, epsabs, 
-            epsrel, &result, &abserr, &neval);
-    return result;
+  F.function = &twod_over_xy;
+  F.params = params;   
+  gsl_integration_qng(&F, params->yl, params->yh, epsabs, 
+		      epsrel, &result, &abserr, &neval);
+  return result;
 }
 
 
 
 
 
+/* Set the general parameters of struct integparams. */
 void
 setintegparams(int s0_m1_g2_p3, float p1, float p2, float pa_d, 
 	       float q, float trunc, float *trunc_r, char *profletter, 
@@ -319,6 +320,16 @@ setintegparams(int s0_m1_g2_p3, float p1, float p2, float pa_d,
 /****************************************************************
  *****************       One profile:        ********************
  ****************************************************************/
+/* Sometimes (for example in making a PSF) you just want one profile
+   that is fully enclosed in an array. The two functions here, namely
+   oneprofile() and fillmock(). Were made for this purpose. These were
+   the precursors to the currently used makeprofile(), they were
+   called by makeprofile_old(), and the intersection of the profile
+   made here and the image (depending on where the actual image was
+   asked to be) would be added to the main output image. 
+
+   makeprofile_old() was removed from this source code on April 12th,
+   2014. You can see it in the last commit before that.*/
 void
 fillmock(float **mock, float x_c, float y_c, struct integparams *p, 
         float integaccu, float trunc_r, size_t *x_w, size_t *y_w, 
@@ -587,69 +598,7 @@ addnoise(float *array, size_t size, double sky)
 
 
 /****************************************************************
- *****************        Old function:      ********************
- ****************************************************************/
-/* This function will make a mock profile and place it in the larger
-   image.*/
-void
-makeprofile_old(float *img, size_t size1, size_t size2, float trunc, 
-        float integaccu, float s0_m1_g2_p3, float x_c, float y_c, 
-        float p1, float p2, float pa_d, float q, float avflux, 
-        double *totflux)
-{
-  float *mock;
-  int av0_tot1=0;
-  int i, j, ilimit, jlimit;
-  size_t x_w, y_w, xc, yc, numpixs;
-  int x1l, y1l, x2l, y2l, x1s, y1s, x2s, y2s;
-
-  if(x_c-(int)x_c>=0.5) xc=x_c+1;
-  else xc=x_c;
-  if(y_c-(int)y_c>=0.5) yc=y_c+1;
-  else yc=y_c;
-
-  oneprofile(x_c, y_c, p1, p2, pa_d, q, trunc, integaccu, 
-	     av0_tot1, avflux, s0_m1_g2_p3, &mock, &x_w, &y_w, 
-	     &numpixs);
-  *totflux=numpixs*avflux;
-
-  smallinlarge((int)size1, (int)size2, (int)x_w, (int)y_w, 
-	       (int)xc, (int)yc, &x1l, &y1l, &x2l, &y2l, &x1s, 
-	       &y1s, &x2s, &y2s);
-
-  ilimit=x2s-x1s; jlimit=y2s-y1s;
-  for(i=0;i<ilimit;i++)
-    for(j=0;j<jlimit;j++)
-      img[(x1l+i)*size2+y1l+j]+=mock[(x1s+i)*y_w+(y1s+j)];
-
-  free(mock);    
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/****************************************************************
- ****************************************************************
- *****************                           ********************
  *****************  Fill in the mock values  ********************
- *****************                           ********************
- ****************************************************************
  ****************************************************************/
 
 
@@ -757,18 +706,29 @@ findstartingpixel(struct pix *D, size_t s0, size_t s1, float truncr,
    with it. It is used to mark which pixels have been checked in 
    the image. indexs will keep the index (1D) of those pixels that
    have been marked so after the job is finished, it can set them
-   all back to zero.
+   all back to zero and not bother with resetting the whole array!
 
    We begin with the pixel in the image that is closest to the desired
    center of the profile. A pixel queue (a FIFO) will keep all the
-   neighbors of pixels in order to check them all. Since we want the
-   total flux of the profile to be a certain value, we will not put
-   the pixel value in the image array immediately. The pixel values
-   for each model will be put in the D[i]->v (i is the pixel's index).
-   This is because we need to make sure it has a desired total
-   magnitude or signal to noise. Once the initial profile's total flux
-   is found, the pixels (whose index we have in the indexs list) will
-   be used to add the appropriate values to the image.
+   neighbors of pixels in order to check them all. Since some profiles
+   will fall on the sides of the image, there is no way we can
+   calculate the whole flux by summing of the pixels and then setting
+   them to the desired value. So we have to use integration, the
+   profiles were all made with their constant set to 1. We integrate
+   over the profile to infinity over a surface and consider that as
+   the total flux. Note that when the truncation radius is small, this
+   theoretical total flux will be much larger (>10%) than the actual
+   total flux of what is actually put in the image if it all fits in.
+   Since that total flux will be set to the desired value, then if the
+   truncation radius is too small, the real total flux in the image is
+   slightly lower than the desired value. This problem did not exist
+   in the makeprofile_old() function which actually allocated an array
+   for each profile, summed over it to find the total flux and then
+   only used the intersection with the main image to put the profile's
+   image into the main image. But that was too slow, especially if a
+   large number of profiles were needed. It was removed on April 12th,
+   2014. So if you are interested, you can see it in the commits before
+   this date.
 
    For all pixels, first it is checked if the pixel is within the
    truncation radius. If it isn't, its neighbors will not be added to
