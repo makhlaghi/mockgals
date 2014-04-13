@@ -16,9 +16,9 @@ histograms of the no noised and noised images.  An example random set
 of mock galaxies with 50 mock galaxies placed randomly in the image
 can be seen below:
 
-<img src="https://raw.github.com/makhlaghi/mockgals/master/jpgs/nonoise.jpg"
+<img src="https://raw.github.com/makhlaghi/mockgals/master/doc/img/nonoise.jpg"
     width=300 />
-<img src="https://raw.github.com/makhlaghi/mockgals/master/jpgs/withnoise.jpg"
+<img src="https://raw.github.com/makhlaghi/mockgals/master/doc/img/withnoise.jpg"
     width=300 />
     
 The noise for every pixel is a random value taken from a Gaussian
