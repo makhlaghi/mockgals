@@ -1,10 +1,4 @@
 Info top title
-**************
-
-This manual is for 'mockgals', which is a tool to create mock galaxies
-and stars in an image and save the result in a FITS file.
-
-Info top title
 1 About this manual
   1.1 Good science
   1.2 Your rights
@@ -16,6 +10,12 @@ Info top title
 6 Mock parameters
 7 How mockgals works
 Index
+Info top title
+**************
+
+This manual is for 'mockgals', which is a tool to create mock galaxies
+and stars in an image and save the result in a FITS file.
+
 1 About this manual
 *******************
 

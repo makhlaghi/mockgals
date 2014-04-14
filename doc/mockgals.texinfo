@@ -44,7 +44,10 @@ Texts.  A copy of the license is available online at
 @page
 @vskip 0pt plus 1filll
 @insertcopying
+
 @end titlepage
+
+@contents
 
 @ifnottex
 @node Top
@@ -64,7 +67,6 @@ galaxies and stars in an image and save the result in a FITS file.
 * Index::               An index to all the terms used.
 @end menu
 
-@contents
 
 
 
@@ -204,6 +206,7 @@ The paragraphs above, in this section, belong to the GNU Texinfo manual
 and are not written by us! We have just changed the name ``Texinfo''
 to ``mockgals'' because it and this manual are released under the same
 licenses and it is beautifully written to inform you of your rights.
+
 
 
 

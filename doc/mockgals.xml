@@ -43,6 +43,8 @@ Texts.  A copy of the license is available online at
 <ulink url="http://www.gnu.org/copyleft/fdl.html">GNU FDL webpage</ulink>.
 </para></blockquote>
 
+
+
 <chapter label="" id="Top">
 <title>Info top title</title>
 <para>This manual is for <literal>mockgals</literal>, which is a tool to create mock
@@ -186,6 +188,7 @@ and are not written by us! We have just changed the name &#8220;Texinfo&#8221;
 to &#8220;mockgals&#8221; because it and this manual are released under the same
 licenses and it is beautifully written to inform you of your rights.
 </para>
+
 
 
 
