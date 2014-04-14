@@ -1,44 +1,8 @@
-This is mockgals.info, produced by texi2any version 5.2 from
-mockgals.texinfo.
-
-This manual is for 'mockgals', a program to make mock astronomical
-objects in a FITS image and add the appropriate noise.
-
-   Copyright (C) 2014 Mohammad Akhlaghi.
-
-     Permission is granted to copy, distribute and/or modify this
-     document under the terms of the GNU Free Documentation License,
-     Version 1.3 or any later version published by the Free Software
-     Foundation; with no Invariant Sections, with no Front-Cover Texts,
-     and with no Back-Cover Texts.  A copy of the license is available
-     online at GNU FDL webpage (http://www.gnu.org/copyleft/fdl.html).
-INFO-DIR-SECTION Astronomy
-START-INFO-DIR-ENTRY
-* mockgals: (mockgals).         Make mock galaxies and stars.
-END-INFO-DIR-ENTRY
-
-
-File: mockgals.info,  Node: Top,  Next: About,  Up: (dir)
-
 Info top title
 **************
 
 This manual is for 'mockgals', which is a tool to create mock galaxies
 and stars in an image and save the result in a FITS file.
-
-* Menu:
-
-* About::               About this manual and how to use it.
-* QuickStart::          A quick start guide to MockGals.
-* Introduction::        An introduction to how MockGals works.
-* Installation::        How to install MockGals
-* Configuring::         Customizing MockGals.
-* Mock Parameters::     The parameters table for the mock profiles.
-* How it works::        A detailed description of all major functions.
-* Index::               An index to all the terms used.
-
-
-File: mockgals.info,  Node: About,  Next: QuickStart,  Prev: Top,  Up: Top
 
 1 About this manual
 *******************
@@ -52,15 +16,6 @@ very good understanding of the software they use.  After that you rights
 as the reader of this document and user of MockGals are explained and in
 the end of this chapter we give a short review of how this manual is
 available for your use and a short summary of the manual.
-
-* Menu:
-
-* Good Science::        How good science depends on good software.
-* Your rights::         Your rights as a user of MockGals.
-* How to read::         How to read this manual.
-
-
-File: mockgals.info,  Node: Good Science,  Next: Your rights,  Up: About
 
 1.1 Good science
 ================
@@ -112,9 +67,6 @@ and models are produced, archived and processed using hard/software.  We
 cannot and should not accept any result through faith in the programmer
 who wrote that particular program we are using to publish our papers.
 
-
-File: mockgals.info,  Node: Your rights,  Next: How to read,  Prev: Good Science,  Up: About
-
 1.2 Your rights
 ===============
 
@@ -157,9 +109,6 @@ manual and are not written by us!  We have just changed the name
 the same licenses and it is beautifully written to inform you of your
 rights.
 
-
-File: mockgals.info,  Node: How to read,  Prev: Your rights,  Up: About
-
 1.3 How to read this manual
 ===========================
 
@@ -185,18 +134,12 @@ practice interactively.
 Mockgals so the user can begin using it very fast.  The following
 chapters give a much more detailed review of each step.
 
-
-File: mockgals.info,  Node: QuickStart,  Next: Introduction,  Prev: About,  Up: Top
-
 2 Quick start
 *************
 
 Once 'mockgals' is installed, if you simply run './mockgals' in the
 installed directory, 45 mock galaxies and 5 stars will be randomly
 positioned in a 'FITS' image of size 200*200.
-
-
-File: mockgals.info,  Node: Introduction,  Next: Installation,  Prev: QuickStart,  Up: Top
 
 3 Introduction
 **************
@@ -217,18 +160,12 @@ A summary of the advantages of 'mockgals' includes:
      and modify or contribute to by any interested user.
   4. [To be added] Can make profiles in any dimentions.
 
-
-File: mockgals.info,  Node: Installation,  Next: Configuring,  Prev: Introduction,  Up: Top
-
 4 Installation
 **************
 
 'mockgals' relys on only 3 packages: 'GSL' (for mathematical functions),
 'FFTW' (for convolution) and 'cfitsio' (for reading to and from FITS
 files).
-
-
-File: mockgals.info,  Node: Configuring,  Next: Mock Parameters,  Prev: Installation,  Up: Top
 
 5 Configuring mockgals.
 ***********************
@@ -237,18 +174,12 @@ Currently configuration paramters into 'mockgals' can only be given
 through single letter commandline options.  The options are explained
 below.
 
-
-File: mockgals.info,  Node: Mock Parameters,  Next: How it works,  Prev: Configuring,  Up: Top
-
 6 Mock parameters
 *****************
 
 The parameters of the profiles you want to build into a FITS image are
 fed to it though a table.  In this section we will review how 'mockgals'
 reads that table and how best to prepare it.
-
-
-File: mockgals.info,  Node: How it works,  Next: Index,  Prev: Mock Parameters,  Up: Top
 
 7 How mockgals works
 ********************
@@ -257,26 +188,6 @@ In this section we will give a complete review on how 'mockgals' works
 and how this is implemented in its coding in order to facilitate your
 reading of the code and possibly modifying it and making it better.
 
-
-File: mockgals.info,  Node: Index,  Prev: How it works,  Up: Top
-
 Index
 *****
 
-
-
-Tag Table:
-Node: Top793
-Node: About1495
-Node: Good Science2350
-Node: Your rights5487
-Node: How to read7666
-Node: QuickStart9058
-Node: Introduction9356
-Node: Installation10363
-Node: Configuring10640
-Node: Mock Parameters10933
-Node: How it works11258
-Node: Index11603
-
-End Tag Table
