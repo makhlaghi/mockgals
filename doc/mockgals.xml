@@ -1,70 +1,53 @@
-\input texinfo @c -*-texinfo-*-
-@c %**start of header
-@setfilename mockgals.info
-@settitle mockgals 0.1
-@afourpaper
+<?xml version="1.0"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" "http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+  <!ENTITY tex "TeX">
+  <!ENTITY latex "LaTeX">
+]>
+<book id="mockgals.xml" lang="en">
+<title>mockgals 0.1</title>
 
-@dircategory Astronomy
-@direntry
-* mockgals: (mockgals).         Make mock galaxies and stars.
-@end direntry
 
-@c %**end of header
+<!-- %**end of header -->
 
 
 
 
 
-@copying
-This manual is for @code{mockgals}, a program to make mock
+<bookinfo><legalnotice><para>This manual is for <literal>mockgals</literal>, a program to make mock
 astronomical objects in a FITS image and add the appropriate noise.
-
-Copyright @copyright{} 2014 Mohammad Akhlaghi.
-
-@quotation
-Permission is granted to copy, distribute and/or modify this document
+</para>
+<para>Copyright &#169; 2014 Mohammad Akhlaghi.
+</para>
+<blockquote><para>Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
 any later version published by the Free Software Foundation; with no
 Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
 Texts.  A copy of the license is available online at
-@uref{http://www.gnu.org/copyleft/fdl.html, GNU FDL webpage}.
-@end quotation
-@end copying
+<ulink url="http://www.gnu.org/copyleft/fdl.html">GNU FDL webpage</ulink>.
+</para></blockquote></legalnotice></bookinfo>
 
 
 
 
 
-@titlepage
-@title MockGals
-@subtitle Make mock stars and galaxies in a FITS image with noise.
-@subtitle Manual for mockgals version 0.1
-@author Mohammad Akhlaghi
+<para>This manual is for <literal>mockgals</literal>, a program to make mock
+astronomical objects in a FITS image and add the appropriate noise.
+</para>
+<para>Copyright &#169; 2014 Mohammad Akhlaghi.
+</para>
+<blockquote><para>Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3 or
+any later version published by the Free Software Foundation; with no
+Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
+Texts.  A copy of the license is available online at
+<ulink url="http://www.gnu.org/copyleft/fdl.html">GNU FDL webpage</ulink>.
+</para></blockquote>
 
-@page
-@vskip 0pt plus 1filll
-@insertcopying
-@end titlepage
-
-@ifnottex
-@node Top
-@top Info top title
-This manual is for @code{mockgals}, which is a tool to create mock
+<chapter label="" id="Top">
+<title>Info top title</title>
+<para>This manual is for <literal>mockgals</literal>, which is a tool to create mock
 galaxies and stars in an image and save the result in a FITS file.
-@end ifnottex
-
-@menu
-* About::               About this manual and how to use it.
-* QuickStart::          A quick start guide to MockGals.
-* Introduction::        An introduction to how MockGals works.
-* Installation::        How to install MockGals
-* Configuring::         Customizing MockGals.
-* Mock Parameters::     The parameters table for the mock profiles.
-* How it works::        A detailed description of all major functions.
-* Index::               An index to all the terms used.
-@end menu
-
-@contents
+</para>
 
 
 
@@ -83,12 +66,14 @@ galaxies and stars in an image and save the result in a FITS file.
 
 
 
-@node About
-@chapter About this manual
 
-To get started with MockGals please go to the next chapter.
+</chapter>
+<chapter label="1" id="About">
+<title>About this manual</title>
 
-The following sections are more general discussions. In the first
+<para>To get started with MockGals please go to the next chapter.
+</para>
+<para>The following sections are more general discussions. In the first
 section we will give a short review of the way modern science has
 become intertwined with software and how important it is for
 scientists to have very good understanding of the software they use.
@@ -96,6 +81,7 @@ After that you rights as the reader of this document and user of
 MockGals are explained and in the end of this chapter we give a short
 review of how this manual is available for your use and a short
 summary of the manual.
+</para>
 
 
 
@@ -103,15 +89,9 @@ summary of the manual.
 
 
 
-@menu
-* Good Science::        How good science depends on good software.
-* Your rights::         Your rights as a user of MockGals.
-* How to read::         How to read this manual.
-@end menu
-
-@node Good Science
-@section Good science
-We believe that if a software (a technique) is to be used in
+<sect1 label="1.1" id="Good-Science">
+<title>Good science</title>
+<para>We believe that if a software (a technique) is to be used in
 scientific research, it has to be open source and open to scrutiny. So
 any critical/interested user can easily follow all the steps and
 understand all their details and assumptions. No software is perfect
@@ -124,15 +104,15 @@ biggest roadblock in our aim to acheive this goal and a modern
 scientists cannot claim to be interested in understanding the universe
 and our relation to it, what ever their specific field, without
 accurately understanding the software techniques used.
-
-To reach this goal, namely to let the users of a software be able to
+</para>
+<para>To reach this goal, namely to let the users of a software be able to
 understand its intricate details at their will, a software has to be
 accompanied by a good and up to date manual. The user of a software
 cannot claim to understand how it works only based on the experience
 they have gained in using it a lot or on mock simulations, that kind
 of subjective experience is prone to very serious mis-understandings
 that only help in producing dogmas.  Unfortunately in the commonly
-used astronomical software, most are either closed source or don't
+used astronomical software, most are either closed source or don&#8217;t
 have a good manual. The scientific results that are deduced from such
 software are thus not objective, because in the former case scientists
 have to look at it as a black box and trust its results on faith. In
@@ -146,12 +126,12 @@ sharing of these fundamental ideas that shape all our scientific
 results and keeping them open to criticism, we can make them more
 robust and thus take better steps in our endeavor to quench our
 curiosity in nature.
-
-Bjarne Stroustrup (creator of the @code{C++} language) says: ``Without
-understanding software, you are reduced to believing in magic''.  Ken
+</para>
+<para>Bjarne Stroustrup (creator of the <literal>C++</literal> language) says: &#8220;Without
+understanding software, you are reduced to believing in magic&#8221;.  Ken
 Thomson (the designer or the Unix operating system) has said very
-nicely that ``I abhor a system designed for the ``user'' if that word
-is a coded pejorative meaning ``stupid and unsophisticated''.'' Both
+nicely that &#8220;I abhor a system designed for the &#8220;user&#8221; if that word
+is a coded pejorative meaning &#8220;stupid and unsophisticated&#8221;.&#8221; Both
 these cases naturally apply more seriously to systems written for
 scientific applications and as scientists we should be loyal to such
 principles if we want to remain critical and be objective. After all,
@@ -159,79 +139,82 @@ all our data and models are produced, archived and processed using
 hard/software. We cannot and should not accept any result through
 faith in the programmer who wrote that particular program we are using
 to publish our papers.
+</para>
 
 
 
 
+</sect1>
+<sect1 label="1.2" id="Your-rights">
+<title>Your rights</title>
 
-@node Your rights
-@section Your rights
-
-mockgals is ``free software''; this means that everyone is free to use
+<para>mockgals is &#8220;free software&#8221;; this means that everyone is free to use
 it and free to redistribute it on certain conditions.  mockgals is not
 in the public domain; it is copyrighted and there are restrictions on
 its distribution, but these restrictions are designed to permit
 everything that a good cooperating citizen would want to do.  What is
 not allowed is to try to prevent others from further sharing any
 version of Texinfo that they might get from you.
-
-Specifically, we want to make sure that you have the right to give
+</para>
+<para>Specifically, we want to make sure that you have the right to give
 away copies of the programs that relate to mockgals, that you receive
 source code or else can get it if you want it, that you can change these
 programs or use pieces of them in new free programs, and that you know
 you can do these things.
-
-To make sure that everyone has such rights, we have to forbid you to
+</para>
+<para>To make sure that everyone has such rights, we have to forbid you to
 deprive anyone else of these rights.  For example, if you distribute
 copies of the mockgals related programs, you must give the recipients
 all the rights that you have.  You must make sure that they, too,
 receive or can get the source code.  And you must tell them their
 rights.
-
-Also, for our own protection, we must make certain that everyone finds
+</para>
+<para>Also, for our own protection, we must make certain that everyone finds
 out that there is no warranty for the programs that relate to mockgals.
 If these programs are modified by someone else and passed on, we want
 their recipients to know that what they have is not what we distributed,
 so that any problems introduced by others will not reflect on our
 reputation.
-
-The precise conditions of the licenses for the programs currently
+</para>
+<para>The precise conditions of the licenses for the programs currently
 being distributed that relate to mockgals are found in the General Public
 Licenses that accompany them.  This manual is covered by the GNU Free
 Documentation License (*note GNU Free Documentation License::).
-
-The paragraphs above, in this section, belong to the GNU Texinfo manual
-and are not written by us! We have just changed the name ``Texinfo''
-to ``mockgals'' because it and this manual are released under the same
+</para>
+<para>The paragraphs above, in this section, belong to the GNU Texinfo manual
+and are not written by us! We have just changed the name &#8220;Texinfo&#8221;
+to &#8220;mockgals&#8221; because it and this manual are released under the same
 licenses and it is beautifully written to inform you of your rights.
+</para>
 
 
 
 
-
-@node How to read
-@section How to read this manual
-This manual is available in plain text, HTML, info, Docbook, PDF and
+</sect1>
+<sect1 label="1.3" id="How-to-read">
+<title>How to read this manual</title>
+<para>This manual is available in plain text, HTML, info, Docbook, PDF and
 finally the Texinfo format. The last one is the basis for creating all
 the other formats. As an initial introduction the PDF and HTML formats
 might be easier to begin using mockgals, but if you would like to
 understand the code, it is much easier to do it in the info format,
 where for example in emacs, you can have one window on the code and
 another on the info file explaining each function, the idea behind its
-usage and how it is used in the Emacs @code{*info*} window.
-
-@code{info} is a very easy to use and particularly useful format for
+usage and how it is used in the Emacs <literal>*info*</literal> window.
+</para>
+<para><literal>info</literal> is a very easy to use and particularly useful format for
 software documentation. We strongly recommend becoming familiar with
 it if you are not because it can significantly enhance your experience
 in programming and in GNU based operating systems (like GNU/Linux). It
 is very trivial made for reading manuals and getting facilitates
 navigating in long manuals. To learn more about it in any GNU/linux
-terminal you can run: @code{info info}. It does a fantastic job in
+terminal you can run: <literal>info info</literal>. It does a fantastic job in
 explaining its self in practice interactively.
-
-The first chapter is a quick start, explaining the generalities of
+</para>
+<para>The first chapter is a quick start, explaining the generalities of
 Mockgals so the user can begin using it very fast. The following
 chapters give a much more detailed review of each step. 
+</para>
 
 
 
@@ -251,13 +234,15 @@ chapters give a much more detailed review of each step.
 
 
 
+</sect1>
+</chapter>
+<chapter label="2" id="QuickStart">
+<title>Quick start</title>
 
-@node QuickStart
-@chapter Quick start
-
-Once @code{mockgals} is installed, if you simply run @code{./mockgals}
+<para>Once <literal>mockgals</literal> is installed, if you simply run <literal>./mockgals</literal>
 in the installed directory, 45 mock galaxies and 5 stars will be
-randomly positioned in a @code{FITS} image of size @math{200*200}.
+randomly positioned in a <literal>FITS</literal> image of size <inlineequation><mathphrase>200*200</mathphrase></inlineequation>.
+</para>
 
 
 
@@ -277,32 +262,26 @@ randomly positioned in a @code{FITS} image of size @math{200*200}.
 
 
 
+</chapter>
+<chapter label="3" id="Introduction">
+<title>Introduction</title>
 
-@node Introduction
-@chapter Introduction
-
-Making mock galaxies is very important in the process of understanding
-our data. @code{mockgals} was initially made with this exact
+<para>Making mock galaxies is very important in the process of understanding
+our data. <literal>mockgals</literal> was initially made with this exact
 intent. Certain astronomical targets, for example elliptical
 galaxies, are very sharp in their central regions, this makes a simple
 calculation of the profile in the center of each pixel unrealistic for
-such cases. The main advantage of @code{mockgals} is that it
+such cases. The main advantage of <literal>mockgals</literal> is that it
 integrates the central parts of profiles until a given accuracy. It
 does this without any sorting or ordering and in a very fast manner.
-
-@noindent
-A summary of the advantages of @code{mockgals} includes:
-@enumerate
-@item
-Integration of the center of the profile.
-@item 
-Very efficient in CPU usage, resuling in a very fast processing.
-@item
-Written in the C programming language, which is easy to understand
+</para>
+<para>A summary of the advantages of <literal>mockgals</literal> includes:
+</para><orderedlist numeration="arabic"><listitem><para>Integration of the center of the profile.
+</para></listitem><listitem><para>Very efficient in CPU usage, resuling in a very fast processing.
+</para></listitem><listitem><para>Written in the C programming language, which is easy to understand
 and modify or contribute to by any interested user.
-@item
-[To be added] Can make profiles in any dimentions. 
-@end enumerate
+</para></listitem><listitem><para>[To be added] Can make profiles in any dimentions. 
+</para></listitem></orderedlist>
 
 
 
@@ -322,14 +301,12 @@ and modify or contribute to by any interested user.
 
 
 
-
-@node Installation
-@chapter Installation
-@code{mockgals} relys on only 3 packages: @code{GSL} (for mathematical
-functions), @code{FFTW} (for convolution) and @code{cfitsio} (for reading to and from FITS files).
-
-
-
+</chapter>
+<chapter label="4" id="Installation">
+<title>Installation</title>
+<para><literal>mockgals</literal> relys on only 3 packages: <literal>GSL</literal> (for mathematical
+functions), <literal>FFTW</literal> (for convolution) and <literal>cfitsio</literal> (for reading to and from FITS files).
+</para>
 
 
 
@@ -347,11 +324,15 @@ functions), @code{FFTW} (for convolution) and @code{cfitsio} (for reading to and
 
 
 
-@node Configuring
-@chapter Configuring mockgals.
-Currently configuration paramters into @code{mockgals} can only be
+
+
+</chapter>
+<chapter label="5" id="Configuring">
+<title>Configuring mockgals.</title>
+<para>Currently configuration paramters into <literal>mockgals</literal> can only be
 given through single letter commandline options. The options are
 explained below.
+</para>
 
 
 
@@ -371,12 +352,13 @@ explained below.
 
 
 
-
-@node Mock Parameters
-@chapter Mock parameters
-The parameters of the profiles you want to build into a FITS image are
+</chapter>
+<chapter label="6" id="Mock-Parameters">
+<title>Mock parameters</title>
+<para>The parameters of the profiles you want to build into a FITS image are
 fed to it though a table. In this section we will review how
-@code{mockgals} reads that table and how best to prepare it.
+<literal>mockgals</literal> reads that table and how best to prepare it.
+</para>
 
 
 
@@ -396,12 +378,13 @@ fed to it though a table. In this section we will review how
 
 
 
-
-@node How it works
-@chapter How mockgals works
-In this section we will give a complete review on how @code{mockgals}
+</chapter>
+<chapter label="7" id="How-it-works">
+<title>How mockgals works</title>
+<para>In this section we will give a complete review on how <literal>mockgals</literal>
 works and how this is implemented in its coding in order to facilitate
 your reading of the code and possibly modifying it and making it better.
+</para>
 
 
 
@@ -421,15 +404,16 @@ your reading of the code and possibly modifying it and making it better.
 
 
 
+</chapter>
+<chapter label="" id="Index">
+<title>Index</title>
 
-@node Index
-@unnumbered Index
-
-@printindex cp
-
-
+<index role="cp"></index>
 
 
 
 
-@bye
+
+
+</chapter>
+</book>
