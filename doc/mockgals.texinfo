@@ -2,6 +2,7 @@
 @c %**start of header
 @setfilename mockgals.info
 @settitle mockgals 0.1
+@afourpaper
 @c %**end of header
 
 
@@ -31,12 +32,18 @@ Texts.  A copy of the license is available online at
 
 
 @titlepage
-@title mockgals
+@title MockGals
+@subtitle Make mock stars and galaxies in a FITS image with noise.
+@subtitle Manual for version 0.1.
+@author Mohammad Akhlaghi
 
 @page 
-
 @vskip 0pt plus 1filll
 @insertcopying
+
+@ifplaintext
+@insertcopying
+@end ifplaintext
 @end titlepage
 
 
@@ -51,7 +58,7 @@ Texts.  A copy of the license is available online at
 
 
 @ifnottex
-@node Top, Introduction., (dir), (dir)
+@node Top, QuickStart, (dir), (dir)
 @top Short mockgals
 
 This manual is for @code{mockgals}, which is a tool to create mock
@@ -63,10 +70,12 @@ galaxies and stars in an image and save the result in a FITS file.
 
 
 @menu
+* QuickStart::
 * Introduction.::
-* temp::
 * Installing::
-* Index::
+* Configuring::
+* MockParams::
+* HowItWorks::
 @end menu
 
 
@@ -76,6 +85,12 @@ galaxies and stars in an image and save the result in a FITS file.
 
 
 
+@node QuickStart, Introduction., Top, Top
+@chapter Quick start
+
+Once @code{mockgals} is installed, if you simply run @code{./mockgals}
+in the installed directory, 45 mock galaxies and 5 stars will be
+randomly positioned in a @code{FITS} image of size @math{200*200}.
 
 
 
@@ -89,7 +104,14 @@ galaxies and stars in an image and save the result in a FITS file.
 
 
 
-@node Introduction., temp, Top, Top
+
+
+
+
+
+
+
+@node Introduction., Installing, QuickStart, Top
 @chapter An introduction.
 
 Making mock galaxies is very important in the process of understanding
@@ -134,32 +156,7 @@ and modify or contribute to by any interested user.
 
 
 
-
-@node temp, Installing, Introduction., Top
-@chapter tmp
-This is a temporary chapter.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-@node Installing, Index, temp, Top
+@node Installing, Configuring, Introduction., Top
 @chapter Installation
 @code{mockgals} relys on only 3 packages: @code{GSL} (for mathematical
 functions), @code{FFTW} (for convolution) and @code{cfitsio} (for reading to and from FITS files).
@@ -176,6 +173,68 @@ functions), @code{FFTW} (for convolution) and @code{cfitsio} (for reading to and
 
 
 
+
+
+
+
+
+
+
+@node Configuring, MockParams, Installing, Top
+@chapter Configuring mockgals.
+Currently configuration paramters into @code{mockgals} can only be
+given through single letter commandline options. The options are
+explained below.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@node MockParams, HowItWorks, Configuring, Top
+@chapter Mock paramters
+The parameters of the profiles you want to build into a FITS image are
+fed to it though a table. In this section we will review how
+@code{mockgals} reads that table and how best to prepare it.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@node HowItWorks,  , MockParams, Top
+@chapter How mockgals works
+In this section we will give a complete review on how @code{mockgals}
+works and how this is implemented in its coding in order to facilitate
+your reading of the code and possibly modifying it and making it better.
 
 
 
