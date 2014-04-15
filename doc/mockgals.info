@@ -1,10 +1,10 @@
 This is mockgals.info, produced by texi2any version 5.2 from
 mockgals.texinfo.
 
-This manual is for 'mockgals', a program to make mock astronomical
-objects in a FITS image and add the appropriate noise.
+This manual is for MockGals, a program to make mock astronomical objects
+in a FITS image and add the appropriate noise.
 
-   Copyright (C) 2014 Mohammad Akhlaghi.
+   Copyright (C) 2014 Mohammad Akhlaghi: <akhlaghi@astr.tohoku.ac.jp>
 
      Permission is granted to copy, distribute and/or modify this
      document under the terms of the GNU Free Documentation License,
@@ -14,207 +14,275 @@ objects in a FITS image and add the appropriate noise.
      online at GNU FDL webpage (http://www.gnu.org/copyleft/fdl.html).
 INFO-DIR-SECTION Astronomy
 START-INFO-DIR-ENTRY
-* mockgals: (mockgals).         Make mock galaxies and stars.
+* mockgals: (MockGals).         Make mock galaxies and stars.
 END-INFO-DIR-ENTRY
 
 
-File: mockgals.info,  Node: Top,  Next: About,  Up: (dir)
+File: mockgals.info,  Node: Top,  Next: About,  Prev: (dir),  Up: (dir)
 
-Info top title
-**************
+MockGals
+********
 
-This manual is for 'mockgals', which is a tool to create mock galaxies
-and stars in an image and save the result in a FITS file.
-
-* Menu:
-
-* About::               About this manual and how to use it.
-* QuickStart::          A quick start guide to MockGals.
-* Introduction::        An introduction to how MockGals works.
-* Installation::        How to install MockGals
-* Configuring::         Customizing MockGals.
-* Mock Parameters::     The parameters table for the mock profiles.
-* How it works::        A detailed description of all major functions.
-* Index::               An index to all the terms used.
-
-
-File: mockgals.info,  Node: About,  Next: QuickStart,  Prev: Top,  Up: Top
-
-1 About this manual
-*******************
-
-To get started with MockGals please go to the next chapter.
-
-   The following sections are more general discussions.  In the first
-section we will give a short review of the way modern science has become
-intertwined with software and how important it is for scientists to have
-very good understanding of the software they use.  After that you rights
-as the reader of this document and user of MockGals are explained and in
-the end of this chapter we give a short review of how this manual is
-available for your use and a short summary of the manual.
+MockGals is a tool to produce mock galaxies and stars based on an input
+catalog or randomly into a FITS image of any given size.  It can be used
+to test various detection criteria.
 
 * Menu:
 
-* Good Science::        How good science depends on good software.
-* Your rights::         Your rights as a user of MockGals.
-* How to read::         How to read this manual.
+* About::                       About this manual.
+* Quick start::                 Get started.
+* Introduction::                An introduction to MockGals.
+* Installation::                How to install MockGals.
+* Configuring::                 Customizing MockGals.
+* Mock Parameters::             Mock profile parameter table.
+* How it works::                Mock gals coding guide.
+* Manual index::                Intex to terminology used.
 
 
-File: mockgals.info,  Node: Good Science,  Next: Your rights,  Up: About
+File: mockgals.info,  Node: About,  Next: Quick start,  Prev: Top,  Up: Top
 
-1.1 Good science
-================
+1 About
+*******
+
+To get started with MockGals please please see *note Quick start::.  The
+following sections in this chapter are more general discussions.
+
+   In the first section we will give a short review of the way modern
+science has become intertwined with software and how important it is for
+scientists to have very good understanding of the software they use.
+After that your rights as the reader of this document and user of
+MockGals are explained and in the end of this chapter we give a short
+review of how this manual is available for your use and a short summary
+of the manual.
+
+* Menu:
+
+* Good Science::                Science and its software.
+* Your rights::                 Your rights as a user of MockGals.
+* Manual formats::              Formats this manual is available in.
+* Conventions and summary::     Summary of this manual.
+
+
+File: mockgals.info,  Node: Good Science,  Next: Your rights,  Prev: About,  Up: About
+
+1.1 Objective/critical science and its software
+===============================================
 
 We believe that if a software (a technique) is to be used in scientific
-research, it has to be open source and open to scrutiny.  So any
-critical/interested user can easily follow all the steps and understand
-all their details and assumptions.  No software is perfect and there are
-ultimately some flaws in any software that allow future generations to
-find them and advance our experimental and theoretical knowledge of the
-universe we live in.  With the progress of technology, scietific results
-are increasing becoming more and more dependent on hard/software
-techniques.  Therefore obscure software is arguably the biggest
-roadblock in our aim to acheive this goal and a modern scientists cannot
-claim to be interested in understanding the universe and our relation to
-it, what ever their specific field, without accurately understanding the
-software techniques used.
+research, it has to be open source and transparent (with a good manual)
+to be open to scrutiny.  Any critical/interested user should easily be
+able to follow all the steps and understand all the fine details and
+assumptions.  History of science shows us that no interpretation, model
+or technique (software) is perfect.  There are always inevitabley unseen
+faults, hidden assumptions, simplifications and approximations in any of
+our constructs.  It is precisely these that will ultimately allow future
+generations to find/correct them and advance our experimental and
+theoretical knowledge of the universe we live in.  By keeping software
+free and transparent for all scientists, we can most accurately convey
+our experiences to users who can build on those or find their
+shortcomings.  Viewed more generally, this will help critical and
+objective science thrive.
+
+   With the progress of technology, scientific results are increasingly
+becoming more and more dependent on hardware and software techniques.
+Therefore obscure software is arguably the biggest roadblock in our aim
+to acheive this goal and a modern scientist cannot claim to be curious
+in understanding the universe and our relation to it, what ever their
+specific field, without accurately understanding the software techniques
+they use to quench that curiosity.  We thus believe that the wide use of
+free and transparent software is one step in a larger scheme to save the
+sciences...
+
+     ...from narrow specialization and from an obscurantist faith in the
+     expert's special skill and in his personal knowledge and authority;
+     a faith that so well fits our post-rationalistic and post critical
+     age, proudly dedicated to the destruction of the tradition of
+     rational philosophy and of rational thought its self.
+
+      -- _Karl Popper. The logic of scientific discovery. 1959._
 
    To reach this goal, namely to let the users of a software be able to
 understand its intricate details at their will, a software has to be
 accompanied by a good and up to date manual.  The user of a software
 cannot claim to understand how it works only based on the experience
-they have gained in using it a lot or on mock simulations, that kind of
-subjective experience is prone to very serious mis-understandings that
-only help in producing dogmas.  Unfortunately in the commonly used
-astronomical software, most are either closed source or don't have a
+they have gained by frequently using it.  This kind of subjective
+experience is prone to very serious mis-understandings that only help in
+producing dogmas and the above mentioned "obscurationist faith in the
+expert's special skill".  Unfortunately in the commonly used
+astronomical softwares, most are either closed source or don't have a
 good manual.  The scientific results that are deduced from such software
 are thus not objective, because in the former case scientists have to
 look at it as a black box and trust its results on faith.  In the
 latter, it is very hard to find enough time to understand the
-programming of an open source project with out a clearly written manual
-explaining all the ideas behind the major functions, data structures or
-objects.  It is certainly time consuming for the programmer to make such
-a manual, but if the greater common experience is considered, that time
-put is very nicely invested.  Because through sharing of these
-fundamental ideas that shape all our scientific results and keeping them
-open to criticism, we can make them more robust and thus take better
-steps in our endeavor to quench our curiosity in nature.
+programming of an open source project without a clearly written and up
+to date manual explaining all the ideas behind the major functions, data
+structures or objects.
+
+   It is certainly time consuming for the author of a software to make
+such a manual.  If personal greed is put aside and our greater common
+experience is considered, that time is a time well invested.  Because
+through sharing of these fundamental ideas, that shape all our
+scientific results, and keeping them open to criticism, we can make them
+more robust and thus take better steps in our common goal to tackle the
+riddles of nature.
 
    Bjarne Stroustrup (creator of the 'C++' language) says: "Without
 understanding software, you are reduced to believing in magic".  Ken
 Thomson (the designer or the Unix operating system) has said very nicely
 that "I abhor a system designed for the "user" if that word is a coded
 pejorative meaning "stupid and unsophisticated"."  Both these cases
-naturally apply more seriously to systems written for scientific
+naturally apply even more seriously to systems written for scientific
 applications and as scientists we should be loyal to such principles if
 we want to remain critical and be objective.  After all, all our data
-and models are produced, archived and processed using hard/software.  We
-cannot and should not accept any result through faith in the programmer
-who wrote that particular program we are using to publish our papers.
+and models are produced, archived and processed using hardware and
+software.  We cannot and should not accept any result through faith in
+the programmer who wrote that particular program we are using to publish
+our papers.
 
 
-File: mockgals.info,  Node: Your rights,  Next: How to read,  Prev: Good Science,  Up: About
+File: mockgals.info,  Node: Your rights,  Next: Manual formats,  Prev: Good Science,  Up: About
 
-1.2 Your rights
-===============
+1.2 Your rights as a user of MockGals
+=====================================
 
-mockgals is "free software"; this means that everyone is free to use it
-and free to redistribute it on certain conditions.  mockgals is not in
+MockGals is "free software"; this means that everyone is free to use it
+and free to redistribute it on certain conditions.  MockGals is not in
 the public domain; it is copyrighted and there are restrictions on its
 distribution, but these restrictions are designed to permit everything
 that a good cooperating citizen would want to do.  What is not allowed
-is to try to prevent others from further sharing any version of Texinfo
+is to try to prevent others from further sharing any version of MockGals
 that they might get from you.
 
    Specifically, we want to make sure that you have the right to give
-away copies of the programs that relate to mockgals, that you receive
+away copies of the programs that relate to MockGals, that you receive
 source code or else can get it if you want it, that you can change these
 programs or use pieces of them in new free programs, and that you know
 you can do these things.
 
    To make sure that everyone has such rights, we have to forbid you to
 deprive anyone else of these rights.  For example, if you distribute
-copies of the mockgals related programs, you must give the recipients
+copies of the MockGals related programs, you must give the recipients
 all the rights that you have.  You must make sure that they, too,
 receive or can get the source code.  And you must tell them their
 rights.
 
    Also, for our own protection, we must make certain that everyone
 finds out that there is no warranty for the programs that relate to
-mockgals.  If these programs are modified by someone else and passed on,
+MockGals.  If these programs are modified by someone else and passed on,
 we want their recipients to know that what they have is not what we
 distributed, so that any problems introduced by others will not reflect
 on our reputation.
 
    The precise conditions of the licenses for the programs currently
-being distributed that relate to mockgals are found in the General
-Public Licenses that accompany them.  This manual is covered by the GNU
-Free Documentation License (*note GNU Free Documentation License::).
+being distributed that relate to MockGals are found in the General
+Public license(1) that accompany them.  This manual is covered by the
+GNU Free Documentation License(2).
 
    The paragraphs above, in this section, belong to the GNU Texinfo
 manual and are not written by us!  We have just changed the name
-"Texinfo" to "mockgals" because it and this manual are released under
+"Texinfo" to "MockGals" because it and this manual are released under
 the same licenses and it is beautifully written to inform you of your
 rights.
 
+   ---------- Footnotes ----------
+
+   (1) <https://www.gnu.org/copyleft/gpl.html>
+
+   (2) <https://www.gnu.org/copyleft/fdl.html>
+
 
-File: mockgals.info,  Node: How to read,  Prev: Your rights,  Up: About
+File: mockgals.info,  Node: Conventions and summary,  Prev: Manual formats,  Up: About
 
-1.3 How to read this manual
-===========================
+1.3 Manual conventions and summary
+==================================
 
-This manual is available in plain text, HTML, info, Docbook, PDF and
-finally the Texinfo format.  The last one is the basis for creating all
-the other formats.  As an initial introduction the PDF and HTML formats
-might be easier to begin using mockgals, but if you would like to
-understand the code, it is much easier to do it in the info format,
-where for example in emacs, you can have one window on the code and
-another on the info file explaining each function, the idea behind its
-usage and how it is used in the Emacs '*info*' window.
-
-   'info' is a very easy to use and particularly useful format for
-software documentation.  We strongly recommend becoming familiar with it
-if you are not because it can significantly enhance your experience in
-programming and in GNU based operating systems (like GNU/Linux).  It is
-very trivial made for reading manuals and getting facilitates navigating
-in long manuals.  To learn more about it in any GNU/linux terminal you
-can run: 'info info'.  It does a fantastic job in explaining its self in
-practice interactively.
+In this manual commands to be input into the command line as normal user
+begin with '$', and for those that to be input as root (or super-user),
+the command begins with '#'.  Note that you need the root password in
+order to execute the latter commands.  The commands finish where the
+special type face used to show them finishes.  Be careful not to include
+text puctuation marks that might follow the inline commands, they have a
+different font.  After typing the commands on the command-line you have
+to press the <Enter> or <Return> key on your keyboard for the command to
+start executing.
 
    The first chapter is a quick start, explaining the generalities of
-Mockgals so the user can begin using it very fast.  The following
+MockGals so the user can begin using it very fast.  The following
 chapters give a much more detailed review of each step.
 
 
-File: mockgals.info,  Node: QuickStart,  Next: Introduction,  Prev: About,  Up: Top
+File: mockgals.info,  Node: Manual formats,  Next: Conventions and summary,  Prev: Your rights,  Up: About
 
-2 Quick start
-*************
+1.4 Manual Formats and reading recommendations
+==============================================
 
-Once 'mockgals' is installed, if you simply run './mockgals' in the
+This manual is available in plain text, HTML, Info, Docbook, PDF and
+finally the Texinfo format.  The last one is the basis for creating all
+the other formats.  As an initial introduction the PDF and HTML formats
+might be easier to begin using MockGals, but if you would like to
+understand the code while reading *note How it works::, it is much
+easier to do it in the info format, where for example in Emacs, you can
+have one window on the code and another on the info file.
+
+   Info is a very convenient format particularly useful for software
+documentation.  We strongly recommend becoming familiar with it if you
+are not already because it can significantly enhance your experience in
+programming and in your GNU based operating systems user experience.
+Operating systems like Ubuntu, Fedora, Linux Mint, Debian, OpenSUSE, Red
+Hat, CentOS or Scientific linux among many others.  Info is very trivial
+and made for reading manuals.  It provides facilitates to navigate
+easily in long manuals.  To learn more about it in any GNU/linux
+terminal you can run: '$ info info'.  It does a fantastic job in
+explaining its self in practice interactively.
+
+   By default, the PDF version of this manual is prepared in the A4
+paper size (210cm by 297cm).  In case you prefer a letter size (8.5in by
+11in), you can simply change it by following the steps below.  You must
+have Texinfo and TeX installed on your system, for an explanation on how
+to install them see *note Installation::.
+
+  1. In the downloaded source directory (lets call it 'SRC/'), open the
+     'SRC/doc/mockgals.texinfo' Texinfo source file of this manual.
+
+  2. Delete the line that says '@afourpaper'.  It is in the first few
+     lines of the file.
+
+  3. run '$ ./run.sh' in that same directory, this will re-make all the
+     documenation formats.
+
+
+File: mockgals.info,  Node: Quick start,  Next: Introduction,  Prev: About,  Up: Top
+
+2 A Quick start
+***************
+
+Once MockGals is installed, if you simply run './mockgals' in the
 installed directory, 45 mock galaxies and 5 stars will be randomly
 positioned in a 'FITS' image of size 200*200.
 
 
-File: mockgals.info,  Node: Introduction,  Next: Installation,  Prev: QuickStart,  Up: Top
+File: mockgals.info,  Node: Introduction,  Next: Installation,  Prev: Quick start,  Up: Top
 
 3 Introduction
 **************
 
 Making mock galaxies is very important in the process of understanding
-our data.  'mockgals' was initially made with this exact intent.
-Certain astronomical targets, for example elliptical galaxies, are very
-sharp in their central regions, this makes a simple calculation of the
-profile in the center of each pixel unrealistic for such cases.  The
-main advantage of 'mockgals' is that it integrates the central parts of
-profiles until a given accuracy.  It does this without any sorting or
-ordering and in a very fast manner.
+our data.  MockGals was initially made with this exact intent.  Certain
+astronomical targets, for example elliptical galaxies, are very sharp in
+their central regions, this makes a simple calculation of the profile in
+the center of each pixel unrealistic for such cases.  The main advantage
+of MockGals is that it integrates the central parts of profiles until a
+given accuracy.  It does this without any sorting or ordering and in a
+very fast manner.
 
-A summary of the advantages of 'mockgals' includes:
+A summary of the advantages of MockGals includes:
   1. Integration of the center of the profile.
+
   2. Very efficient in CPU usage, resuling in a very fast processing.
+
   3. Written in the C programming language, which is easy to understand
      and modify or contribute to by any interested user.
+
   4. [To be added] Can make profiles in any dimentions.
 
 
@@ -223,17 +291,17 @@ File: mockgals.info,  Node: Installation,  Next: Configuring,  Prev: Introductio
 4 Installation
 **************
 
-'mockgals' relys on only 3 packages: 'GSL' (for mathematical functions),
-'FFTW' (for convolution) and 'cfitsio' (for reading to and from FITS
-files).
+MockGals relys on only 3 packages: GSL (GNU scientific library, for
+mathematical functions), FFTW (for convolution) and cfitsio (for reading
+to and from FITS files).
 
 
 File: mockgals.info,  Node: Configuring,  Next: Mock Parameters,  Prev: Installation,  Up: Top
 
-5 Configuring mockgals.
-***********************
+5 Configuring MockGals
+**********************
 
-Currently configuration paramters into 'mockgals' can only be given
+Currently configuration paramters into MockGals can only be given
 through single letter commandline options.  The options are explained
 below.
 
@@ -244,21 +312,21 @@ File: mockgals.info,  Node: Mock Parameters,  Next: How it works,  Prev: Configu
 *****************
 
 The parameters of the profiles you want to build into a FITS image are
-fed to it though a table.  In this section we will review how 'mockgals'
+fed to it though a table.  In this section we will review how MockGals
 reads that table and how best to prepare it.
 
 
-File: mockgals.info,  Node: How it works,  Next: Index,  Prev: Mock Parameters,  Up: Top
+File: mockgals.info,  Node: How it works,  Next: Manual index,  Prev: Mock Parameters,  Up: Top
 
 7 How mockgals works
 ********************
 
-In this section we will give a complete review on how 'mockgals' works
-and how this is implemented in its coding in order to facilitate your
+In this section we will give a complete review on how MockGals works and
+how this is implemented in its coding in order to facilitate your
 reading of the code and possibly modifying it and making it better.
 
 
-File: mockgals.info,  Node: Index,  Prev: How it works,  Up: Top
+File: mockgals.info,  Node: Manual index,  Prev: How it works,  Up: Top
 
 Index
 *****
@@ -266,17 +334,20 @@ Index
 
 
 Tag Table:
-Node: Top793
-Node: About1495
-Node: Good Science2350
-Node: Your rights5487
-Node: How to read7666
-Node: QuickStart9058
-Node: Introduction9356
-Node: Installation10363
-Node: Configuring10640
-Node: Mock Parameters10933
-Node: How it works11258
-Node: Index11603
+Node: Top820
+Node: About1551
+Node: Good Science2482
+Node: Your rights6887
+Ref: Your rights-Footnote-19114
+Ref: Your rights-Footnote-29162
+Node: Conventions and summary9210
+Node: Manual formats10157
+Node: Quick start12176
+Node: Introduction12477
+Node: Installation13483
+Node: Configuring13776
+Node: Mock Parameters14065
+Node: How it works14388
+Node: Manual index14738
 
 End Tag Table
