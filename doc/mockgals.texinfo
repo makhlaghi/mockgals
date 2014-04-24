@@ -1,7 +1,9 @@
 \input texinfo @c -*-texinfo-*-
 @c %**start of header
 @setfilename mockgals.info
-@settitle mockgals 0.1
+
+@include version.texi
+@settitle mockgals @value{VERSION}
 @afourpaper
 
 @dircategory Astronomy
@@ -18,10 +20,11 @@
 
 
 @copying
-This manual is for MockGals, a program to make mock astronomical
-objects in a FITS image and add the appropriate noise.
+This manual is for MockGals (version @value{VERSION},
+@value{UPDATED}), a program to make mock astronomical objects in a
+FITS image and add the appropriate noise.
 
-Copyright @copyright{} 2014 Mohammad Akhlaghi:
+Copyright @copyright{} 2014 Mohammad Akhlaghi.
 @email{akhlaghi@@astr.tohoku.ac.jp}
 
 @quotation
@@ -41,7 +44,7 @@ Texts.  A copy of the license is available online at
 @titlepage
 @title MockGals
 @subtitle Make mock stars and galaxies in a FITS image with noise.
-@subtitle Manual for MockGals version 0.1
+@subtitle Manual for MockGals version @value{VERSION}, @value{UPDATED}.
 @author Mohammad Akhlaghi
 
 @page
@@ -54,8 +57,8 @@ Texts.  A copy of the license is available online at
 @node Top, About, (dir), (dir)
 @top MockGals
 MockGals is a tool to produce mock galaxies and stars based on an
-input catalog or randomly into a FITS image of any given size. It can
-be used to test various detection criteria. 
+input catalog or randomly into a FITS image of any given size. This
+manual is for version @value{VERSION} (@value{UPDATED}).
 @end ifnottex
 
 @menu
@@ -100,7 +103,6 @@ Copyright notice:
 
 To get started with MockGals please please see @ref{Quick start}.  The
 following sections in this chapter are more general discussions.
-
 In the first section we will give a short review of the way modern
 science has become intertwined with software and how important it is
 for scientists to have very good understanding of the software they
@@ -119,35 +121,59 @@ summary of the manual.
 * Good Science::                Science and its software.
 * Your rights::                 Your rights as a user of MockGals.
 * Manual formats::              Formats this manual is available in.
-* Conventions and summary::     Summary of this manual.
+* Conventions::
+* Summary::
 @end menu
 
 @node Good Science, Your rights, About, About
 @section Objective/critical science and its software
-We believe that if a software (a technique) is to be used in
-scientific research, it has to be open source and transparent (with a
-good manual) to be open to scrutiny. Any critical/interested user
-should easily be able to follow all the steps and understand all the
-fine details and assumptions. History of science shows us that no
-interpretation, model or technique (software) is perfect.  There are
-always inevitabley unseen faults, hidden assumptions, simplifications
-and approximations in any of our constructs. It is precisely these
-that will ultimately allow future generations to find/correct them and
-advance our experimental and theoretical knowledge of the universe we
-live in. By keeping software free and transparent for all scientists,
+History of science shows us that no interpretation, model or technique
+(software) is perfect.  There are always inevitably unseen faults,
+hidden assumptions, simplifications and approximations in all of our
+constructs. It is precisely these that will ultimately allow future
+generations to find and correct or solve them, thus advancing our
+experimental and theoretical knowledge of the universe. Therefore, we
+should be as explicit as possible about such approximations and
+simplifications. Through keeping software free and transparent (with a
+clearly written, detailed and up to date manual) for all scientists,
 we can most accurately convey our experiences to users who can build
-on those or find their shortcomings. Viewed more generally, this will
-help critical and objective science thrive.
+on those or find their shortcomings, hence facilitating the progress
+of science.
 
 With the progress of technology, scientific results are increasingly
 becoming more and more dependent on hardware and software
-techniques. Therefore obscure software is arguably the biggest
-roadblock in our aim to acheive this goal and a modern scientist
-cannot claim to be curious in understanding the universe and our
-relation to it, what ever their specific field, without accurately
-understanding the software techniques they use to quench that
-curiosity.  We thus believe that the wide use of free and transparent
-software is one step in a larger scheme to save the sciences...
+techniques. While in the past, a scientists would gather data and
+process them individually to achieve an analysis, today scientits
+mainly leave the first two steps to pre-written software libraries,
+therefore distancing them selves from the pure observational data.
+
+@quotation
+Unfortunately, most persons who have recourse to a computer for
+statistical analysis of data are not much interested either in
+computer programming or in statistical method, being primarily
+concerned with their own proper business. Hence the common use of
+library programs and various statistical packages. Most of these
+originated in the pre-visual era. The user is not showered with
+graphical displays. He can get them only with trouble, cunning and a
+fighting spirit. It's time that was changed.
+@author F. J. Anscombe. The American Statistician, Vol. 27, No. 1. 1973
+@end quotation
+
+Anscombe argues that ``Good statistical analysis is not a purely
+routine matter, and generally calls for more than one pass through the
+computer''. He showed how four data sets with widely different shapes
+(when plotted) give nearly identical output from standard regression
+techinques. Thus he showed how wrong it is to only rely on outputs of
+standard methods to interpret the data. Although we have much better
+graphic displays today, unfortuantely the general situation has not
+changed too much from Anscombe's time.  Obscure software, either
+closed source or with a bad manual, is certainly one of the main
+culprits.  Most of the software packages available today for a
+scientist are either closed source or have a bad, out-dated or not
+clearly written manual.  Making an interested scientist think twice
+before trying to understand the inner workings of a software.  Thus
+the wide use of free and transparent software may be one step in a
+larger scheme to save the sciences...
 
 @quotation
 ...from narrow specialization and from an obscurantist faith in the
@@ -155,7 +181,6 @@ expert's special skill and in his personal knowledge and authority; a
 faith that so well fits our post-rationalistic and post critical age,
 proudly dedicated to the destruction of the tradition of rational
 philosophy and of rational thought its self.
-
 @author Karl Popper. The logic of scientific discovery. 1959.
 @end quotation
 
@@ -167,35 +192,39 @@ they have gained by frequently using it. This kind of subjective
 experience is prone to very serious mis-understandings that only help
 in producing dogmas and the above mentioned ``obscurationist faith in
 the expert's special skill''.  Unfortunately in the commonly used
-astronomical softwares, most are either closed source or don't have a
-good manual. The scientific results that are deduced from such
-software are thus not objective, because in the former case scientists
-have to look at it as a black box and trust its results on faith. In
-the latter, it is very hard to find enough time to understand the
-programming of an open source project without a clearly written and up
-to date manual explaining all the ideas behind the major functions,
-data structures or objects. 
+astronomical softwares at least, most are either closed source or
+don't have a good manual. The scientific results that are deduced from
+such software are thus not objective, because in the former case
+scientists have to look at it as a black box and trust its results on
+faith or their subjective experience. In the latter, it is very hard
+to find enough time to understand the programming of an open source
+project without a clearly written and up to date manual explaining all
+the ideas behind the major functions, data structures or objects.
 
 It is certainly time consuming for the author of a software to make
-such a manual. If personal greed is put aside and our greater common
-experience is considered, that time is a time well invested. Because
-through sharing of these fundamental ideas, that shape all our
-scientific results, and keeping them open to criticism, we can make
-them more robust and thus take better steps in our common goal to
-tackle the riddles of nature.
+such a manual. But if our greater common experience is considered,
+that time, is a time well invested. Because through sharing of these
+fundamental ideas and techniques, that define all our scientific
+results, and keeping them open to criticism, we can make them more
+robust and thus take better steps in our common goal to tackle the
+riddles of nature.
 
 Bjarne Stroustrup (creator of the @code{C++} language) says: ``Without
 understanding software, you are reduced to believing in magic''.  Ken
-Thomson (the designer or the Unix operating system) has said very
-nicely that ``I abhor a system designed for the ``user'' if that word
-is a coded pejorative meaning ``stupid and unsophisticated''.'' Both
-these cases naturally apply even more seriously to systems written for
-scientific applications and as scientists we should be loyal to such
-principles if we want to remain critical and be objective. After all,
-all our data and models are produced, archived and processed using
-hardware and software. We cannot and should not accept any result
-through faith in the programmer who wrote that particular program we
-are using to publish our papers.
+Thomson (the designer or the Unix operating system) has says ``I abhor
+a system designed for the ``user'' if that word is a coded pejorative
+meaning ``stupid and unsophisticated''.'' No scientist would want to
+be considered as ``stupid and unsophisticated'', so both these cases
+naturally apply much more seriously to programs written for scientific
+applications and as scientists we should be loyal to such principles
+if we want to remain critical and be objective. 
+
+All our data and models are produced, archived and processed using
+hardware and software. If our aim in pursing science is tackling the
+riddles of nature (and not merely stacking published papers with our
+names on them!) we cannot and should not accept any result through
+faith in the programmer who wrote that particular program(s) which
+defineys all our scientific results.
 
 
 
@@ -221,7 +250,7 @@ you can do these things.
 To make sure that everyone has such rights, we have to forbid you to
 deprive anyone else of these rights.  For example, if you distribute
 copies of the MockGals related programs, you must give the recipients
-all the rights that you have.  You must make sure that they, too,
+all the lrights that you have.  You must make sure that they, too,
 receive or can get the source code.  And you must tell them their
 rights.
 
@@ -248,35 +277,16 @@ licenses and it is beautifully written to inform you of your rights.
 
 
 
-@node Conventions and summary,  , Manual formats, About
-@section Manual conventions and summary
-In this manual commands to be input into the command line as normal
-user begin with @command{$}, and for those that to be input as root
-(or super-user), the command begins with @command{#}. Note that you
-need the root password in order to execute the latter commands. The
-commands finish where the special type face used to show them
-finishes. Be careful not to include text puctuation marks that might
-follow the inline commands, they have a different font. After typing
-the commands on the command-line you have to press the @key{Enter} or
-@key{Return} key on your keyboard for the command to start executing.
-
-The first chapter is a quick start, explaining the generalities of
-MockGals so the user can begin using it very fast. The following
-chapters give a much more detailed review of each step. 
-
-
-
-
-
-@node Manual formats, Conventions and summary, Your rights, About
+@node Manual formats, Conventions, Your rights, About
 @section Manual Formats and reading recommendations
 This manual is available in plain text, HTML, Info, Docbook, PDF and
 finally the Texinfo format. The last one is the basis for creating all
 the other formats. As an initial introduction the PDF and HTML formats
 might be easier to begin using MockGals, but if you would like to
 understand the code while reading @ref{How it works}, it is much
-easier to do it in the info format, where for example in Emacs, you
-can have one window on the code and another on the info file.
+easier to do so in the Info format. For example in Emacs, you can have
+one window on the code and another on the Info versin of this manual
+and follow the functions and explanations together.
 
 Info is a very convenient format particularly useful for software
 documentation. We strongly recommend becoming familiar with it if you
@@ -290,7 +300,7 @@ in any GNU/linux terminal you can run: @command{$ info info}. It does
 a fantastic job in explaining its self in practice interactively.
 
 By default, the PDF version of this manual is prepared in the A4 paper
-size (210cm by 297cm). In case you prefer a letter size (8.5in by
+size (21.0cm by 29.7cm). In case you prefer a letter size (8.5in by
 11in), you can simply change it by following the steps below. You must
 have Texinfo and @TeX{} installed on your system, for an explanation
 on how to install them see @ref{Installation}.
@@ -310,6 +320,37 @@ run @code{$ ./run.sh} in that same directory, this will re-make all
 the documenation formats.
 @end enumerate
 
+
+
+
+
+@node Conventions, Summary, Manual formats, About
+@section Conventions
+@itemize
+@item
+Commands to be input into the command line as normal user begin with
+@command{$}.
+
+@item
+Commands that to be input as root (or super-user), start with
+@command{#}. Note that you need the root password in order to execute
+the latter commands. 
+
+@item
+The @command{commands}, @file{file names} and @code{programming codes}
+in this manual are written in the respective font face. Be careful not
+to include text puctuation marks that might follow them.
+@end itemize
+
+
+
+
+
+@node Summary,  , Conventions, About
+@section Summary
+The first chapter is a quick start, explaining the generalities of
+MockGals so the user can begin using it very fast. The following
+chapters give a much more detailed review of each step. 
 
 
 
@@ -336,7 +377,9 @@ Once MockGals is installed, if you simply run @code{./mockgals} in the
 installed directory, 45 mock galaxies and 5 stars will be randomly
 positioned in a @code{FITS} image of size @math{200*200}.
 
+@center @image{./mockgals-figures/g,5cm,,Image showing a galaxy,}@image{./mockgals-figures/a,5cm,, here is another one,.jpg}
 
+Here is the next paragraph.
 
 
 

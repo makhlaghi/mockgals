@@ -1,7 +1,7 @@
 /*********************************************************************
 fitsarrayvv - FITS image to C array and vice versa.
 
-Copyright (C) 2014 Mohammad Akhlaghi
+Copyright (C) 2013, 2014 Mohammad Akhlaghi
 Tohoku University Astronomical Institute, Sendai, Japan.
 http://astr.tohoku.ac.jp/~akhlaghi/
 
@@ -23,7 +23,7 @@ along with fitsarrayvv. If not, see <http://www.gnu.org/licenses/>.
 #ifndef FITSMATRIX_H
 #define FITSMATRIX_H
 
-#define MAXFITSNAME 500
+#include "fitsio.h"
 
 /* This structure is used to keep any additional keywords
    to add to the final output FITS image:                      */
@@ -39,15 +39,20 @@ struct keywords
     char **comments_s; /* Comments for the string keywords     */
 };
 
-/* fitstypes currently defined: "FLOAT", "SHORT", "UCHAR" */ 
-void 
-fits_to_array(char *fits_name, int exten, char *fitstype, 
-        void **array, size_t *size1, size_t *size2);
 
-/* fitstypes currently defined: "FLOAT", "UCHAR", "SHORT", "LONG" */ 
+
 void
-array_to_fits(char *fits_name, struct keywords *keys, 
-        char *EXTname, char *fitstype, void *array, 
-        size_t size1, size_t size2);
+numextinfits(char *inname, int *numext);
+
+void
+fits_to_array(char *fits_name, int exten, int *bitpix, 
+		void **array, size_t *size1, size_t *size2);
+
+void
+array_to_fits(char *fits_name, struct keywords *keys, char *EXTname, 
+		int bitpix, void *array, size_t s0, size_t s1);
+
+
+
 
 #endif

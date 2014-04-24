@@ -38,10 +38,11 @@ along with statistics. If not, see <http://www.gnu.org/licenses/>.
 void
 floatmin(float *in, size_t size, float *min)
 {
-  float tmin=FLT_MAX, *pt=in, *fpt;
+  float tmin=FLT_MAX, *fpt;
   fpt=in+size;
-  for(;pt<fpt;pt++)
-    if(*pt<tmin) tmin=*pt;
+  do
+    if(*in<tmin) tmin=*in;
+  while (++in<fpt);
   *min=tmin;
 }
 
@@ -52,10 +53,11 @@ floatmin(float *in, size_t size, float *min)
 void
 floatmax(float *in, size_t size, float *max)
 {
-  float tmax=FLT_MIN, *pt=in, *fpt;
+  float tmax=FLT_MIN, *fpt;
   fpt=in+size;
-  for(;pt<fpt;pt++)
-    if(*pt>tmax) tmax=*pt;
+  do
+    if(*in>tmax) tmax=*in;
+  while(++in<fpt);
   *max=tmax;
 }
 
@@ -66,13 +68,14 @@ floatmax(float *in, size_t size, float *max)
 void
 fminmax(float *in, size_t size, float *min, float *max)
 {
-  float tmin=FLT_MAX, tmax=FLT_MIN, *pt=in, *fpt;
+  float tmin=FLT_MAX, tmax=FLT_MIN, *fpt;
   fpt=in+size;
-  for(;pt<fpt;pt++) 
+  do
     {
-      if(*pt>tmax) tmax=*pt;
-      else if(*pt<tmin) tmin=*pt;
+      if(*in>tmax) tmax=*in;
+      else if(*in<tmin) tmin=*in;
     }
+  while(++in<fpt);
   *max=tmax;    
   *min=tmin;    
 }
@@ -86,15 +89,16 @@ dmax_withindex(double *in, size_t size,
         double *max, size_t *index)
 {
   size_t tindex=0;
-  double *pt=in, *fpt, tmax=MINFD;
+  double *fpt, *pt=in, tmax=MINFD;
 
   fpt=pt+size;
-  for(;pt<fpt;pt++)
+  do
     if(*pt>tmax)
       {
 	tmax=*pt;
 	tindex=pt-in;
       }
+  while(++pt<fpt);
   *index=tindex;
   *max=tmax;
 }
@@ -111,12 +115,13 @@ fmax_withindex(float *in, size_t size,
   float *pt=in, *fpt, tmax=MINFD;
 
   fpt=pt+size;
-  for(;pt<fpt;pt++)
+  do
     if(*pt>tmax)
       {
 	tmax=*pt;
 	tindex=pt-in;
       }
+  while(++pt<fpt);
   *index=tindex;
   *max=tmax;
 }
@@ -133,12 +138,13 @@ dmin_withindex(double *in, size_t size,
   double *pt=in, *fpt, tmin=MAXFD;
 
   fpt=pt+size;
-  for(;pt<fpt;pt++)
+  do
     if(*pt<tmin)
       {
 	tmin=*pt;
 	tindex=pt-in;
       }
+  while(++pt<fpt);
   *index=tindex;
   *min=tmin;
 }
@@ -155,12 +161,13 @@ fmin_withindex(float *in, size_t size,
   float *pt=in, *fpt, tmin=MAXFD;
 
   fpt=pt+size;
-  for(;pt<fpt;pt++)
+  do
     if(*pt<tmin)
       {
 	tmin=*pt;
 	tindex=pt-in;
       }
+  while(++pt<fpt);
   *index=tindex;
   *min=tmin;
 }
@@ -190,12 +197,11 @@ fmin_withindex(float *in, size_t size,
 float 
 floatsum(float *in, size_t size)
 {
-  float *pt, *fpt;
+  float *fpt;
   double sum=0;
   fpt=in+size;
-  pt=in;
-  while(pt<fpt) 
-    sum+=*pt++;
+  while(in<fpt) 
+    sum+=*in++;
   return sum;
 }
 
@@ -206,11 +212,12 @@ floatsum(float *in, size_t size)
 float 
 floatsumsquared(float *in, size_t size)
 {
-  float *pt, *fpt;
+  float *fpt;
   double sum=0;
   fpt=in+size;
-  for(pt=in;pt<fpt;pt++) 
-    sum+=*pt * *pt;
+  do
+    sum+=*in * *in;
+  while(++in<fpt);
   return sum;
 }
 

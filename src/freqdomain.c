@@ -62,7 +62,7 @@ savecomplexasfits(char *name, fftw_complex *array, size_t size1,
     for(i=0;i<size;i++)
       farray[i]=atan2(array[i][1], array[i][0]);
 
-  array_to_fits(name, NULL, "", "FLOAT", farray, size1, size2);
+  array_to_fits(name, NULL, "", FLOAT_IMG, farray, size1, size2);
 
   free(farray);
 }
@@ -88,7 +88,7 @@ savedoubleasfits(char *name, double *array,
     for(j=0;j<size2;j++) 
       farray[i*size2+j]=array[i*size2+j];
 
-  array_to_fits(name, NULL, "", "FLOAT", farray, size1, size2);
+  array_to_fits(name, NULL, "", FLOAT_IMG, farray, size1, size2);
 
   free(farray);
 }
@@ -271,7 +271,7 @@ convolve_function(float *f, size_t fsize1, size_t fsize2,
       else if(s0_m1_g2==1)
 	sprintf(comment, "# Gaussian profile, sigma=%.2f, "
 		"extended to %.2f*sigma\n", p1, trunc);
-      array_to_fits("conv.fits", NULL, "CONVFUNC", "FLOAT", 
+      array_to_fits("conv.fits", NULL, "CONVFUNC", FLOAT_IMG, 
 		    psf, x_w, y_w);
       printfarray(psf, x_w, y_w, comment, "conv.txt", 6);
     }

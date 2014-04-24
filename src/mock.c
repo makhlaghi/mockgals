@@ -436,7 +436,7 @@ oneprofile(float x_c, float y_c, float p1, float p2, float pa_d,
   if(SHOWONEPROFILE)
     {
       sprintf(fitsname, "%c%lu.fits", profletter, fitscounter++);
-      array_to_fits(fitsname, NULL, "MOCK", "FLOAT", 
+      array_to_fits(fitsname, NULL, "ONEPROFILE", FLOAT_IMG, 
 		    *mock, *x_w, *y_w);
     }
 }
@@ -994,8 +994,8 @@ mockimg(struct mockparams *p)
 	     psf_trunc, integaccu, psf_av0_tot1, psfsum, psf_smg, 
 	     &psf, &psf_s0, &psf_s1, &junk);
   if(p->vpsf)
-    array_to_fits("PSF.fits", NULL, "PSF", "FLOAT", 
-		  psf, psf_s0, psf_s1);
+    array_to_fits("PSF.fits", NULL, "PSF", FLOAT_IMG, psf, 
+		  psf_s0, psf_s1);
 
   hs0=psf_s0/2;          hs1=psf_s1/2;
   ns0=p->s0+2*hs0;       ns1=p->s1+2*hs1;
@@ -1042,12 +1042,12 @@ mockimg(struct mockparams *p)
     {
       floatshrinkarraytonew(img, ns0, ns1, hs0, hs1, 
 			    p->s0+hs0, p->s1+hs1, &preconv);
-      array_to_fits(p->outname, NULL, "NOCONV", 
-		    "FLOAT", preconv, p->s0, p->s1);
+      array_to_fits(p->outname, NULL, "NOCONV", FLOAT_IMG, psf, 
+		    p->s0, p->s1);
       free(preconv);
 
       if(p->verb)
-	printf("- Not convolved profiles saved in '%s' (ext %d)\n",
+	printf("- Pre-convolved profiles saved in '%s' (ext %d)\n",
 	       p->outname, extcounter++);
     }
 
@@ -1059,8 +1059,8 @@ mockimg(struct mockparams *p)
 
   if(p->vconv)
     {
-      array_to_fits(p->outname, NULL, "NONOISE", 
-		    "FLOAT", img, p->s0, p->s1);
+      array_to_fits(p->outname, NULL, "NONOISE", FLOAT_IMG, img, 
+		    p->s0, p->s1);
       if(p->verb)
 	printf("- Convolved profiles saved in '%s' (ext %d)\n",
 	       p->outname, extcounter++);
@@ -1072,8 +1072,9 @@ mockimg(struct mockparams *p)
 
   addnoise(img, size, p->sky);
 
-  array_to_fits(p->outname, NULL, "WITHNOISE", 
-		"FLOAT", img, p->s0, p->s1);
+  array_to_fits(p->outname, NULL, "WITHNOISE", FLOAT_IMG, img, 
+		p->s0, p->s1);
+
   if(p->verb)
     printf("- Noised image saved in '%s' (ext %d)\n",
 	   p->outname, extcounter++);
