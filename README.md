@@ -19,7 +19,7 @@ after convolving with the PSF, right: After adding noise.
 
 <img src="https://raw.github.com/makhlaghi/mockgals/master/doc/mockgals-figures/s1_noconv.jpg"/>
 <img src="https://raw.github.com/makhlaghi/mockgals/master/doc/mockgals-figures/s1_conv.jpg" />
-<img src="https://raw.github.com/makhlaghi/mockgals/master/doc/mockgals-figures/s1_conv.jpg" />
+<img src="https://raw.github.com/makhlaghi/mockgals/master/doc/mockgals-figures/s1_noise.jpg" />
     
 The noise for every pixel is a random value taken from a Gaussian
 distribution with sigma=sqrt(sky+pixel value) and mean=sky+pixel value.
