@@ -1042,8 +1042,8 @@ mockimg(struct mockparams *p)
     {
       floatshrinkarraytonew(img, ns0, ns1, hs0, hs1, 
 			    p->s0+hs0, p->s1+hs1, &preconv);
-      array_to_fits(p->outname, NULL, "NOCONV", FLOAT_IMG, psf, 
-		    p->s0, p->s1);
+      array_to_fits(p->outname, NULL, "NOCONV", FLOAT_IMG, 
+		    preconv, p->s0, p->s1);
       free(preconv);
 
       if(p->verb)

@@ -375,12 +375,7 @@ chapters give a much more detailed review of each step.
 
 Once MockGals is installed, if you simply run @code{./mockgals} in the
 installed directory, 45 mock galaxies and 5 stars will be randomly
-positioned in a @code{FITS} image of size @math{200*200}.
-
-@center @image{./mockgals-figures/g,5cm,,Image showing a galaxy,}@image{./mockgals-figures/a,5cm,, here is another one,.jpg}
-
-Here is the next paragraph.
-
+positioned in a square @code{FITS} image with sides of 200 pixels.
 
 
 

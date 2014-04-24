@@ -14,12 +14,12 @@ input), it will make random Sersic profiles (of galaxies) and convolve
 them with a Moffat PSF. As an option, `mockgals` will also produce
 histograms of the no noised and noised images.  An example random set
 of mock galaxies with 50 mock galaxies placed randomly in the image
-can be seen below:
+can be seen below. Left prior to convolution with with PSF, middle
+after convolving with the PSF, right: After adding noise.
 
-<img src="https://raw.github.com/makhlaghi/mockgals/master/doc/mockgals-figures/README_nonoise.jpg"
-    width=300 />
-<img src="https://raw.github.com/makhlaghi/mockgals/master/doc/mockgals-figures/README_withnoise.jpg"
-    width=300 />
+<img src="https://raw.github.com/makhlaghi/mockgals/master/doc/mockgals-figures/s1_noconv.jpg"/>
+<img src="https://raw.github.com/makhlaghi/mockgals/master/doc/mockgals-figures/s1_conv.jpg" />
+<img src="https://raw.github.com/makhlaghi/mockgals/master/doc/mockgals-figures/s1_conv.jpg" />
     
 The noise for every pixel is a random value taken from a Gaussian
 distribution with sigma=sqrt(sky+pixel value) and mean=sky+pixel value.
