@@ -53,7 +53,7 @@ setdefaultoptions(struct mockparams *p)
   p->s1        =201;
   p->sky       =10000.0f;
   p->trunc     =5;
-  p->psf_p1    =3;
+  p->psf_p1    =5;
   p->psf_p2    =3;
   p->histmin   =-250;
   p->histmax   =700;
