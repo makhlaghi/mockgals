@@ -378,14 +378,21 @@ explains the most frequently used inputs and outputs of mockgals so you can get 
 @chapter A Quick start
 
 Once MockGals is installed system wide, @pxref{Installation}, you can
-simply run @command{mockgals -nm} any where and, 45 mock galaxies and
+simply run @command{$mockgals -nm} any where and, 45 mock galaxies and
 5 stars will be randomly positioned in a square @code{FITS} image with
 sides of 200 pixels. @ref{quickpreview} shows one such random example.
+The central positions of some of these random profiles is
+intentionally placed outside of the actual image range in order to be
+more realistic. MockGals ignores objects that are completely out of
+the image, but if even a small fraction of their area (within the
+defined truncation radius) falls with in the image, it will be
+included.  In the example below, one of the 5 randomly positioned
+stars is out of the image.
 
 @float Figure, quickpreview
 @center@image{./mockgals-figures/s1_noconv,5cm,,./mockgals-figures/s1_noconv.jpg,.jpg}@image{./mockgals-figures/s1_conv, 5cm,,./mockgals-figures/s1_conv.jpg,.jpg}@image{./mockgals-figures/s1_noised, 5cm,,./mockgals-figures/s1_noised.jpg,.jpg}
 
-@caption{Three extentions of the output of @command{mockgals
+@caption{Three extentions of the output of @command{$mockgals
 -nm}. Left: 45 galaxies and 5 stars with no convolution. Middle, The
 same image after convolution. Right: After adding noise.}
 @end float
@@ -409,13 +416,13 @@ image of @ref{quickpreview}.
 
 
 @menu
-* Viewing multi-extension FITS files:: How to view Multi-ext FITS files.
+* Viewing multi-extension FITS files::  How to view Multi-ext FITS files.
 @end menu
 
 @node Viewing multi-extension FITS files,  , Quick start, Quick start
 @section Viewing multi-extension FITS files
 
-If you run @command{mockgals} with the @command{-m} or @command{-n}
+If you run @command{$mockgals} with the @command{-m} or @command{-n}
 options, the output will be a multi-extention FITS file. Lets assume
 you use SAOImage ds9@footnote{@url{http://ds9.si.edu/}} (from now on,
 we'll call it ds9) to view FITS images. If you ordinarily open a
@@ -461,54 +468,219 @@ you just added as the default and click the ``Close'' button.
 @chapter Introduction
 
 As scientists, the only tool we have to test our theories are through
-gathering data through scientific experiments, for example experiments
-in Physics and Chemistry, or observations, like in Astronomy. There is
-always an element of uncertainty in our observations, either because
-we don't completely understand the nature of the subject we are
-observing or because of noise. 
+gathering data from scientific experiments for example in Physics and
+Chemistry where we are an active element in the experiment, or
+observations, like in Astronomy where we are only passive observers to
+the events that occur naturally. There is always an element of
+uncertainty in our observations. We either don't completely understand
+the nature of the subject we are observing or we think we understand
+the nature fine enough but the data is diluted with a lot of noise, or
+both, which is unfortunately the case in extra galactic Astronomy at
+least.
 
 In order to be able to tackle these two problems, before actually
 doing any form of analysis on real data, we first have to calibrate
 our data analysis tools with a set of mock subjects where we know the
-exact nature of the data with out noise. We also have to simulate
-noise and add it to the mock data to try to simulate a real
+exact nature of the data without noise. We also have to simulate noise
+and any other instrumental defects that are bundled in with the data
+and add them to the mock data to try to simulate a real
 observation. Then we can apply the techniques we apply to our real
-data to that mock data set and see how accurately it measures the
-properties we want it to measure. 
+data, to that mock data set and see how accurately it measures the
+properties we want it to measure.
 
 This is the fundamental raison d'@^etre of MockGals. In astronomy,
-faint galaxies or the fainter parts of bright galaxies are the most
+faint objects or the fainter parts of bright objects are the most
 curious aspects of the universe, simply because they are extremely
-faint! So any tool we use to observe such real galaxies, has to be
-first tested with mock galaxies, because identifying a diffuse faint
-galaxy in a large noise is extremely hard and prone to very serious
-systematic bias if we don't test our detection methods accurately with
-such faint mock galaxies. 
+faint! They are either nearby faint objects or very distant bright
+objects. Both are the most curious objects in Astronomy, and
+understanding their nature is the primary reason behind investing so
+much in larger ground and space based telescopes.
+
+So any tool we use to observe such real galaxies, has to be first
+tested with mock galaxies, because identifying a diffuse faint galaxy
+in a large noise is extremely hard and prone to very serious
+systematic bias if we don't test our detection methods accurately and
+understand the systematic biases they inevitably have.
 
 Mock galaxies can also be used to fit known parametric models to the
 observed galaxies, for example suppose we have a real galaxy image and
 we have a radial functional profile (for example the S@'ersic profile)
 and we want to see what values of the free parameters of the S@'ersic
-profile fit best with the observed galaxy. In this case, we can make
-various mock 2D S@'ersic profiles with various properties and check to
-see which one best resembles our dataset. This feature will be a
-future addition to MockGals. The infra structure for this capability
-is already present, we just have to find the time to add this
-capability.
+profile fit best with the observed galaxy, or more generally, if that
+functional radial profile is suitable or not for that particular
+object. In this case, we can make various mock 2D S@'ersic profiles
+with various properties that have the observable properties of our
+desired object and check to see which one best resembles the real
+galaxy. This feature will be a future addition to MockGals. The
+infra-structure for this capability is already in place, we just have
+to find the time to add this capability.
 
-
+Currently MockGals makes mock profiles on a 2D surface, but the
+infra-structure is there to make the profiles on a 3D volume and find
+a real projection of a real 3D object. This is also a future upgrade
+we plan to apply.
 
 
 
 @menu
-* Astronomical object profiles.:: Profiles of Astronomical objects.
+* Object profiles.::
+* Why C?::
 @end menu
 
-@node Astronomical object profiles.,  , Introduction, Introduction
-@section Astronomical object profiles
+@node Object profiles., Why C?, Introduction, Introduction
+@section Object profiles
+
+MockGals has been written for extra galactic studies, so the only
+astronomical objects it can produce are stars and galaxies. In this
+section we review how an ellipse with a certain functional form is
+created and in the following sections the functional radial profiles
+used for the PSF, stars and galaxies are explained separately.
+
+@menu
+* Defining an ellipse::         Defining an ellipse in 2D.
+* Integration::
+* PSF::                         Radial profiles for the PSF.
+* Stars::                       Making mock star profiles.
+* Galaxies::                    Radial profiles for galaxies.
+@end menu
+
+@node Defining an ellipse, Integration, Object profiles., Object profiles.
+@subsection Defining an ellipse
+
+The PSF and galaxy radial profiles are generally defined on an ellipse
+so in this section we will first review how an ellipse can be defined
+on a 2D surface. Labeling the major axis of an ellipse @math{a}, and
+its minor axis with @math{b}, the axis ratio is defined as:
+@math{q\equiv b/a}. The major axis of an ellipse can be aligned in any
+direction, we therefore define the angle of the major axis to the
+horizontal axis of the image as position angle of the ellipse and in
+this manual, we show it with @math{p}.
+
+Our aim is to put a radial profile of any functional form @math{f(r)}
+over an ellipse. Lets define the radial distance @math{r_{el}} as the
+distance on the major axis to the center of the ellipse which is
+located at @math{x_c} and @math{y_c}. We want to find the elliptical
+distance of a point located at @math{(i,j)}, in the image coordiate
+system, from the center of the ellipse. First we rotate the coordinate
+system by @math{p} to get the new rotated distance of the point:
+@math{(i_r,j_r)}:
+
+@center@math{i_r(i,j)=(i_c-i)cos(p)+(j_c-j)sin(p)}
+@center@math{j_r(i,j)=(j_c-j)cos(p)-(i_c-i)sin(p)}
+
+@noindent The elliptical distance of a point located at @math{(i,j)} 
+can now be defined as:
+
+@center@math{r_{el}^2(i,j)=i_r^2(i,j)+j_r^2(i,j)/q^2}
+
+To place the radial profiles explained below over an ellipse, we
+simply calculate @math{f(r_{el}(i,j))} based on the functional radial
+profile desired. 
 
 
 
+
+
+@node Integration, PSF, Defining an ellipse, Object profiles.
+@subsection Integration over central regions
+All the radial profiles made here become extremely sharp as we
+approach the center of the profiles. This sharp change in the radial
+profile will produce a strong gradient over the central few pixels of
+the object. In those cases we will integrate @math{f(r)} over the
+pixel area to find the pixel value. 
+
+The building of the profile begins from its central pixel and
+continues outwards. As we go to larger radii, the difference between
+integration over the pixel area and using the central pixel distance
+as a proxy for the whole pixel will become smaller. Therefore to
+increase the preformance speed of MockGals, the user can define a
+certain tollerance level beyond which only the central pixel value
+will be used and no integration will be preformed.
+
+
+
+
+@node PSF, Stars, Integration, Object profiles.
+@subsection Point Spread function
+
+The point spread function or PSF of an image a generic term we use to
+name all the atmospheric and instrumental defects that are added to
+the actual image.
+
+
+
+
+
+
+@node Stars, Galaxies, PSF, Object profiles.
+@subsection Star Profiles
+
+In MockGals, we generally consider stars to be a point source. This is
+usually the case for extra galactic studies, were nearby stars are
+also in the field. Since a star is only a point source, we assume that
+it only fills one pixel prior to convolution. Four such examples can
+be seen in @ref{quickpreview} by comparing the left (prior to
+convolution) and the middle (after convolution) images. Therefore the
+final shape of a star can be considered as the shape of the PSF used
+to make the mock images.
+
+Infact, exactly for this reason, in astronomical images the light
+profiles of stars are one of the best methods to understand the shape
+of the PSF and a very large fraction of scientific research is
+preformed by assuming the shapes of stars to be the PSF of the image.
+
+
+
+
+ 
+@node Galaxies,  , Stars, Object profiles.
+@subsection Galaxies
+
+
+
+
+
+
+
+@node Why C?,  , Object profiles., Introduction
+@section Why C programming language?
+
+Currently the programming language that is most commonly used in
+scientific applications is the C++ language, not plain C. One of the
+main reasons behind this choice is that through the Object Oriented
+programming pradigm, the C++ language offers a much higher level of
+abstraction.
+
+But we have chosen the C programming language to write MockGals. The
+reasons can be summarized with simplicity and speed. Both are
+extremely important in a scientific software. A simple comparison of
+the main books of the two langauges can act as a guide. The C
+programming language book is only 286 pages and covers a very good
+fraction of the language, it has also remained unchanged from
+1988. The C++ programming language (fourth edition, 2013) book on the
+other hand has 1366 pages! As discussed in @ref{Good Science}, it is
+very important for other scientists to be able to readily read the
+code of a program at their will with minimum requirements.
+
+In C++, inheriting objects and their internal functions make the code
+very easy to write for the programmer who is deeply invested in those
+objects and understands all their relations well. But it
+simultaneously makes reading the program for a first time reader
+extremely hard, since before understanding the methods, they have to
+invest a lot of time in understanding those objects and their
+relations. But in C, if you only stick to simple structures, as we
+have here, all the inputs and outputs to functions can be given as the
+basic language types for example @code{int}s or @code{float}s and
+their pointers to define arrays. So when an outside reader is only
+interested in one part of the program, that part is all they have to
+understand.
+
+Being a very low level (closer to the hardware) language, C also
+allows for much more closer relation to the actual data we have in our
+disposal, rather than the illusion of high-level abstractions that the
+higher level languages provide. The GNU coding standards also encourage
+the use of C over all other languages when generality of usage and
+``high speed'' is desired.
 
 
 

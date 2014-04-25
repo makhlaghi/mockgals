@@ -108,6 +108,11 @@ Future updates:
 0. Make a nice documentation.
 1. Add more functionality:
    - Positioning of stars.
+   - 2D fits to galaxy light profiles.
+   - Make 3D objects projected on a 2D surface.
+   - Add a library of real objects from HST images to use.
+   - Include instrumental defects: distortions, 
+     various noise properties and varing sky among many.
 2. Work on a better user experience.
 3. Fix any bugs I have not found yet!
 
