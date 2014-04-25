@@ -106,7 +106,8 @@ personally configured my linux system).
 Future updates:
 ------------
 0. Make a nice documentation.
-1. Add more functionality.
+1. Add more functionality:
+   - Positioning of stars.
 2. Work on a better user experience.
 3. Fix any bugs I have not found yet!
 

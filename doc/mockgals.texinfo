@@ -69,7 +69,6 @@ manual is for version @value{VERSION} (@value{UPDATED}).
 * Configuring::                 Customizing MockGals.
 * Mock Parameters::             Mock profile parameter table.
 * How it works::                Mock gals coding guide.
-* Manual index::                Intex to terminology used.
 @end menu
 
 
@@ -340,6 +339,12 @@ the latter commands.
 The @command{commands}, @file{file names} and @code{programming codes}
 in this manual are written in the respective font face. Be careful not
 to include text puctuation marks that might follow them.
+
+@item
+When mentioning the order of menus to choose on a graphical user
+interface application, we will list them like this example: ``File''
+-> ``Save As'', which means to first click on the ``File'' menu and
+then choose ``Save As'' in the list that opens.
 @end itemize
 
 
@@ -348,9 +353,8 @@ to include text puctuation marks that might follow them.
 
 @node Summary,  , Conventions, About
 @section Summary
-The first chapter is a quick start, explaining the generalities of
-MockGals so the user can begin using it very fast. The following
-chapters give a much more detailed review of each step. 
+@ref{Quick start} is a quick start to get you going with MockGals.  It
+explains the most frequently used inputs and outputs of mockgals so you can get started. Once you have used it in some simple situations and get a good understanding of what MockGals has to offer, you can go on with the rest of the manual.
 
 
 
@@ -373,15 +377,75 @@ chapters give a much more detailed review of each step.
 @node Quick start, Introduction, About, Top
 @chapter A Quick start
 
-Once MockGals is installed, if you simply run @code{./mockgals} in the
-installed directory, 45 mock galaxies and 5 stars will be randomly
-positioned in a square @code{FITS} image with sides of 200 pixels.
+Once MockGals is installed system wide, @pxref{Installation}, you can
+simply run @command{mockgals -nm} any where and, 45 mock galaxies and
+5 stars will be randomly positioned in a square @code{FITS} image with
+sides of 200 pixels. @ref{quickpreview} shows one such random example.
+
+@float Figure, quickpreview
+@center@image{./mockgals-figures/s1_noconv,5cm,,./mockgals-figures/s1_noconv.jpg,.jpg}@image{./mockgals-figures/s1_conv, 5cm,,./mockgals-figures/s1_conv.jpg,.jpg}@image{./mockgals-figures/s1_noised, 5cm,,./mockgals-figures/s1_noised.jpg,.jpg}
+
+@caption{Three extentions of the output of @command{mockgals
+-nm}. Left: 45 galaxies and 5 stars with no convolution. Middle, The
+same image after convolution. Right: After adding noise.}
+@end float
+
+After MockGals has finished, two files are added to the directory you
+ran it in: @file{mock.fits} and @file{mockinfo.txt}. The first is
+generally a multi-extension FITS file and the second is a text file
+listing the properties of all the profiles that are positioned in this
+image.
+
+To view the full list of options, see @ref{Configuring} where all the
+options are explained. The two options used here, namely @command{-m}
+and @command{-n}, will output the desired image prior to convolution
+(left in @ref{quickpreview}) and the convolved image prior to
+adding noise (middle in @ref{quickpreview}) respectively. So if
+you don't pass along these two options, you will only get the right
+image of @ref{quickpreview}.
 
 
 
 
 
+@menu
+* Viewing multi-extension FITS files:: How to view Multi-ext FITS files.
+@end menu
 
+@node Viewing multi-extension FITS files,  , Quick start, Quick start
+@section Viewing multi-extension FITS files
+
+If you run @command{mockgals} with the @command{-m} or @command{-n}
+options, the output will be a multi-extention FITS file. Lets assume
+you use SAOImage ds9@footnote{@url{http://ds9.si.edu/}} (from now on,
+we'll call it ds9) to view FITS images. If you ordinarily open a
+multi-extension FITS file with ds9 (by double clicking on it for
+example), then it will only show you the first extension. To be able
+to switch between the extensions you have to follow these menus in the
+ds9 window: ``File'' -> ``Open Other'' -> ``Open Multi Ext Cube'' and
+then choose the Multi extension FITS file in your computer's file
+structure.
+
+The method above is a little tedious to do every time you want view a
+multi-extension FITS file. Fortunately ds9 also provides options that
+you can add to it. One of those options is @command{-mecube} which
+opens a FITS image as a multi-extension data cube, so on the command
+line if you run @command{$ds9 -mecube foo.fits}, you can switch
+between all the extensions that @file{foo.fits} might have. If
+@file{foo.fits} only consists of one extension, then ds9 will open as
+usual. 
+
+It is really convenient if you set ds9 to always run with the
+@command{-mecube} option on your graphical display. On a GNU/Linux
+operating system, you can do this by following the following steps.
+Right click on a FITS file and choose ``Properties''. Open the ``Open
+With'' tab on top of the Properties window and click on the ``Add''
+button. A list of applications will show up, ds9 might already be
+present in the list, but don't choose it because it will run with no
+options. Below the list is an option ``Use a custom
+command''. Click on it and write the following command: @command{ds9
+-mecube} in the box and click ``Add''. Then finally choose the command
+you just added as the default and click the ``Close'' button.
 
 
 
@@ -396,31 +460,53 @@ positioned in a square @code{FITS} image with sides of 200 pixels.
 @node Introduction, Installation, Quick start, Top
 @chapter Introduction
 
-Making mock galaxies is very important in the process of understanding
-our data. MockGals was initially made with this exact
-intent. Certain astronomical targets, for example elliptical
-galaxies, are very sharp in their central regions, this makes a simple
-calculation of the profile in the center of each pixel unrealistic for
-such cases. The main advantage of MockGals is that it
-integrates the central parts of profiles until a given accuracy. It
-does this without any sorting or ordering and in a very fast manner.
+As scientists, the only tool we have to test our theories are through
+gathering data through scientific experiments, for example experiments
+in Physics and Chemistry, or observations, like in Astronomy. There is
+always an element of uncertainty in our observations, either because
+we don't completely understand the nature of the subject we are
+observing or because of noise. 
 
-@noindent
-A summary of the advantages of MockGals includes:
-@enumerate
-@item
-Integration of the center of the profile.
+In order to be able to tackle these two problems, before actually
+doing any form of analysis on real data, we first have to calibrate
+our data analysis tools with a set of mock subjects where we know the
+exact nature of the data with out noise. We also have to simulate
+noise and add it to the mock data to try to simulate a real
+observation. Then we can apply the techniques we apply to our real
+data to that mock data set and see how accurately it measures the
+properties we want it to measure. 
 
-@item 
-Very efficient in CPU usage, resuling in a very fast processing.
+This is the fundamental raison d'@^etre of MockGals. In astronomy,
+faint galaxies or the fainter parts of bright galaxies are the most
+curious aspects of the universe, simply because they are extremely
+faint! So any tool we use to observe such real galaxies, has to be
+first tested with mock galaxies, because identifying a diffuse faint
+galaxy in a large noise is extremely hard and prone to very serious
+systematic bias if we don't test our detection methods accurately with
+such faint mock galaxies. 
 
-@item
-Written in the C programming language, which is easy to understand
-and modify or contribute to by any interested user.
+Mock galaxies can also be used to fit known parametric models to the
+observed galaxies, for example suppose we have a real galaxy image and
+we have a radial functional profile (for example the S@'ersic profile)
+and we want to see what values of the free parameters of the S@'ersic
+profile fit best with the observed galaxy. In this case, we can make
+various mock 2D S@'ersic profiles with various properties and check to
+see which one best resembles our dataset. This feature will be a
+future addition to MockGals. The infra structure for this capability
+is already present, we just have to find the time to add this
+capability.
 
-@item
-[To be added] Can make profiles in any dimentions. 
-@end enumerate
+
+
+
+
+@menu
+* Astronomical object profiles.:: Profiles of Astronomical objects.
+@end menu
+
+@node Astronomical object profiles.,  , Introduction, Introduction
+@section Astronomical object profiles
+
 
 
 
@@ -516,7 +602,7 @@ MockGals reads that table and how best to prepare it.
 
 
 
-@node How it works, Manual index, Mock Parameters, Top
+@node How it works,  , Mock Parameters, Top
 @chapter How mockgals works
 In this section we will give a complete review on how MockGals works
 and how this is implemented in its coding in order to facilitate your
@@ -535,16 +621,6 @@ reading of the code and possibly modifying it and making it better.
 
 
 
-
-
-
-
-
-
-@node Manual index,  , How it works, Top
-@unnumbered Index
-
-@printindex cp
 
 
 
