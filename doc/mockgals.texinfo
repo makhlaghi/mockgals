@@ -206,7 +206,10 @@ that time, is a time well invested. Because through sharing of these
 fundamental ideas and techniques, that define all our scientific
 results, and keeping them open to criticism, we can make them more
 robust and thus take better steps in our common goal to tackle the
-riddles of nature.
+riddles of nature. Also, through writing the manual, the programmer
+gets to understand her/his own program and its strengths and
+weaknesses much better, which can most of the time result in changes
+in the program that will make it much more accurate and user friendly.
 
 Bjarne Stroustrup (creator of the @code{C++} language) says: ``Without
 understanding software, you are reduced to believing in magic''.  Ken
@@ -220,10 +223,10 @@ if we want to remain critical and be objective.
 
 All our data and models are produced, archived and processed using
 hardware and software. If our aim in pursing science is tackling the
-riddles of nature (and not merely stacking published papers with our
-names on them!) we cannot and should not accept any result through
+riddles of nature, and not merely stacking published papers with our
+names on them, we cannot and should not accept any result through
 faith in the programmer who wrote that particular program(s) which
-defineys all our scientific results.
+determines all our scientific results.
 
 
 
@@ -336,9 +339,10 @@ Commands that to be input as root (or super-user), start with
 the latter commands. 
 
 @item
-The @command{commands}, @file{file names} and @code{programming codes}
-in this manual are written in the respective font face. Be careful not
-to include text puctuation marks that might follow them.
+The @command{commands}, @option{-options}, @file{file_names} and
+@code{programming_codes} in this manual are written as they are
+written here. Be careful not to include text puctuation marks that
+might follow them.
 
 @item
 When mentioning the order of menus to choose on a graphical user
@@ -385,7 +389,7 @@ The central positions of some of these random profiles is
 intentionally placed outside of the actual image range in order to be
 more realistic. MockGals ignores objects that are completely out of
 the image, but if even a small fraction of their area (within the
-defined truncation radius) falls with in the image, it will be
+defined truncation radius) falls within the image, that part will be
 included.  In the example below, one of the 5 randomly positioned
 stars is out of the image.
 
@@ -404,8 +408,8 @@ listing the properties of all the profiles that are positioned in this
 image.
 
 To view the full list of options, see @ref{Configuring} where all the
-options are explained. The two options used here, namely @command{-m}
-and @command{-n}, will output the desired image prior to convolution
+options are explained. The two options used here, namely @option{-m}
+and @option{-n}, will output the desired image prior to convolution
 (left in @ref{quickpreview}) and the convolved image prior to
 adding noise (middle in @ref{quickpreview}) respectively. So if
 you don't pass along these two options, you will only get the right
@@ -416,26 +420,62 @@ image of @ref{quickpreview}.
 
 
 @menu
+* Input/Output::
 * Viewing multi-extension FITS files::  How to view Multi-ext FITS files.
 @end menu
 
-@node Viewing multi-extension FITS files,  , Quick start, Quick start
+
+
+
+@node Input/Output, Viewing multi-extension FITS files, Quick start, Quick start
+@section MockGals input/output
+
+Normally, you wouldn't want MockGals to give you 45 random galaxies
+and stars! You want to give it a list of galaxies with known
+properties so MockGals can make those galaxies for you. The output
+image size is determined on the command line by the @option{-x} and
+@option{-y} options. The first sets the horizontal width and the
+second the height of the output image, see @ref{Configuring} for more
+information. 
+
+MockGals reads the properties you want for the galaxies through an
+ASCII table, a simple ASCII text file, where columns are separated by
+white space or @kbd{TAB}. An example is the @file{mockinfo.txt} table
+that was created above. The file name of the table you have created
+with the profile properties can be specified with the @option{-i}
+option. If it doesn't exist, MockGals will make the default 50 random
+profiles (5 stars and 45 galaxies) as it did when you ran
+@command{$mockgals -nm}. If you run this command again, one more time,
+it is going to make exactly the same image it made the first time,
+this is because if no input is given, it is going to read the profile
+properties from @file{mockinfo.txt} and make an exact duplicate.
+
+By default the output FITS file is named @file{mock.fits} you can also
+ask for a different output file name through the option
+@option{-o}. When reading for input, MockGals does not read the
+columns that specify the total magnitude of the object. It will make
+the profiles and then fill this column by its self. 
+
+
+
+
+@node Viewing multi-extension FITS files,  , Input/Output, Quick start
 @section Viewing multi-extension FITS files
 
-If you run @command{$mockgals} with the @command{-m} or @command{-n}
+If you run @command{$mockgals} with the @option{-m} or @option{-n}
 options, the output will be a multi-extention FITS file. Lets assume
 you use SAOImage ds9@footnote{@url{http://ds9.si.edu/}} (from now on,
 we'll call it ds9) to view FITS images. If you ordinarily open a
-multi-extension FITS file with ds9 (by double clicking on it for
-example), then it will only show you the first extension. To be able
-to switch between the extensions you have to follow these menus in the
-ds9 window: ``File'' -> ``Open Other'' -> ``Open Multi Ext Cube'' and
-then choose the Multi extension FITS file in your computer's file
-structure.
+multi-extension FITS file with ds9, by double clicking on it or
+running @command{$ds9 foo.fits} for example, ds9 will only show you
+the first extension. To be able to switch between the extensions you
+have to follow these menus in the ds9 window: ``File'' -> ``Open
+Other'' -> ``Open Multi Ext Cube'' and then choose the Multi extension
+FITS file in your computer's file structure.
 
 The method above is a little tedious to do every time you want view a
 multi-extension FITS file. Fortunately ds9 also provides options that
-you can add to it. One of those options is @command{-mecube} which
+you can add to it. One of those options is @option{-mecube} which
 opens a FITS image as a multi-extension data cube, so on the command
 line if you run @command{$ds9 -mecube foo.fits}, you can switch
 between all the extensions that @file{foo.fits} might have. If
@@ -443,7 +483,7 @@ between all the extensions that @file{foo.fits} might have. If
 usual. 
 
 It is really convenient if you set ds9 to always run with the
-@command{-mecube} option on your graphical display. On a GNU/Linux
+@option{-mecube} option on your graphical display. On a GNU/Linux
 operating system, you can do this by following the following steps.
 Right click on a FITS file and choose ``Properties''. Open the ``Open
 With'' tab on top of the Properties window and click on the ``Add''
@@ -467,26 +507,28 @@ you just added as the default and click the ``Close'' button.
 @node Introduction, Installation, Quick start, Top
 @chapter Introduction
 
-As scientists, the only tool we have to test our theories are through
-gathering data from scientific experiments for example in Physics and
-Chemistry where we are an active element in the experiment, or
+Once the internal consistencies of theories has been verified, the
+only method scientists have to test their theories are gathering data
+from scientific experiments. For example in Physics and Chemistry
+where we are an active element in the experiment, or through
 observations, like in Astronomy where we are only passive observers to
 the events that occur naturally. There is always an element of
 uncertainty in our observations. We either don't completely understand
 the nature of the subject we are observing or we think we understand
 the nature fine enough but the data is diluted with a lot of noise, or
-both, which is unfortunately the case in extra galactic Astronomy at
-least.
+both, which is unfortunately the case most of the time.
 
 In order to be able to tackle these two problems, before actually
-doing any form of analysis on real data, we first have to calibrate
-our data analysis tools with a set of mock subjects where we know the
-exact nature of the data without noise. We also have to simulate noise
-and any other instrumental defects that are bundled in with the data
-and add them to the mock data to try to simulate a real
-observation. Then we can apply the techniques we apply to our real
-data, to that mock data set and see how accurately it measures the
-properties we want it to measure.
+doing any form of analysis on real data, a scientist first has to
+calibrate the data analysis tools with a set of mock subjects where
+s/he knows the exact nature of the data without noise. We also have to
+simulate noise and any other instrumental defects that are bundled in
+with the data and add them to the mock data to try to simulate a real
+observation. The data analysis techniques that are applied to the real
+data can then be first tested on the mock data to see how accurately
+our method measures the properties we want it to measure in known
+objects. Of course, whether our model actually resembles the data is
+an issue we have to have accertained before this step.
 
 This is the fundamental raison d'@^etre of MockGals. In astronomy,
 faint objects or the fainter parts of bright objects are the most
@@ -562,20 +604,17 @@ distance on the major axis to the center of the ellipse which is
 located at @math{x_c} and @math{y_c}. We want to find the elliptical
 distance of a point located at @math{(i,j)}, in the image coordiate
 system, from the center of the ellipse. First we rotate the coordinate
-system by @math{p} to get the new rotated distance of the point:
+system by @math{p} to get the new rotated coordiantes of that point
 @math{(i_r,j_r)}:
 
 @center@math{i_r(i,j)=(i_c-i)cos(p)+(j_c-j)sin(p)}
 @center@math{j_r(i,j)=(j_c-j)cos(p)-(i_c-i)sin(p)}
 
 @noindent The elliptical distance of a point located at @math{(i,j)} 
-can now be defined as:
-
-@center@math{r_{el}^2(i,j)=i_r^2(i,j)+j_r^2(i,j)/q^2}
-
-To place the radial profiles explained below over an ellipse, we
-simply calculate @math{f(r_{el}(i,j))} based on the functional radial
-profile desired. 
+can now be defined as: @math{r_{el}^2= \sqrt{i_r^2+j_r^2/q^2} }. To
+place the radial profiles explained below over an ellipse, we simply
+calculate @math{f(r_{el}(i,j))} based on the functional radial profile
+desired.
 
 
 
@@ -603,9 +642,56 @@ will be used and no integration will be preformed.
 @node PSF, Stars, Integration, Object profiles.
 @subsection Point Spread function
 
-The point spread function or PSF of an image a generic term we use to
-name all the atmospheric and instrumental defects that are added to
-the actual image.
+Assume we have a ``point'' source. When we take an image of it, it
+will ``spread'' over an area. To quantify that spread, we can define a
+parametric ``function'', which we call the point spread function or
+the PSF of the image. This ``spread'' can have various causes, for
+example in ground based astronomy, due to the atmosphere. In practice
+we can never surpass the ``spread'' due to the diffraction of our lens
+aperture. Vairous other effects can also be quantified through a PSF,
+for example, the simple fact that we are sampling in a discrete space,
+namely the pixels, also produces a very small ``spread'' in the image
+we take.
+
+Since we want the total flux of an object to remain unchanged after
+convolution by the PSF, in both cases, it is important that the sum of
+all the pixels of the PSF be unity. The image also has to be a square
+and have an odd number of pixels on its sides so one pixel can be
+defined as the center.
+
+In MockGals, the PSF can be set by the two methods explained below.
+
+@table @asis
+
+@item Parametric functions
+A known mathematical function, in this case, only the paramaters to
+define the functions are necessary and MockGals will make a PSF based
+on the given parameters for each function. In both cases, the center
+of the profile has to be exactly in the middle of the central pixel of
+the PSF.
+
+@table @cite
+@item Gaussian
+In the older papers, and to a lesser extent even today, some
+researchers use the 2D gaussian function approximate the PSF of ground
+based images. In its most general form, a Gaussian function can be
+written as:
+@tex
+$$ f(r)=a \exp \left( -(x-\mu)^2 \over 2\sigma^2 \right)+d $$
+@end tex
+Since the center of the profile is pre-defined, @math{\mu} and
+@math{d} are constrained. @math{a} can also be found because we want
+the function to be normalized. So the only important parameter for
+MockGals is the @math{\sigma}.
+
+@item Moffat
+A Moffat function
+@end table
+
+
+@item An input FITS image
+Pixel values from an input image will be used.
+@end table
 
 
 
@@ -636,8 +722,21 @@ preformed by assuming the shapes of stars to be the PSF of the image.
 @node Galaxies,  , Stars, Object profiles.
 @subsection Galaxies
 
+Today, most practitioners agree that galaxy profiles can be modeled
+with one or a few generalized de Vaucouleur's (or S@'ersic) profiles.
 
+@tex
+$$ I(r) = I_e exp \left ( -b_n \left[ \left( r \over r_e \right)^{1/n}-1 
+                               \right]
+                  \right ) $$
+@end tex
 
+This profile depends on the effective radius (@math{r_e}) which is
+defined as the radius which contains half of the total brightness of
+the object. The S@'ersic index @math{n} is used to define the
+concentration of the profile within @math{r_e} and @math{b_n} is a
+constant dependent on @math{n}. @math{I_e} is the surface brightness
+at the effective radius.
 
 
 

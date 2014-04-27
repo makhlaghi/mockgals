@@ -70,8 +70,8 @@ the same column definitions:
 2. 0: Sersic, 1: Moffat, 2: Gaussian, 3: Point source
 3. X position (FITS standard, not C)
 4. Y position (FITS standard, not C)
-5. Sersic n, Moffat beta or Gaussian sigma.
-6. Sersic r_e, Moffat FWHM or won't be used in Gaussian 
+5. Sersic r_e, Moffat FWHM or Gaussian FWHM.
+6. Sersic n, Moffat beta or won't be used in Gaussian 
 7. Position angle.
 8. Axis ratio.
 9. Signal to noise (average profile flux to sqrt(sky))

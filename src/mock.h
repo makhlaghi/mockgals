@@ -56,11 +56,9 @@ struct mockparams
 
 /* Inputs into the 2D integration routine: integ2d();
    The parameters for the various profiles:
-   - Sersic: p1: n. p2: re. trunc*re;
-   - Moffat: p1: beta. p2: (input)fwhm, (processing)later alpha.
-           (FWHM/2)*trunc.
-   - Gaussian: p1: sigma. p2: nothing (you can set it to zero).
-           sigma*trunc.    
+   - Sersic:   p1: re.   p2: n.       trunc*re;
+   - Moffat:   p1: FWHM. p2: beta.    (FWHM/2)*trunc.
+   - Gaussian: p1: FWHM. p2: Nothing. sigma*trunc.    
    - Point: none matter! */
 struct integparams
 {

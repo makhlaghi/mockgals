@@ -72,7 +72,7 @@ Gaussian(double r, double junk, double a)
  
    http://labs.adsabs.harvard.edu/adsabs/abs/2001MNRAS.328..977T/
 
-   When alpha=(fwhm/2)/(2^(1.0/beta)-1)^(0.5). Then the moffat
+   alpha=(FWHM/2)/(2^(1.0/beta)-1)^(0.5). Then the moffat
    function at r is: (1.0 + (r/alpha)^2.0)^(-1.0*beta)*/
 double
 moffat_alpha(double fwhm, double beta)
@@ -94,7 +94,7 @@ moffat_alpha(double fwhm, double beta)
 double
 Moffat(double rda, double nb, double junk)
 {
-  junk=1;
+  junk=1; /* So it can keep the same functional form as the others. */
   return pow(junk+rda*rda, nb);
 }
 
@@ -187,7 +187,7 @@ rot_ell(double x, struct integparams *p)
   double r;
   r=sqrt((x*c+p->y*s)*(x*c+p->y*s)+
 	 ((p->y*c-x*s)*(p->y*c-x*s)/p->q/p->q));
-  return p->profile(r/p->p2, p->p1, p->co);
+  return p->profile(r/p->p1, p->p2, p->co);
 }
 
 
@@ -252,7 +252,8 @@ integ2d(struct integparams *params)
 
 
 
-/* Set the general parameters of struct integparams. */
+/* Set the general parameters of struct integparams. In all profiles,
+   p1 is the parameter that the radius is divided by. */
 void
 setintegparams(int s0_m1_g2_p3, float p1, float p2, float pa_d, 
 	       float q, float trunc, float *trunc_r, char *profletter, 
@@ -260,30 +261,34 @@ setintegparams(int s0_m1_g2_p3, float p1, float p2, float pa_d,
 {
   switch(s0_m1_g2_p3)
     {
-    case 0: /* Sersic: p1: n, p2: re */
-      *trunc_r=p2*trunc;
-      p->p1=1/p1; p->p2=p2;
-      p->co=-1*sersic_b(p1);
+    case 0: /* Sersic: p1: re, p2: n */
+      *trunc_r=p1*trunc;	/* Trunctation in units of re. */
+      p->p1=p1; 		/* re. */
+      p->p2=1/p2;		/* n is used as 1/n in Sersic. */
+      p->co=-1*sersic_b(p2);	/* Constant in the power. */
       p->profile=&Sersic;
       *profletter='s';
       break;
-    case 1: /* Moffat: p1: beta. p2: fwhm, later alpha*/
-      *trunc_r=(p2/2)*trunc;
-      p->p1=-1*p1; p->co=0;
-      p->p2=moffat_alpha(p2, p1);
+    case 1: /* Moffat: p1: fwhm(input) -> alpha. p2: beta*/
+      *trunc_r=(p1/2)*trunc;	/* Truncation in units of FWHM/2. */
+      p->p1=moffat_alpha(p1, p2);
+      p->p2=-1*p2;              /* Beta is always negative!  */
+      p->co=0;	                /* No constant terms needed */
       p->profile=&Moffat;
       *profletter='m';
       break;
-    case 2: /* Gaussian: p1: sigma*/
-      *trunc_r=p1*trunc;
-      p->p1=0; p->p2=1;
-      p->co=-0.5f/p1/p1;
-      p->profile=&Gaussian;
+    case 2: /* Gaussian: p1: FWHM(input) -> sigma */
+      p1/=2.35482;              /* Convert FWHM to sigma. */
+      *trunc_r=p1*trunc;	/* Truncation in units of sigma */
+      p->co=-1.0f/(2.0f*p1*p1);	/* Constant to multiply */
+      p->p1=1;			/* r gets divided by p->p1! */
+      p->p2=0;			/* Not needed! */
+      p->profile=&Gaussian;   
       *profletter='g';
       break;
     case 3: /* Point:*/
       *trunc_r=2;
-      p->p1=0; p->p2=0;
+      p->p1=p->p2=0;
       p->co=1;
       p->profile=&Point;
       *profletter='p';
@@ -522,8 +527,13 @@ setprflprms(double **prflprms, size_t numprflprms,
   size_t i;  
   double *pprflprms;
   double starSN[5]={400, 150, 1000, 300, 110};
-  float randparamranges[14]={-20,+20,-20,+20,0.5,8,1,30,
-			     0,360,0.2,1,0.001,0.02};
+  float randparamranges[14]={-20,+20,     /* x axis range. */
+			     -20,+20,     /* y axis range. */
+			     8,12,        /* re range. */
+			     0.5,8,       /* n range */
+			     0,360,       /* position angle range */
+			     0.2,1,       /* Axis ration range. */
+			     0.0005,0.001}; /* S/N range. */
   randparamranges[1]+=size1;
   randparamranges[3]+=size2;
     
@@ -809,7 +819,7 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
 	}
       
       /* Find the value for this pixel: */
-      tmp=func(r/p2, p1, co); 
+      tmp=func(r/p1, p2, co); 
       if(r<maxir)		
 	{
 	  t_i-=x_c;             t_j-=y_c;
@@ -988,7 +998,7 @@ mockimg(struct mockparams *p)
   float *nonoisehist, *preconv, trunc=10;
   size_t i, psf_s0, psf_s1, junk, ns0, ns1;
   size_t nc, nsize, size, hs0, hs1, *bytind;
-  float *psf, psf_q=1, psf_pa=0, psf_trunc=3;
+  float *psf, psf_q=1, psf_pa=0, psf_trunc=10;
 
   oneprofile(0.0f, 0.0f, p->psf_p1, p->psf_p2, psf_pa, psf_q, 
 	     psf_trunc, integaccu, psf_av0_tot1, psfsum, psf_smg, 
@@ -1025,8 +1035,8 @@ mockimg(struct mockparams *p)
 		      pp[i*nc+1],	  /* Profile function. */
 		      pp[i*nc+3]+hs0-1,   /* x_c (C format) */
 		      pp[i*nc+2]+hs1-1,   /* y_c (C format) */
-		      pp[i*nc+4],	  /* p1: sersic n. */
-		      pp[i*nc+5],	  /* p2: sersic re. */
+		      pp[i*nc+4],	  /* p1: sersic re. */
+		      pp[i*nc+5],	  /* p2: sersic n. */
 		      pp[i*nc+6],	  /* position angle. */
 		      pp[i*nc+7],	  /* axis ratio. */
 		      ss*pp[i*nc+8],	  /* average flux.*/
