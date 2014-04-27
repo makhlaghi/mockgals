@@ -15,6 +15,6 @@ mockgals: $(objects)
 	rm *.fits *.txt ./mockgals
 	@$(CC) -o mockgals $(LDFLAGS) $(objects) $(LDLIBS) 
 	@rm *.o
-	./mockgals -mnp
+#	./mockgals -mn
 
 .SILENT: $(objects)
