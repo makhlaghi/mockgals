@@ -53,6 +53,8 @@ setdefaultoptions(struct mockparams *p)
   p->s1        =201;
   p->sky       =10000.0f;
   p->trunc     =5;
+  p->psfname   ="";
+  p->psf_mg    =1;
   p->psf_p1    =5;
   p->psf_p2    =3;
   p->histmin   =-250;
@@ -206,6 +208,12 @@ printmockgalshelp(struct mockparams *p)
   printf("\tdefault: %.2f\n\n", p->sky);
   printf(" -t FLOAT:\n\tProfile truncation, a multiple of radius.\n");
   printf("\tdefault: %.2f\n\n", p->trunc);
+  printf(" -u INTEGER:\n\tPSF radial function.\n");
+  printf("\t1: Moffat function.\n");
+  printf("\t2: Gaussian function.\n");
+  printf("\tAny other input value will be changed to default.\n");
+  printf("\tdefault: %d.\n", p->psf_mg);
+  printf("\tdefault: %.2f\n\n", p->psf_p1);
   printf(" -a FLOAT:\n\tPSF (Moffat function) FWHM.\n");
   printf("\tdefault: %.2f\n\n", p->psf_p1);
   printf(" -b FLOAT:\n\tPSF (Moffat function) beta.\n");
@@ -232,7 +240,8 @@ getsaveoptions(struct mockparams *p,
   int c;
   char *tailptr; 
 
-  while( (c=getopt(argc, argv, "pmnvhx:y:i:o:a:b:s:g:c:d:")) != -1 )
+  while( (c=getopt(argc, argv, "pmnvhx:y:i:o:a:b:s:g:c:d:f:t:u:")) 
+	 != -1 )
     switch(c)
       {
       case 'x':			/* NAXIS1 value of output image. */
@@ -250,10 +259,21 @@ getsaveoptions(struct mockparams *p,
       case 's':			/* Sky value. */
 	p->sky=strtof(optarg, &tailptr);
 	break;
-      case 'a':			/* First PSF parameter. */
+      case 't':			/* PSF FWHM.4 */
+	p->trunc=strtof(optarg, &tailptr);
+	break;
+      case 'f':			/* Input PSF name */
+	p->psfname=optarg;
+	break;
+      case 'u':			/* PSF function type */
+	p->psf_mg=strtol(optarg, &tailptr, 0);
+	if(p->psf_mg<1 || p->psf_mg>2) 
+	  p->psf_mg=1;
+	break;
+      case 'a':			/* PSF FWHM.4 */
 	p->psf_p1=strtof(optarg, &tailptr);
 	break;
-      case 'b':			/* Second PSF parameter. */
+      case 'b':			/* If Moffat, the beta. */
 	p->psf_p2=strtof(optarg, &tailptr);
 	break;
       case 'g':			/* View histogram. */

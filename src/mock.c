@@ -372,7 +372,7 @@ fillmock(float **mock, float x_c, float y_c, struct integparams *p,
       p->xl=t_i-0.5; p->xh=t_i+0.5;
       p->yl=t_j-0.5; p->yh=t_j+0.5;
       integ=integ2d(p);
-      point=p->profile(pmock[i]/p2, p1, co);
+      point=p->profile(pmock[i]/p1, p2, co);
       *totalflux+=pmock[i]=integ;
       (*numpixs)++;
       if (fabs(integ-point)/integ<integaccu) 
@@ -389,11 +389,10 @@ fillmock(float **mock, float x_c, float y_c, struct integparams *p,
       if(pmock[i]>trunc_r) break;
       else 
         { 
-          *totalflux+=pmock[i]=p->profile(pmock[i]/p2, p1, co);
+          *totalflux+=pmock[i]=p->profile(pmock[i]/p1, p2, co);
           (*numpixs)++;
         }
     }
-
 
   /* For those points out of the truncation radius: */
   for(;i<size;i++) pmock[i]=0;
@@ -972,6 +971,76 @@ printmockhist(float *img, size_t size, int numbins, float histmin,
 
 
 
+
+
+
+/****************************************************************
+ *****************    Read or make the PSF   ********************
+ ****************************************************************/
+void
+readormakepdf(float **psf, size_t *psf_s0, size_t *psf_s1, 
+	      struct mockparams *p)
+{
+  void *tmp;
+  size_t junk;
+  FILE *tmpfile;
+  int av0_tot1=1, bitpix;
+  float q=1, pa=0, trunc=10;
+  float sum=1, integaccu=0.001;
+  char funcpsfname[]="PSF.fits";
+
+  if(strlen(p->psfname))	/* A PSF file name was given. */
+    {
+      if ((tmpfile = fopen(p->psfname, "r")) != NULL) 
+	{			/* The file exists! */
+	  fclose(tmpfile);
+	  fits_to_array(p->psfname, 0, &bitpix, &tmp, psf_s0, psf_s1);
+	  convertanytofloat(tmp, *psf_s0 * *psf_s1, bitpix, psf,
+			    BYTE_IMG, SHORT_IMG, LONG_IMG,FLOAT_IMG, 
+			    DOUBLE_IMG);
+	}
+      else
+	{
+	  printf("\n\n\tError: %s could not be opened\n\n",p->psfname);
+	  exit(EXIT_FAILURE);
+	}
+    }
+  else
+    {
+      oneprofile(0.0f, 0.0f, p->psf_p1, p->psf_p2, pa, q, 
+		 trunc, integaccu, av0_tot1, sum, p->psf_mg, 
+  		 psf, psf_s0, psf_s1, &junk);
+      if(p->vpsf)
+	{
+	  if ((tmpfile = fopen(funcpsfname, "r")) != NULL) 
+	    {			/* The file exists! */
+	      fclose(tmpfile);
+	      assert(remove(funcpsfname)==0);
+	      printf("\nWARNING:  %s already existed, was deleted\n",
+		     funcpsfname);
+	    }
+	  array_to_fits(funcpsfname, NULL, "PSF", FLOAT_IMG, 
+			*psf, *psf_s0, *psf_s1);
+	}
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /****************************************************************
  *****************     Main output program   ********************
  ****************************************************************/
@@ -993,19 +1062,12 @@ mockimg(struct mockparams *p)
   double *pp, ss;
   unsigned char *byt;
   int extcounter=0, suc;
-  int psf_smg=1, psf_av0_tot1=1;
-  float *img, integaccu=0.01, psfsum=1;
+  float *psf, *img, integaccu=0.01;
+  size_t i, psf_s0, psf_s1, ns0, ns1;
   float *nonoisehist, *preconv, trunc=10;
-  size_t i, psf_s0, psf_s1, junk, ns0, ns1;
   size_t nc, nsize, size, hs0, hs1, *bytind;
-  float *psf, psf_q=1, psf_pa=0, psf_trunc=10;
 
-  oneprofile(0.0f, 0.0f, p->psf_p1, p->psf_p2, psf_pa, psf_q, 
-	     psf_trunc, integaccu, psf_av0_tot1, psfsum, psf_smg, 
-	     &psf, &psf_s0, &psf_s1, &junk);
-  if(p->vpsf)
-    array_to_fits("PSF.fits", NULL, "PSF", FLOAT_IMG, psf, 
-		  psf_s0, psf_s1);
+  readormakepdf(&psf, &psf_s0, &psf_s1, p);
 
   hs0=psf_s0/2;          hs1=psf_s1/2;
   ns0=p->s0+2*hs0;       ns1=p->s1+2*hs1;

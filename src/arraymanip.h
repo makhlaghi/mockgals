@@ -66,6 +66,10 @@ floatsetabovetomax(float *in, size_t size, float max);
 
 
 
+void
+convertanytofloat(void *in, size_t size, int bitpix, float **out,
+		  int byte_code, int short_code, int long_code,
+		  int float_code, int double_code);
 
 void
 convertftd(float *f, size_t size, double **d);

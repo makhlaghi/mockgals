@@ -12,7 +12,6 @@ LDFLAGS=-L/usr/lib64/atlas/
 LDLIBS=-lcfitsio -lfftw3 -pthread -lcblas -lgsl -lm
 
 mockgals: $(objects) 
-	rm *.fits *.txt ./mockgals
 	@$(CC) -o mockgals $(LDFLAGS) $(objects) $(LDLIBS) 
 	@rm *.o
 #	./mockgals -mn

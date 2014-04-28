@@ -169,6 +169,71 @@ floatinvert(float *in, size_t size, float base)
  **********************      Change type:       **********************
  *********************************************************************/
 void
+convertanytofloat(void *in, size_t size, int bitpix, float **out,
+		  int byte_code, int short_code, int long_code,
+		  int float_code, int double_code)
+{
+  float *f=NULL;
+  long *lng, *lfpt;
+  short *sht, *sfpt;
+  double *dbl, *dfpt;
+  unsigned char *byt, *bfpt;
+
+  /* A new array only needs to be defined if the input array is not
+     FLOAT! */
+  if(bitpix!=float_code)
+    {
+      assert((*out=malloc(size*sizeof **out))!=NULL);
+      f=*out;
+    }
+  else if(bitpix==byte_code)
+    {
+      byt=in;
+      bfpt=byt+size;
+      while(byt<bfpt) 
+	*f++=*byt++;;
+      free(byt);
+    }
+  else if(bitpix==short_code)
+    {
+      sht=in;
+      sfpt=sht+size;
+      while(sht<sfpt) 
+	*f++=*sht++;;
+      free(sht);
+    }
+  else if(bitpix==long_code)
+    {
+      lng=in;
+      lfpt=lng+size;
+      while(lng<lfpt) 
+	*f++=*lng++;;
+      free(lng);
+    }
+  else if(bitpix==float_code)
+    *out=in;
+  else if(bitpix==double_code)
+    {
+      dbl=in;
+      dfpt=dbl+size;
+      while(dbl<dfpt) 
+	*f++=*dbl++;;
+      free(dbl);
+    }
+  else
+    {
+      printf("\n\n\tbitpix=%d, Not one of given values!\n",
+	     bitpix);
+      printf("\tError in convertanytofloat() (arraymanip.c)\n\n");
+      exit(EXIT_FAILURE);
+    }
+}
+
+
+
+
+
+void
 convertftd(float *f, size_t size, double **d)
 {
   double *td, *dp;

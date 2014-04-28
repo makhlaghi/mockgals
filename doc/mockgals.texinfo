@@ -390,8 +390,7 @@ intentionally placed outside of the actual image range in order to be
 more realistic. MockGals ignores objects that are completely out of
 the image, but if even a small fraction of their area (within the
 defined truncation radius) falls within the image, that part will be
-included.  In the example below, one of the 5 randomly positioned
-stars is out of the image.
+included.
 
 @float Figure, quickpreview
 @center@image{./mockgals-figures/s1_noconv,5cm,,./mockgals-figures/s1_noconv.jpg,.jpg}@image{./mockgals-figures/s1_conv, 5cm,,./mockgals-figures/s1_conv.jpg,.jpg}@image{./mockgals-figures/s1_noised, 5cm,,./mockgals-figures/s1_noised.jpg,.jpg}
@@ -657,40 +656,57 @@ Since we want the total flux of an object to remain unchanged after
 convolution by the PSF, in both cases, it is important that the sum of
 all the pixels of the PSF be unity. The image also has to be a square
 and have an odd number of pixels on its sides so one pixel can be
-defined as the center.
-
-In MockGals, the PSF can be set by the two methods explained below.
+defined as the center. In MockGals, the PSF can be set by the two
+methods explained below.
 
 @table @asis
 
 @item Parametric functions
-A known mathematical function, in this case, only the paramaters to
-define the functions are necessary and MockGals will make a PSF based
-on the given parameters for each function. In both cases, the center
-of the profile has to be exactly in the middle of the central pixel of
-the PSF.
+A known mathematical function is used to make the PSF. In this case,
+only the paramaters to define the functions are necessary and MockGals
+will make a PSF based on the given parameters for each function. In
+both cases, the center of the profile has to be exactly in the middle
+of the central pixel of the PSF (which is automatically done by
+MockGals). When talking about the PSF, usually, the FWHM is used as a
+scale of the width of the PSF. This is because, identifying two point
+sources that are FWHM appart is impossibe.
 
 @table @cite
 @item Gaussian
 In the older papers, and to a lesser extent even today, some
-researchers use the 2D gaussian function approximate the PSF of ground
-based images. In its most general form, a Gaussian function can be
-written as:
+researchers use the 2D gaussian function to approximate the PSF of
+ground based images. In its most general form, a Gaussian function can
+be written as:
 @tex
 $$ f(r)=a \exp \left( -(x-\mu)^2 \over 2\sigma^2 \right)+d $$
 @end tex
 Since the center of the profile is pre-defined, @math{\mu} and
 @math{d} are constrained. @math{a} can also be found because we want
 the function to be normalized. So the only important parameter for
-MockGals is the @math{\sigma}.
+MockGals is the @math{\sigma}. In the Gaussian function we have this
+relation between the FWHM and @math{\sigma}:
+FWHM@math{=2\sqrt{2\ln{2}}\sigma \approx 2.35482\sigma}.
 
 @item Moffat
-A Moffat function
+The Gaussian profile is much sharper than the images taken from stars
+on photographic plates or CCDs. Therefore in 1969, Moffat proposed
+this functional form for the image of stars:
+@tex
+$$ f(r)=a \left[ 1+\left( r\over \alpha \right)^2 \right]^{-\beta}$$
+@end tex
+Again, @math{a} is constrained by the normalization, therefore two
+paramters define the shape of the Moffat function: @math{\alpha} and
+@math{\beta}. The radial parameter is @math{\alpha} which is related
+to the FWHM by @math{\alpha=}FWHM@math{/(2\sqrt{2^{1/\beta}-1)}}.
+
 @end table
 
 
 @item An input FITS image
-Pixel values from an input image will be used.
+Pixel values from an input image will be used. As stated above, it is
+extremely important for the input FITS image to be a square with odd
+pixel sides. If the sum of the pixels of the input FITS image is not
+unity, MockGals will divide all pixels by their sum to make it so.
 @end table
 
 
