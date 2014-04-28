@@ -9,3 +9,4 @@ rm -rf ./mockgals
 texi2any --html --split=chapter mockgals.texinfo
 mkdir ./mockgals/mockgals-figures/
 cp ./mockgals-figures/*.jpg ./mockgals/mockgals-figures/
+cp ./mockgals-figures/*.png ./mockgals/mockgals-figures/

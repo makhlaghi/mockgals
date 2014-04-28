@@ -985,9 +985,9 @@ readormakepdf(float **psf, size_t *psf_s0, size_t *psf_s1,
   size_t junk;
   FILE *tmpfile;
   int av0_tot1=1, bitpix;
-  float q=1, pa=0, trunc=10;
   float sum=1, integaccu=0.001;
   char funcpsfname[]="PSF.fits";
+  float q=1, pa=0, trunc=10, psfsum;
 
   if(strlen(p->psfname))	/* A PSF file name was given. */
     {
@@ -995,9 +995,30 @@ readormakepdf(float **psf, size_t *psf_s0, size_t *psf_s1,
 	{			/* The file exists! */
 	  fclose(tmpfile);
 	  fits_to_array(p->psfname, 0, &bitpix, &tmp, psf_s0, psf_s1);
+
+          /* Check if the sides are odd */
+	  if(*psf_s0%2==0)
+	    {
+	      printf("\n\n\tError: NAXIS2 of %s (PSF) must be odd!\n\n",
+		     p->psfname);
+	      exit(EXIT_FAILURE);
+	    }
+	  if(*psf_s1%2==0)
+	    {
+	      printf("\n\n\tError: NAXIS1 of %s (PSF) must be odd!\n\n",
+		     p->psfname);
+	      exit(EXIT_FAILURE);
+	    }
+
+	  /* Everything is fine, make sure the output is in float. */
 	  convertanytofloat(tmp, *psf_s0 * *psf_s1, bitpix, psf,
-			    BYTE_IMG, SHORT_IMG, LONG_IMG,FLOAT_IMG, 
+			    BYTE_IMG, SHORT_IMG, LONG_IMG, FLOAT_IMG, 
 			    DOUBLE_IMG);
+
+	  /* Check if the sum of the PSF is unity. */
+	  psfsum=floatsum(*psf, *psf_s0 * *psf_s1);
+          if(psfsum!=1)
+	    floatarrmwith(*psf, *psf_s0 * *psf_s1, 1/psfsum);
 	}
       else
 	{

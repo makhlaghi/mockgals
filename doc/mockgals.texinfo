@@ -680,6 +680,9 @@ be written as:
 @tex
 $$ f(r)=a \exp \left( -(x-\mu)^2 \over 2\sigma^2 \right)+d $$
 @end tex
+@ifnottex
+@center f(r)=a \exp \left( -(x-\mu)^2 \over 2\sigma^2 \right)+d
+@end ifnottex
 Since the center of the profile is pre-defined, @math{\mu} and
 @math{d} are constrained. @math{a} can also be found because we want
 the function to be normalized. So the only important parameter for
@@ -694,6 +697,9 @@ this functional form for the image of stars:
 @tex
 $$ f(r)=a \left[ 1+\left( r\over \alpha \right)^2 \right]^{-\beta}$$
 @end tex
+@ifnottex
+@center f(r)=a \left[ 1+\left( r\over \alpha \right)^2 \right]^@{-\beta@}
+@end ifnottex
 Again, @math{a} is constrained by the normalization, therefore two
 paramters define the shape of the Moffat function: @math{\alpha} and
 @math{\beta}. The radial parameter is @math{\alpha} which is related
@@ -710,6 +716,31 @@ unity, MockGals will divide all pixels by their sum to make it so.
 @end table
 
 
+Below you can see a comparison of the Gaussian and Moffat
+profiles. All profiles have the same FWHM of 5 units. While the
+Gaussian is only dependent on the FWHM, the Moffat function is also
+dependant on @math{\beta}. Therefore we have shown the Moffat function
+for 4 @math{\beta} values. 
+
+@float Figure, MoffatGaussianComp
+@center@image{./mockgals-figures/S3_MoffatGaussianComp,15cm,,./mockgals-figures/s3_MoffatGaussianComp.pdf,}
+@caption{Comparison between the Gaussian and Moffat functions with
+various @math{\beta} values. All 5 profiles have the same FWHM of 5
+units.}
+@end float
+
+The results of comparing these functions can be summarized as:
+
+@itemize
+@item 
+Within the FWHM, the functions don't have significant differences.
+@item
+The Gaussian function is much sharper than the Moffat functions, even
+when @math{\beta} is large.
+@item
+For a fixed FWHM, as @math{\beta} increases, the Moffat function
+becomes sharper.
+@end itemize
 
 
 

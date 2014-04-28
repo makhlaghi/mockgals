@@ -184,6 +184,7 @@ printmockgalshelp(struct mockparams *p)
 {
   printf("\n\nThis is mockgals version 0.01:\n\n\n");
   printf(" No options:\n\tMake %lu random profiles\n\n", p->nummock); 
+
   printf("\n\n###### Options with no argument:\n");
   printf("###### In default, they are all inactive.\n");
   printf(" -h:\n\tPrint this help message.\n\n");
@@ -193,36 +194,52 @@ printmockgalshelp(struct mockparams *p)
   printf("\tAs a prior extension to main output. \n\n");
   printf(" -n:\n\tView convolved (before adding noise) image.\n");
   printf("\tAs a prior extension to main output. \n\n");
+
   printf("\n\n###### Options with an argument:\n");
   printf(" -x INTEGER:\n\tThe NAXIS0 size of the ");
   printf("output FITS image.\n");
   printf("\tdefault: %lu pixels\n\n", p->s1);
+
   printf(" -y INTEGER:\n\tThe NAXIS1 size of the ");
   printf("output FITS image.\n");
   printf("\tdefault: %lu pixels\n\n", p->s0);
+
   printf(" -i FILENAME:\n\tInput ASCII table with 9 columns.\n");
   printf("\tdefault: '%s'\n\n", p->infoname);
+
   printf(" -o FILENAME:\n\tOutput FITS image name\n");
   printf("\tdefault: '%s'\n\n", p->outname);
+
   printf(" -s FLOAT:\n\tBackground value of the image.\n");
   printf("\tdefault: %.2f\n\n", p->sky);
+
   printf(" -t FLOAT:\n\tProfile truncation, a multiple of radius.\n");
   printf("\tdefault: %.2f\n\n", p->trunc);
+
+  printf(" -f FILENAME:\n\tInput PSF fits file.\n");
+  printf("\tIf a file is specified, the other\n");
+  printf("\tPSF parameters are ignored.\n\n");
+
   printf(" -u INTEGER:\n\tPSF radial function.\n");
   printf("\t1: Moffat function.\n");
   printf("\t2: Gaussian function.\n");
   printf("\tAny other input value will be changed to default.\n");
-  printf("\tdefault: %d.\n", p->psf_mg);
+  printf("\tdefault: %d.\n\n", p->psf_mg);
+
+  printf(" -a FLOAT:\n\tPSF FWHM.\n");
   printf("\tdefault: %.2f\n\n", p->psf_p1);
-  printf(" -a FLOAT:\n\tPSF (Moffat function) FWHM.\n");
-  printf("\tdefault: %.2f\n\n", p->psf_p1);
+
   printf(" -b FLOAT:\n\tPSF (Moffat function) beta.\n");
+  printf("\tNot used for a Gaussian.\n");
   printf("\tdefault: %.2f\n\n", p->psf_p2);
+
   printf(" -g INTEGER:\n\tIf positive, print histogram.\n");
   printf("\tdefault: %d. Integer (argument) number of bins.\n\n",
 	 p->vhist);
+
   printf(" -c FLOAT:\n\tHistogram minimum value \n");
   printf("\tdefault: %.2f.\n\n", p->histmin);
+
   printf(" -d FLOAT:\n\tHistogram maximum value \n");
   printf("\tdefault: %.2f.\n\n", p->histmax);
   exit(0);

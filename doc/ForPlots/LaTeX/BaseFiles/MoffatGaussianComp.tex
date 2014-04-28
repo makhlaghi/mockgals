@@ -1,0 +1,35 @@
+\begin{figure}[t]
+  \centering
+  \begin{tikzpicture}
+    \begin{axis}[no markers, ymode=log, ymin=0.00001, ymax=1.1,
+        xmin=0, xmax=25, width=\linewidth, height=0.4\linewidth, 
+        xlabel=Radius, ylabel=$f(r)/f(0)$]
+
+      \addplot+[Black, solid, very thick]
+      table [x index=0, y index=1]
+      {./BaseFiles/MoffatGaussianComp.txt};
+      \addlegendentry{Gaussian}
+
+      \addplot+[red, solid, very thick]
+      table [x index=0, y index=2]
+      {./BaseFiles/MoffatGaussianComp.txt};
+      \addlegendentry{Moffat, $\beta=2$}
+
+      \addplot+[magenta, solid, very thick]
+      table [x index=0, y index=3]
+      {./BaseFiles/MoffatGaussianComp.txt};
+      \addlegendentry{Moffat, $\beta=3$}
+
+      \addplot+[green, solid, very thick]
+      table [x index=0, y index=4]
+      {./BaseFiles/MoffatGaussianComp.txt};
+      \addlegendentry{Moffat, $\beta=4$}
+
+      \addplot+[cyan, solid, very thick]
+      table [x index=0, y index=5]
+      {./BaseFiles/MoffatGaussianComp.txt};
+      \addlegendentry{Moffat, $\beta=5$}
+
+    \end{axis}
+  \end{tikzpicture}
+\end{figure}

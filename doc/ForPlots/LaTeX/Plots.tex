@@ -1,0 +1,29 @@
+\documentclass[9pt, oneside]{article}
+
+%Page margins (use a4paper or letterpaper for different page size):
+\usepackage[a4paper, includeheadfoot, body={18.7cm, 25.5cm}]{geometry}
+
+%To define colors:
+\usepackage[cmyk,usenames,dvipsnames]{xcolor}
+
+%For a tikz environment:
+\usepackage{tikz}
+
+%For drawing plots:
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.9}
+\usepgfplotslibrary{groupplots}
+\usepgfplotslibrary{external}
+\tikzexternalize
+\tikzsetexternalprefix{./tikzext/}
+\pgfplotsset
+{
+    axis line style={very thick},
+    tick style={semithick},
+}
+
+\begin{document}
+
+  \input{./BaseFiles/MoffatGaussianComp.tex}
+
+\end{document}
