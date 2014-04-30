@@ -17,3 +17,8 @@ mockgals: $(objects)
 #	./mockgals -mn
 
 .SILENT: $(objects)
+
+.PHONY: install
+
+install:
+	cp ./mockgals /usr/local/bin/

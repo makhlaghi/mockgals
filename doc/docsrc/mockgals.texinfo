@@ -364,7 +364,9 @@ Commands to be input into the command line as normal user begin with
 @item
 Commands that to be input as root (or super-user), start with
 @command{#}. Note that you need the root password in order to execute
-the latter commands. 
+the latter commands. To switch to the root user (or super-user) you
+can simply run @command{$ su}. You will be prompted with a password
+and if it is correct you will gain super-user privileges. 
 
 @item
 The @command{commands}, @option{-options}, @file{file_names} and
@@ -447,8 +449,8 @@ image of @ref{quickpreview}.
 
 
 @menu
-* InputOutput::                         Input and output into MockGals.
-* Viewing multiextension FITS files::   How to easily view a multi-extention FITS.
+* InputOutput::                 Input and output into MockGals.
+* Viewing multiextension FITS files::  How to easily view a multi-extention FITS.
 @end menu
 
 
@@ -592,9 +594,9 @@ we plan to apply.
 
 
 @menu
-* Object profiles.::    Detailed explanations of the profiles used.
-* Why C::               Why we chose the C langauge to write MockGals.
-* References::          References to some documents cited in this introduction.
+* Object profiles.::            Detailed explanations of the profiles used.
+* Why C::                       Why we chose the C langauge to write MockGals.
+* Intro References::            References to the papers mentioned here.
 @end menu
 
 @node Object profiles., Why C, Introduction, Introduction
@@ -831,7 +833,7 @@ have to be 4.
 
 
 
-@node Why C, References, Object profiles., Introduction
+@node Why C, Intro References, Object profiles., Introduction
 @section Why C programming language?
 
 Currently the programming language that is most commonly used in
@@ -871,7 +873,7 @@ higher level languages provide. The GNU coding standards also encourage
 the use of C over all other languages when generality of usage and
 ``high speed'' is desired.
 
-@node References,  , Why C, Introduction
+@node Intro References,  , Why C, Introduction
 @section References
 
 @noindent
@@ -910,9 +912,115 @@ PSF''. In: MNRAS 328, pp. 977---985.
 
 @node Installation, Configuring, Introduction, Top
 @chapter Installation
-MockGals relys on only 3 packages: GSL (GNU scientific library, for
-mathematical functions), FFTW (for convolution) and cfitsio (for
-reading to and from FITS files).
+To install MockGals, there are three requirements which are all very
+easy to setup on your GNU/Linux system. Here is a short list:
+
+@itemize
+@item
+GNU scientific library, @url{http://www.gnu.org/software/gsl/, GSL},
+which is mainly used to generate random numbers (for noise mainly) and
+integration over the surface of pixels.
+
+@item 
+Fastest Fourier Transform in the West, @url{http://www.fftw.org/,
+FFTW}, which is used for convoling the actual profiles of the stars
+and galaxies with the PSF.
+
+@item 
+@url{http://heasarc.gsfc.nasa.gov/fitsio/fitsio.html, CFITSIO}, which
+is the C library to create and manipulate FITS images.
+
+@item 
+@url{http://ds9.si.edu/, SAOImage DS9} which is not required for MockGals to
+work! It is only a tool to view FITS images.
+@end itemize
+
+So far we have only tested the installation of MockGals on a
+Scientific Linux (SL) 6.5 machine. SL is a distribution of Linux based
+on the Red Hat enterprise linux (RHEL). RHEL is also the base for
+other common operating systems like Fedora and CentOS, so there
+shouldn't be much difference. But since the explanations below are all
+based on compiling from source, the explanations below should
+generally be applicable on any
+@url{http://en.wikipedia.org/wiki/Linux_distribution, GNU/Linux based
+operating system}.
+
+@menu
+* Requirements::        How to install the required software
+* MockGals Install::    Installing MockGals
+@end menu
+
+
+
+
+
+@node Requirements, MockGals Install, Installation, Installation
+@section Installing requirements
+In GNU/Linux operating systems, installing most programs from source
+is extremely easy. Generally, the following three commands have to be
+run in sequence. Lets call the compressed file you download from the
+software's webpage @file{downloaded.tar.gz}. After you un-compress it
+with the first command below, lets suppose you get @file{untared_dir}.
+
+@example
+$ tar zxvf downloaded.tar.gz
+$ cd untared_dir
+$ ./configure
+$ make
+$ su 
+# make install
+@end example
+
+@noindent
+Note that the last command has to be run as root or superuser, see
+@ref{Conventions}. That is why the second last command is
+@command{$su}, which is short for ``switch user''. It will prompt you
+with a request to provide the root password. Since you want to be able
+to use the libraries of these three requirements it is best that you
+do install them system wide by going through all the steps.
+
+
+
+
+
+
+
+@node MockGals Install,  , Requirements, Installation
+@section Installing MockGals
+The source code for MockGals is avilable
+@url{https://github.com/makhlaghi/mockgals, on Github}. As with any
+program that is available there, you have two options to download it.
+
+@itemize
+@item 
+In Github's webpage, find the ``Download ZIP'' button on the right
+side of the screen and Download the zip file. This will download
+@file{mockgals-master.zip} to your computer (probably in your
+@file{Downloads} directory). You can then un-compress the file by
+runnnig @command{$ unzip mockgals-master.zip}. This will create the
+directory @command{mockgals-master} in that directory. You can change
+your directory with @command{$ cd mockgals-master}.
+
+@item
+Alternatively, you can simply clone the whole repository with the
+following command in any directory. ``Cloning'' is used in Git to
+refer to downloading the whole version control history of the
+repository along with the actual files necessary to install and run
+it. A directory named @file{mockgals} will be created and you can
+enter it with @command{$ cd mockgals}.
+
+@example
+$ git clone https://github.com/makhlaghi/mockgals.git
+@end example
+
+@end itemize
+
+The number of requirements for MockGals is currently not too
+much. Therefore we haven't set up the @command{$./configure}
+installing script like the three required programs. So how ever you
+downloaded the source code, once you are in the directory, you can
+simply run @command{$ make} and @command{# make install}, don't forget
+that the second has to be run as root, see @ref{Conventions}.
 
 
 
