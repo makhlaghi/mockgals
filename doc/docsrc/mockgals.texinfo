@@ -369,10 +369,10 @@ can simply run @command{$ su}. You will be prompted with a password
 and if it is correct you will gain super-user privileges. 
 
 @item
-The @command{commands}, @option{-options}, @file{file_names} and
-@code{programming_codes} in this manual are written as they are
-written here. Be careful not to include text puctuation marks that
-might follow them.
+The @command{commands}, @option{-options}, @file{file_names},
+@code{programming_codes} and keyboard @kbd{keys} in this manual are
+written as they are written here. Be careful not to include text
+puctuation marks that might follow them.
 
 @item
 When mentioning the order of menus to choose on a graphical user
@@ -494,13 +494,13 @@ the profiles and then fill this column by its self.
 If you run @command{$mockgals} with the @option{-m} or @option{-n}
 options, the output will be a multi-extention FITS file. Lets assume
 you use SAOImage ds9@footnote{@url{http://ds9.si.edu/}} (from now on,
-we'll call it ds9) to view FITS images. If you ordinarily open a
-multi-extension FITS file with ds9, by double clicking on it or
-running @command{$ds9 foo.fits} for example, ds9 will only show you
-the first extension. To be able to switch between the extensions you
-have to follow these menus in the ds9 window: ``File'' -> ``Open
-Other'' -> ``Open Multi Ext Cube'' and then choose the Multi extension
-FITS file in your computer's file structure.
+we'll call it ds9) to view FITS images, see @ref{Installing ds9}. If
+you ordinarily open a multi-extension FITS file with ds9, by double
+clicking on it or running @command{$ds9 foo.fits} for example, ds9
+will only show you the first extension. To be able to switch between
+the extensions you have to follow these menus in the ds9 window:
+``File'' -> ``Open Other'' -> ``Open Multi Ext Cube'' and then choose
+the Multi extension FITS file in your computer's file structure.
 
 The method above is a little tedious to do every time you want view a
 multi-extension FITS file. Fortunately ds9 also provides options that
@@ -946,8 +946,8 @@ generally be applicable on any
 operating system}.
 
 @menu
-* Requirements::        How to install the required software
-* MockGals Install::    Installing MockGals
+* Requirements::                How to install the required software
+* MockGals Install::            Installing MockGals
 @end menu
 
 
@@ -969,18 +969,92 @@ $ ./configure
 $ make
 $ su 
 # make install
+# exit
 @end example
 
 @noindent
-Note that the last command has to be run as root or superuser, see
-@ref{Conventions}. That is why the second last command is
+Note that the second last command has to be run as root or superuser,
+see @ref{Conventions}. That is why the third last command is
 @command{$su}, which is short for ``switch user''. It will prompt you
-with a request to provide the root password. Since you want to be able
-to use the libraries of these three requirements it is best that you
-do install them system wide by going through all the steps.
+with a request to provide the root password when no user name is
+provided. Since you want to be able to use the libraries of these
+three packages it is best that you do install them system wide by
+going through all the steps. The last command simply disables the root
+privileges and returns you back to your own user ID. It is best to
+avoid remaining root for a long time, because you might accidentally
+to something very harmful!
+
+The sequence above is enough for the first two programs in the list,
+namely GSL and FFTW, but CFITSIO needs a slight modification and ds9
+doesn't use this sequence at all, it is available as already compiled
+from the webpage.To install CFITSIO, you just have to add the
+following flags (those that start with a @command{--}) after the
+@command{$./configure} command, so it becomes:
+
+@example
+$ ./configure --enable-sse2 --prefix=/usr/local --enable-reentrant 
+@end example
+
+@noindent
+The first flag is for increasing the reading and writing speed and
+only works for a 64 bit systems. If you are on a 32 bit system, don't
+include it. The second one says where to put the final compiled
+libraries, the given value is the standard place to put them. The last
+one is if you want to access the fits files in a multithread manner.
 
 
 
+
+
+@menu
+* Installing ds9::              How to install SAOImage ds9
+@end menu
+
+@node Installing ds9,  , Requirements, Requirements
+@subsection Installing SAOImage ds9
+From the webpage ``SAOImage DS9 is an astronomical imaging and data
+visualization application.'' This is actually a very useful, simple
+and easy Graphical User Interface (GUI) application for you to view
+the fits images and do simple operations on them. 
+
+@itemize
+@item
+@url{http://ds9.si.edu/site/Download.html,Download} the compressed
+    binary file based on your operating system.  
+@item
+Unpack it with @command{$ tar zxvf [filename]}
+
+@item
+Copy the ds9 file to a system wide location (as root): @command{# mv
+ds9 /usr/local/bin}.
+@end itemize
+
+By typing ds9 any where in the command line you can begin using it,
+you can also set your GNU/Linux Graphic user interface to open any
+FITS file with ds9, we recommend to define it to open any FITS image
+as a multiextension FITS image, see @ref{Viewing multiextension FITS
+files} for an explanation on how to do that.
+
+XPA is the ``X Public Access'' mechanism, its a messaging system in
+DS9 that allows e.g. host scripts to load images or control the
+display. After running ds9, if you get an error regarding XPA enter
+these commands if you are using the bash shell (default in GNU/Linux):
+
+@example
+$ cd ~
+$ vim .bashrc
+@end example
+
+Once inside vim, press @kbd{i} to be able to insert text, add
+@code{export XPA_METHOD=local}. Save by pressing @kbd{Esc} first and
+then @kbd{ZZ} (the @kbd{Shift} and @kbd{z} keys together,
+twice). @kbd{Esc} followed by @kbd{:wq} can also be used.
+
+To stop this command when you run ds9 from the Graphic User Interface,
+follow the above procedures on @file{~/.profile} also, if you don't
+already have that file, don't worry, the second command will create
+it. But have in mind that you need to log out and log-in again for
+this change to take effect.
 
 
 
@@ -1043,15 +1117,246 @@ that the second has to be run as root, see @ref{Conventions}.
 
 @node Configuring, Mock Parameters, Installation, Top
 @chapter Configuring MockGals
-Currently configuration paramters into MockGals can only be
-given through single letter commandline options. The options are
-explained below.
+Currently, the only way you can configure MockGals and ask it to do
+various actions is through command line options. MockGals is
+compatible with the
+@url{http://www.gnu.org/software/libc/manual/html_node/Argument-Syntax.html,POSIX
+recommendations for command line arguments}. A summary of the points
+are as follows:
+
+@itemize
+@item
+Arguments are options if they begin with a hyphen delimiter (@option{-}).
+
+@item
+Multiple options may follow a hyphen delimiter in a single token if
+the options do not take arguments. Thus, @option{-abc} is equivalent
+to @option{-a -b -c}.
+
+@item
+Certain options require an argument (for MockGals, they are identified
+below).
+
+@item
+An option and its argument may or may not appear as separate
+tokens. (In other words, the whitespace separating them is optional.)
+Thus, @option{-o foo} and @option{-ofoo} are equivalent.
+
+@item
+The argument @option{--} terminates all options; any following arguments are treated as non-option arguments, even if they begin with a hyphen.
+
+@item
+Options may be supplied in any order, or appear multiple times. In
+MockGals, for those options with arguments, this will ignore all
+previous values assigned to that option.
+@end itemize
+
+MockGals has three types of options. Those that don't actually run
+MockGals, those that don't require arguments and those that do. Below
+you can see an explanation for each type. The second two types of
+options have pre-defined default values set for them when MockGals
+begins. Therefore you only need to call MockGals with an option, if
+you want to change its value.
+
+If you do not supply any options or arguments to MockGals, it will
+make 45 random galaxy profiles and 5 random stars positioned in a
+square fits image of side 200 pixels. This was actually used in
+@ref{Quick start}, where we only added two ON/OFF options. Try
+removing those options to see the output.
+
+@menu
+* Informative options::         Options that don't run MockGals.
+* No argument options::         Options without arguments.
+* Options with arguments::      Options that require arguments.
+@end menu
+
+
+
+
+@node Informative options, No argument options, Configuring, Configuring
+@section Informative options
+Sometimes you don't actually want to run MockGals, you just want to
+know what version it is or you want to see a list of its options and
+their default values and you don't feel like finding this manual to
+browse it and find this section! The options here are made exactly 
+with this purpose in mind.
+
+If you supply any other options along with these options, they will be
+totally ineffective and MockGals will abort after doing what these
+options ask it to do.
+
+@table @option
+@item -h
+Running MockGals with this option will print the full list of options
+available to you along with a short explanation and the default value
+of each option.  The type of argument (string, integer or float) is
+also specified to guide you in the values to assign to each option.
+
+@item -v
+Print the version and copyright  information for MockGals. Here is how
+this looks for its first release.
+
+@example
+MockGals 0.1
+============
+Make mock stars and galaxies in a FITS image.
+
+Copyright (C) 2014  Mohammad Akhlaghi
+This program comes with ABSOLUTELY NO WARRANTY.
+This is free software, and you are welcome to
+modify and redistribute it under the
+GNU Public License v3 or later.
+@end example
+
+
+@end table
 
 
 
 
 
+@node No argument options, Options with arguments, Informative options, Configuring
+@section Options with no arguments
 
+Some of the configurations that can define MockGals behavior can be
+thought of as ON/OFF options. You don't need to give it any value, you
+just turn the switch ON or OFF. These options are listed below.
+
+By default all these options are switched OFF unless you call them.
+
+@table @option
+@item -e
+Verbose mode. If this option is called (is switched on), MockGals will
+report every step it takes in making the mock image. 
+
+@item -p
+View the PSF. This is useful if you have asked MockGals to make a
+functional PSF and you want to see how the PSF its self looks. If this
+option is called, as soon as MockGals makes the PSF, it will save it
+into @file{psf.fits}.
+
+@item -m
+Save unconvolved mock image as an extention of the output FITS
+image. If this option is activated, MockGals will save a copy of the
+image before it gets convolved with the PSF. This image will be saved
+as an extention to the output file. So by switching between different
+extentions, you can see how convolution and noise have affected the
+otherwise perfect initial image. As an example, please see the left
+image of @ref{quickpreview}.
+
+@item -n
+Save the convolved mock image as an extention of the output FITS
+image.  If this option is activated, the image is saved right before
+noise is added. See the middle image in @ref{quickpreview}. 
+
+@end table
+
+
+
+
+
+@node Options with arguments,  , No argument options, Configuring
+@section Options with arguments
+
+Some of the options require arguments. If you don't supply any,
+MockGals will complain and abort. A list of them can be seen below.
+
+In this list, after each option the terms @option{INTEGER},
+@option{FLOAT} or @option{FILENAME} can be seen, these terms show the
+type of argument that each gets. If floating point value is given
+instead of an integer, only its integer section will be used. In other
+cases supplying the wrong type or argument to an option is not defined 
+and might result in unexpected out comes.
+
+@table @option
+@item -x INTEGER
+The argument to this option will be the number of pixels in the
+horizontal axis of the output image as viewed in ds9. The input to
+this option has to be as positive (@mymath{>0}) integer. The default 
+value for this option is 200.
+
+@item -y INTEGER
+Similar to @option{-x} but for the vertical axis of the output
+image. The default value is 200.
+
+@item -i FILENAME
+This is the name of the input ASCII text file. It can have any number
+of comments (lines begining with @code{#}). It has to be space
+separated table that is composed of 9 columns. The default file name
+is @file{mockinfo.txt}.
+
+@item -o FILENAME
+The name of the output FITS image. Default is @file{mock.fits}.
+
+@item -s FLOAT
+The Background value. The main effect of this value is on the noise,
+because the background noise standard deviation is the square root of
+this value summed with the object pixel values. A larger argument to
+this option will result in more significant noise. Default is 10000
+counts or electrons.
+
+@item -t FLOAT
+The mock profiles do not extend to infinity! With this option you can
+set the radial extent of the profile to be made. By default it is set
+to 5.0. For each type of profile, this value will determine where to
+stop building the profile.
+@table @asis
+@item S@'ersic
+The argument to this option will be multiplied by the effective radius
+(@mymath{r_e}) of the profile, see @ref{Galaxies}.
+
+@item Gaussian
+The argument to this function will be multiplied by
+@mymath{\sigma}. For a Gaussian the input radial parameter is the
+FWHM, MockGals converts that to @mymath{\sigma}, see @ref{PSF}.
+
+@item Moffat
+Half of the FWHM is multiplied to the argument of this function to set
+a limit to the Moffat profile, see @ref{PSF}.
+@end table
+
+@item -f FILENAME
+In case a given FITS image is to be used as the PSF of the image, its
+file name has to be specified with this option. The FITS image has to
+have sides that are odd numbers. It doesn't matter if the sum of its
+pixel values are unity or not, if they aren't MockGals will multiply
+all the pixels by the inverse of the sum so that it does become unity.
+If a file is specified, @option{-u}, @option{-a} and @option{-b} will
+be ignored.
+
+@item -u INTEGER
+Determine the functional form of a PSF. Any value other than the two
+shown below will be changed to the default value which is 1 (Moffat
+function).
+@enumerate
+@item
+Moffat function.
+
+@item
+Gaussian function.
+@end enumerate
+
+@item -a FLOAT
+PSF FWHM in pixels. Default value is 5.
+
+@item -b FLOAT
+Moffat function's @mymath{\beta}, see @ref{PSF}. In case a Gaussian is
+asked for, this value is ignored. Default is 3.
+
+@item -g INTEGER
+For Histogram. If the argument to this function is zero, no histogram
+will be calculated. If it is any positive value, the positive value
+will be set as the number of bins of a histogram. A negative value
+will abort, default is 0.
+
+@item -c FLOAT
+For Histogram. Minimum histogram value, default: -250.
+
+@item -d FLOAT
+For Histogram. Maximum histogram value, default: 700.
+
+
+@end table
 
 
 
@@ -1069,8 +1374,8 @@ explained below.
 @node Mock Parameters, How it works, Configuring, Top
 @chapter Mock parameters
 The parameters of the profiles you want to build into a FITS image are
-fed to it though a table. In this section we will review how
-MockGals reads that table and how best to prepare it.
+fed to it though a table. In this section we will review how MockGals
+reads that table and how best to prepare it.
 
 
 

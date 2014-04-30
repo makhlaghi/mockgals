@@ -26,6 +26,7 @@ along with mockgals. If not, see <http://www.gnu.org/licenses/>.
 #include <unistd.h>
 
 #include "attaavv.h"
+#include "main.h"
 #include "mock.h"
 #include "ui.h"
 
@@ -178,22 +179,41 @@ checksize(char *optarg, size_t *var, int opt)
 
 
 
+void
+printversioninfo()
+{
+  printf("\n\nMockGals %.1f\n", MOCKGALSVERSION);
+  printf("============\n");
+  printf("Make mock stars and galaxies in a FITS image.\n");
+  printf("\nCopyright (C) 2014  Mohammad Akhlaghi\n");
+  printf("This program comes with ABSOLUTELY NO WARRANTY.\n");
+  printf("This is free software, and you are welcome to\n");
+  printf("modify and redistribute it under the\n");
+  printf("GNU Public License v3 or later.\n\n\n");
+}
+
+
+
+
 /* Print the help menu. */
 void
 printmockgalshelp(struct mockparams *p)
 {
-  printf("\n\nThis is mockgals version 0.01:\n\n\n");
-  printf(" No options:\n\tMake %lu random profiles\n\n", p->nummock); 
+  printversioninfo();
+  printf("No options:\n\tMake %lu random profiles\n\n", p->nummock); 
+
+  printf("\n\n###### Options that won't run Mockgals\n");
+  printf(" -h:\n\tPrint this help message.\n\n");
+  printf(" -v:\n\tPrint version and copyright information.\n\n\n");
 
   printf("\n\n###### Options with no argument:\n");
   printf("###### In default, they are all inactive.\n");
-  printf(" -h:\n\tPrint this help message.\n\n");
-  printf(" -v:\n\tVerbose: report steps.\n\n");
+  printf(" -e:\n\tVerbose: report all steps.\n\n");
   printf(" -p:\n\tView the PSF used, no argument necessary.\n\n");
   printf(" -m:\n\tView unconvolved mock image.\n");
   printf("\tAs a prior extension to main output. \n\n");
   printf(" -n:\n\tView convolved (before adding noise) image.\n");
-  printf("\tAs a prior extension to main output. \n\n");
+  printf("\tAs a prior extension to main output. \n\n\n");
 
   printf("\n\n###### Options with an argument:\n");
   printf(" -x INTEGER:\n\tThe NAXIS0 size of the ");
@@ -241,7 +261,7 @@ printmockgalshelp(struct mockparams *p)
   printf("\tdefault: %.2f.\n\n", p->histmin);
 
   printf(" -d FLOAT:\n\tHistogram maximum value \n");
-  printf("\tdefault: %.2f.\n\n", p->histmax);
+  printf("\tdefault: %.2f.\n\n\n", p->histmax);
   exit(0);
 }
 
@@ -257,7 +277,7 @@ getsaveoptions(struct mockparams *p,
   int c;
   char *tailptr; 
 
-  while( (c=getopt(argc, argv, "pmnvhx:y:i:o:a:b:s:g:c:d:f:t:u:")) 
+  while( (c=getopt(argc, argv, "pmnevhx:y:i:o:a:b:s:g:c:d:f:t:u:")) 
 	 != -1 )
     switch(c)
       {
@@ -303,7 +323,7 @@ getsaveoptions(struct mockparams *p,
       case 'd':			/* Histogram maximum. */
 	p->histmax=strtof(optarg, &tailptr);
 	break;
-      case 'v':			/* Verbatim mode. */
+      case 'e':			/* Verbose mode. */
 	p->verb=1;
 	break;
       case 'p':			/* View PSF. */
@@ -315,6 +335,9 @@ getsaveoptions(struct mockparams *p,
       case 'n':			/* View no noised image. */
 	p->vconv=1;
 	break;
+      case 'v':			/* Print version and copyright. */
+	printversioninfo();
+	exit(EXIT_FAILURE);
       case 'h':			/* Print help. */
 	printmockgalshelp(p);
 	exit(EXIT_FAILURE);
