@@ -5,7 +5,7 @@ HTMLHEADERSCRIPT=./docsrc/htmlheaderscript.txt
 rm -rf ./mockgals
 texi2any --html --css-ref=./manualstyle.css  $TEXISRC
 mkdir ./mockgals/mockgals-figures/
-./addscripttohtmlhead HTMLHEADERSCRIPT ./mockgals/*.html
+./addscripttohtmlhead $HTMLHEADERSCRIPT ./mockgals/*.html
 cp ./docsrc/manualstyle.css ./mockgals/
 cp ./mockgals-figures/*.jpg ./mockgals/mockgals-figures/
 cp ./mockgals-figures/*.png ./mockgals/mockgals-figures/
