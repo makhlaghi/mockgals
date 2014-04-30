@@ -20,7 +20,17 @@ main(int argc, char *argv[])
   if (in == NULL) exit(EXIT_FAILURE);
   if (out == NULL) exit(EXIT_FAILURE);
 
-  /* Read until you reach the line to change */
+  /* Read until you reach the top line to change */
+  while ((read = getline(&line, &len, in)) != -1)
+    {
+      if(strcmp(line, initline)==0) break;
+      fprintf(out, "%s", line);
+    }
+
+  /* Put in the correct line. */
+  fprintf(out, "%s", changetoline);
+
+  /* Read until you reach the bottom line to change */
   while ((read = getline(&line, &len, in)) != -1)
     {
       if(strcmp(line, initline)==0) break;
