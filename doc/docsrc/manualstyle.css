@@ -1,0 +1,43 @@
+html
+{
+    background-color: #FFCC99;
+}
+
+body 
+{
+    border: 3px solid black;
+    padding: 1em;
+
+    font-family: arial, sans-serif;
+
+    margin-left:auto;
+    margin-right:auto;
+    width:50em;
+
+    text-align:justify;
+    text-justify:inter-word;
+}
+
+code,
+samp
+{
+    background-color: #FEF0DB;
+    border-radius:5px;
+    font-family: courier, sans-serif;
+    font-weight:bold;
+}
+
+
+a:link, 
+a:visited, 
+a:hover,
+a:active
+{
+    text-decoration:none;
+    color: #9D1309;
+    font-weight:bold;
+}
+a:hover
+{
+    color: #FC1501;
+}

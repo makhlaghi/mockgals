@@ -2,8 +2,10 @@
 @c %**start of header
 @setfilename mockgals.info
 
-@include version.texi
-@settitle mockgals @value{VERSION}
+@include ./docsrc/version.texi
+@include ./docsrc/formath.texi
+
+@settitle MockGals @value{VERSION}
 @afourpaper
 
 @dircategory Astronomy
@@ -14,6 +16,8 @@
 @c Use section titles in cross references, not node titles.
 @xrefautomaticsectiontitle on
 @c %**end of header
+
+
 
 
 
@@ -57,8 +61,23 @@ Texts.  A copy of the license is available online at
 @node Top, About, (dir), (dir)
 @top MockGals
 MockGals is a tool to produce mock galaxies and stars based on an
-input catalog or randomly into a FITS image of any given size. This
-manual is for version @value{VERSION} (@value{UPDATED}).
+input catalog, or randomly, into a FITS image of any given size. All
+paramters to define mock galaxies and to define background noise are
+easily configurable. We have tried to give a very complete overview of
+how to install, understand and use MockGals version @value{VERSION}
+(@value{UPDATED}) for your scientific research. We sincerely hope it
+can be useful.
+
+@ifhtml
+To show the equations in some sections of this manual, we use the the
+@url{http://www.mathjax.org/, MathJax}, JavaScript display
+engine. Therefore to view the Math easily, you have to have JavaScript
+enabled. If it is not enabled, you can still read the math if you are
+familiar with how write equations in TeX: inline equations are marked
+with @code{\(...\)} and equations that are positioned in the center of
+a separate line for them selves (displayed mathematics) are marked
+with @code{$$...$$}.
+@end ifhtml
 @end ifnottex
 
 @menu
@@ -211,7 +230,7 @@ gets to understand her/his own program and its strengths and
 weaknesses much better, which can most of the time result in changes
 in the program that will make it much more accurate and user friendly.
 
-Bjarne Stroustrup (creator of the @code{C++} language) says: ``Without
+Bjarne Stroustrup (creator of the C++ language) says: ``Without
 understanding software, you are reduced to believing in magic''.  Ken
 Thomson (the designer or the Unix operating system) has says ``I abhor
 a system designed for the ``user'' if that word is a coded pejorative
@@ -419,15 +438,15 @@ image of @ref{quickpreview}.
 
 
 @menu
-* Input/Output::
-* Viewing multi-extension FITS files::  How to view Multi-ext FITS files.
+* InputOutput::
+* Viewing multiextension FITS files::
 @end menu
 
 
 
 
-@node Input/Output, Viewing multi-extension FITS files, Quick start, Quick start
-@section MockGals input/output
+@node InputOutput, Viewing multiextension FITS files, Quick start, Quick start
+@section Setting input and output
 
 Normally, you wouldn't want MockGals to give you 45 random galaxies
 and stars! You want to give it a list of galaxies with known
@@ -458,7 +477,7 @@ the profiles and then fill this column by its self.
 
 
 
-@node Viewing multi-extension FITS files,  , Input/Output, Quick start
+@node Viewing multiextension FITS files,  , InputOutput, Quick start
 @section Viewing multi-extension FITS files
 
 If you run @command{$mockgals} with the @option{-m} or @option{-n}
@@ -565,10 +584,11 @@ we plan to apply.
 
 @menu
 * Object profiles.::
-* Why C?::
+* Why C::
+* References::
 @end menu
 
-@node Object profiles., Why C?, Introduction, Introduction
+@node Object profiles., Why C, Introduction, Introduction
 @section Object profiles
 
 MockGals has been written for extra galactic studies, so the only
@@ -590,29 +610,29 @@ used for the PSF, stars and galaxies are explained separately.
 
 The PSF and galaxy radial profiles are generally defined on an ellipse
 so in this section we will first review how an ellipse can be defined
-on a 2D surface. Labeling the major axis of an ellipse @math{a}, and
-its minor axis with @math{b}, the axis ratio is defined as:
-@math{q\equiv b/a}. The major axis of an ellipse can be aligned in any
+on a 2D surface. Labeling the major axis of an ellipse @mymath{a}, and
+its minor axis with @mymath{b}, the axis ratio is defined as:
+@mymath{q\equiv b/a}. The major axis of an ellipse can be aligned in any
 direction, we therefore define the angle of the major axis to the
 horizontal axis of the image as position angle of the ellipse and in
-this manual, we show it with @math{p}.
+this manual, we show it with @mymath{p}.
 
-Our aim is to put a radial profile of any functional form @math{f(r)}
-over an ellipse. Lets define the radial distance @math{r_{el}} as the
+Our aim is to put a radial profile of any functional form @mymath{f(r)}
+over an ellipse. Lets define the radial distance @mymath{r_{el}} as the
 distance on the major axis to the center of the ellipse which is
-located at @math{x_c} and @math{y_c}. We want to find the elliptical
-distance of a point located at @math{(i,j)}, in the image coordiate
+located at @mymath{x_c} and @mymath{y_c}. We want to find the elliptical
+distance of a point located at @mymath{(i,j)}, in the image coordiate
 system, from the center of the ellipse. First we rotate the coordinate
-system by @math{p} to get the new rotated coordiantes of that point
-@math{(i_r,j_r)}:
+system by @mymath{p} to get the new rotated coordiantes of that point
+@mymath{(i_r,j_r)}:
 
-@center@math{i_r(i,j)=(i_c-i)cos(p)+(j_c-j)sin(p)}
-@center@math{j_r(i,j)=(j_c-j)cos(p)-(i_c-i)sin(p)}
+@dispmath{i_r(i,j)=(i_c-i)\cos(p)+(j_c-j)\sin(p)}
+@dispmath{j_r(i,j)=(j_c-j)\cos(p)-(i_c-i)\sin(p)}
 
-@noindent The elliptical distance of a point located at @math{(i,j)} 
-can now be defined as: @math{r_{el}^2= \sqrt{i_r^2+j_r^2/q^2} }. To
+@noindent The elliptical distance of a point located at @mymath{(i,j)} 
+can now be defined as: @mymath{r_{el}^2=\sqrt{i_r^2+j_r^2/q^2} }. To
 place the radial profiles explained below over an ellipse, we simply
-calculate @math{f(r_{el}(i,j))} based on the functional radial profile
+calculate @mymath{f(r_{el}(i,j))} based on the functional radial profile
 desired.
 
 
@@ -624,7 +644,7 @@ desired.
 All the radial profiles made here become extremely sharp as we
 approach the center of the profiles. This sharp change in the radial
 profile will produce a strong gradient over the central few pixels of
-the object. In those cases we will integrate @math{f(r)} over the
+the object. In those cases we will integrate @mymath{f(r)} over the
 pixel area to find the pixel value. 
 
 The building of the profile begins from its central pixel and
@@ -677,33 +697,30 @@ In the older papers, and to a lesser extent even today, some
 researchers use the 2D gaussian function to approximate the PSF of
 ground based images. In its most general form, a Gaussian function can
 be written as:
-@tex
-$$ f(r)=a \exp \left( -(x-\mu)^2 \over 2\sigma^2 \right)+d $$
-@end tex
-@ifnottex
-@center f(r)=a \exp \left( -(x-\mu)^2 \over 2\sigma^2 \right)+d
-@end ifnottex
-Since the center of the profile is pre-defined, @math{\mu} and
-@math{d} are constrained. @math{a} can also be found because we want
+
+@dispmath{f(r)=a \exp \left( -(x-\mu)^2 \over 2\sigma^2 \right)+d}
+
+Since the center of the profile is pre-defined, @mymath{\mu} and
+@mymath{d} are constrained. @mymath{a} can also be found because we want
 the function to be normalized. So the only important parameter for
-MockGals is the @math{\sigma}. In the Gaussian function we have this
-relation between the FWHM and @math{\sigma}:
-FWHM@math{=2\sqrt{2\ln{2}}\sigma \approx 2.35482\sigma}.
+MockGals is the @mymath{\sigma}. In the Gaussian function we have this
+relation between the FWHM and @mymath{\sigma}:
+FWHM@mymath{=2\sqrt{2\ln{2}}\sigma \approx 2.35482\sigma}.
 
 @item Moffat
 The Gaussian profile is much sharper than the images taken from stars
 on photographic plates or CCDs. Therefore in 1969, Moffat proposed
 this functional form for the image of stars:
-@tex
-$$ f(r)=a \left[ 1+\left( r\over \alpha \right)^2 \right]^{-\beta}$$
-@end tex
-@ifnottex
-@center f(r)=a \left[ 1+\left( r\over \alpha \right)^2 \right]^@{-\beta@}
-@end ifnottex
-Again, @math{a} is constrained by the normalization, therefore two
-paramters define the shape of the Moffat function: @math{\alpha} and
-@math{\beta}. The radial parameter is @math{\alpha} which is related
-to the FWHM by @math{\alpha=}FWHM@math{/(2\sqrt{2^{1/\beta}-1)}}.
+
+@dispmath{f(r)=a \left[ 1+\left( r\over \alpha \right)^2 \right]^{-\beta}}
+
+Again, @mymath{a} is constrained by the normalization, therefore two
+paramters define the shape of the Moffat function: @mymath{\alpha} and
+@mymath{\beta}. The radial parameter is @mymath{\alpha} which is related
+to the FWHM by @mymath{\alpha=}FWHM@mymath{/(2\sqrt{2^{1/\beta}-1})}.
+Comparing with the PSF predicted from atmospheric turbulence theory
+with a Moffat function, Trujillo et al. 2001 claim that
+@mymath{\beta} should be 4.765.
 
 @end table
 
@@ -716,16 +733,16 @@ unity, MockGals will divide all pixels by their sum to make it so.
 @end table
 
 
-Below you can see a comparison of the Gaussian and Moffat
-profiles. All profiles have the same FWHM of 5 units. While the
-Gaussian is only dependent on the FWHM, the Moffat function is also
-dependant on @math{\beta}. Therefore we have shown the Moffat function
-for 4 @math{\beta} values. 
+Below, see @ref{MoffatGaussianComp}, you can see a comparison of the
+Gaussian and Moffat profiles. All profiles have the same FWHM of 5
+units. While the Gaussian is only dependent on the FWHM, the Moffat
+function is also dependant on @mymath{\beta}. Therefore we have shown
+the Moffat function for 4 @mymath{\beta} values.
 
 @float Figure, MoffatGaussianComp
 @center@image{./mockgals-figures/S3_MoffatGaussianComp,15cm,,./mockgals-figures/s3_MoffatGaussianComp.pdf,}
 @caption{Comparison between the Gaussian and Moffat functions with
-various @math{\beta} values. All 5 profiles have the same FWHM of 5
+various @mymath{\beta} values. All 5 profiles have the same FWHM of 5
 units.}
 @end float
 
@@ -736,9 +753,9 @@ The results of comparing these functions can be summarized as:
 Within the FWHM, the functions don't have significant differences.
 @item
 The Gaussian function is much sharper than the Moffat functions, even
-when @math{\beta} is large.
+when @mymath{\beta} is large.
 @item
-For a fixed FWHM, as @math{\beta} increases, the Moffat function
+For a fixed FWHM, as @mymath{\beta} increases, the Moffat function
 becomes sharper.
 @end itemize
 
@@ -772,23 +789,40 @@ preformed by assuming the shapes of stars to be the PSF of the image.
 Today, most practitioners agree that galaxy profiles can be modeled
 with one or a few generalized de Vaucouleur's (or S@'ersic) profiles.
 
-@tex
-$$ I(r) = I_e exp \left ( -b_n \left[ \left( r \over r_e \right)^{1/n}-1 
-                               \right]
-                  \right ) $$
-@end tex
+@dispmath{I(r) = I_e exp \left ( -b_n \left[ \left( r \over r_e \right)^{1/n} -1 \right] \right )}
 
-This profile depends on the effective radius (@math{r_e}) which is
+This profile depends on the effective radius (@mymath{r_e}) which is
 defined as the radius which contains half of the total brightness of
-the object. The S@'ersic index @math{n} is used to define the
-concentration of the profile within @math{r_e} and @math{b_n} is a
-constant dependent on @math{n}. @math{I_e} is the surface brightness
-at the effective radius.
+the object. @mymath{I_e} is the surface brightness at the effective
+radius.  The S@'ersic index @mymath{n} is used to define the
+concentration of the profile within @mymath{r_e} and @mymath{b_n} is a
+constant dependent on @mymath{n}. MacArthur et al. 2003 show that for
+@mymath{n>0.35}, @mymath{b_n} can be accurately approximated using this
+equation:
+
+@dispmath{b_n=2n - {1\over 3} + {4\over 405n} + {46\over 25515n^2} + {131\over 1148175n^3}-{2194697\over 30690717750n^4}}
+ 
+Below, see @ref{SersicComp}, 5 example S@'ersic profiles with various
+@mymath{n} values are shown. All the profiles have been divided by their
+central value in order to compare their behavior especially in the
+central parts of the profile
+
+@float Figure, SersicComp
+@center@image{./mockgals-figures/S3_SersicComp,15cm,,./mockgals-figures/S3_SersicComp.pdf,}
+@caption{S@'ersic profiles with various @mymath{n} values, all profiles have the same @mymath{r_e=5} units.}
+@end float
+
+deVaucouleurs 1948 was actually first showed that this function best
+fits the galaxy light profiles, with the only difference that he held
+@mymath{n} fixed to a value of 4. 20 years later, S@'ersic 1968 showed
+that @mymath{n} can have a variety of values and does not necessarily
+have to be 4.
 
 
 
 
-@node Why C?,  , Object profiles., Introduction
+
+@node Why C, References, Object profiles., Introduction
 @section Why C programming language?
 
 Currently the programming language that is most commonly used in
@@ -828,10 +862,30 @@ higher level languages provide. The GNU coding standards also encourage
 the use of C over all other languages when generality of usage and
 ``high speed'' is desired.
 
+@node References,  , Why C, Introduction
+@section References
 
+@noindent
+de Vaucouleurs, G. (1948). ``Recherches sur les nebuleuses
+extragalactiques''. In: Journal des Observateurs 31, p. 113.
 
+@noindent
+MacArthur, L. A., S. Courteau, and J. A. Holtzman (2003). ``Structure of
+Disk-dominated Galaxies. I. Bulge/Disk Param- eters, Simulations, and
+Secular Evolution''. In: ApJ 582, pp. 689---722.
 
+@noindent
+Moffat, A. F. J. (1969). ``A Theoretical Investigation of Focal
+Stellar Images in the Photographic Emulsion and Application to
+Photographic Photometry''. In: A&A 3, p. 455.
 
+@noindent
+Sersic, J. L. (1968). Atlas de galaxias australes.
+
+@noindent
+Trujillo, I., J. A. L. Aguerri, J. Cepa, and C. M. Gutierrez
+(2001). ``The effects of seeing on S@'ersic profiles - II. The Moffat
+PSF''. In: MNRAS 328, pp. 977---985.
 
 
 

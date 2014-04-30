@@ -22,8 +22,25 @@
     tick style={semithick},
 }
 
+%Bibliography:
+\usepackage[
+    backend=biber,
+    style=authoryear,
+    hyperref=true,
+    doi=false,
+    url=false,
+    eprint=false,
+    maxnames=5
+]{biblatex}
+\addbibresource{ref.bib}
+
 \begin{document}
 
   \input{./BaseFiles/MoffatGaussianComp.tex}
+
+  \input{./BaseFiles/SersicComp.tex}
+
+\cite{Sersicb}, \cite{Moffatb}, \cite{Moffat}, \cite{deVo}, \cite{sersic}
+\printbibliography 
 
 \end{document}

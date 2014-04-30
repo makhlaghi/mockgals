@@ -1,0 +1,35 @@
+\begin{figure}[t]
+  \centering
+  \begin{tikzpicture}
+    \begin{axis}[no markers, ymode=log, ymin=0.000001, ymax=1.1,
+        xmin=0, xmax=25, width=\linewidth, height=0.4\linewidth, 
+        xlabel=Radius, ylabel=$f(r)/f(0)$]
+
+      \addplot+[Orange, solid, very thick]
+      table [x index=0, y index=1]
+      {./BaseFiles/SersicComp.txt};
+      \addlegendentry{S\'{e}rsic, $n=0.5$}
+
+      \addplot+[red, solid, very thick]
+      table [x index=0, y index=2]
+      {./BaseFiles/SersicComp.txt};
+      \addlegendentry{S\'{e}rsic, $n=1.0$}
+
+      \addplot+[magenta, solid, very thick]
+      table [x index=0, y index=3]
+      {./BaseFiles/SersicComp.txt};
+      \addlegendentry{S\'{e}rsic, $n=2.5$}
+
+      \addplot+[green, solid, very thick]
+      table [x index=0, y index=4]
+      {./BaseFiles/SersicComp.txt};
+      \addlegendentry{S\'{e}rsic, $n=4.0$}
+
+      \addplot+[cyan, solid, very thick]
+      table [x index=0, y index=5]
+      {./BaseFiles/SersicComp.txt};
+      \addlegendentry{S\'{e}rsic, $n=6.0$}
+
+    \end{axis}
+  \end{tikzpicture}
+\end{figure}
