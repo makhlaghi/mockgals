@@ -69,6 +69,15 @@ how to install, understand and use MockGals version @value{VERSION}
 can be useful.
 
 @ifhtml
+
+To navigate easily in this webpage, you can use the @code{Next},
+@code{Previous}, @code{Up} and @code{Contents} links in the top and
+bottom of each page. @code{Next} and @code{Previous} will take you to
+the next or previous topic in the same level, for example from chapter
+1 to chapter 2 or vice versa. To go to the sections or subsections,
+you have to click on the menu entries that are there when ever a
+sub-component to a title is present.
+
 To show the equations in some sections of this manual, we use the the
 @url{http://www.mathjax.org/, MathJax}, JavaScript display
 engine. Therefore to view the Math easily, you have to have JavaScript
@@ -81,13 +90,13 @@ with @code{$$...$$}.
 @end ifnottex
 
 @menu
-* About::                       About this manual.
-* Quick start::                 Get started.
-* Introduction::                An introduction to MockGals.
-* Installation::                How to install MockGals.
-* Configuring::                 Customizing MockGals.
-* Mock Parameters::             Mock profile parameter table.
-* How it works::                Mock gals coding guide.
+* About::                       This manual, why we wrote it and how to read it.
+* Quick start::                 To get a fast start, have a look here.
+* Introduction::                General introduction to the purpose and ideas.
+* Installation::                Complete explanation on how to install MockGals.
+* Configuring::                 Explanation on how to tell MockGals what to do.
+* Mock Parameters::             The parameters that are input into MockGals.
+* How it works::                Detailed explanation of the coding.
 @end menu
 
 
@@ -136,11 +145,11 @@ summary of the manual.
 
 
 @menu
-* Good Science::                Science and its software.
+* Good Science::                Critical/Objective science and its software.
 * Your rights::                 Your rights as a user of MockGals.
-* Manual formats::              Formats this manual is available in.
-* Conventions::
-* Summary::
+* Manual formats::              How to make the best use of this manual.
+* Conventions::                 The conventions used in writing this manual.
+* Summary::                     A summary of all this manual.
 @end menu
 
 @node Good Science, Your rights, About, About
@@ -438,8 +447,8 @@ image of @ref{quickpreview}.
 
 
 @menu
-* InputOutput::
-* Viewing multiextension FITS files::
+* InputOutput::                         Input and output into MockGals.
+* Viewing multiextension FITS files::   How to easily view a multi-extention FITS.
 @end menu
 
 
@@ -583,9 +592,9 @@ we plan to apply.
 
 
 @menu
-* Object profiles.::
-* Why C::
-* References::
+* Object profiles.::    Detailed explanations of the profiles used.
+* Why C::               Why we chose the C langauge to write MockGals.
+* References::          References to some documents cited in this introduction.
 @end menu
 
 @node Object profiles., Why C, Introduction, Introduction
@@ -599,7 +608,7 @@ used for the PSF, stars and galaxies are explained separately.
 
 @menu
 * Defining an ellipse::         Defining an ellipse in 2D.
-* Integration::
+* Integration::                 How integration is preformed over a pixel.
 * PSF::                         Radial profiles for the PSF.
 * Stars::                       Making mock star profiles.
 * Galaxies::                    Radial profiles for galaxies.
