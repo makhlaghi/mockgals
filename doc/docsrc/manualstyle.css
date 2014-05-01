@@ -1,31 +1,48 @@
 html
 {
-    background-color: #FFCC99;
+  background-color:#D4D4D4;
 }
 
 body 
 {
-    border: 3px solid black;
-    padding: 1em;
+  border:1px solid black;
+  padding:1em;
 
-    font-family: arial, sans-serif;
+  font-family:verdana,helvetica,arial,sans-serif;
+  font-size:14px;	
 
-    margin-left:auto;
-    margin-right:auto;
-    width:50em;
+  margin-left:auto;
+  margin-right:auto;
+  width:50em;
 
-    text-align:justify;
-    text-justify:inter-word;
+  text-align:justify;
+  text-justify:inter-word;
 }
+
+
+
 
 code,
 samp
 {
-    background-color: #FEF0DB;
-    border-radius:5px;
-    font-family: courier, sans-serif;
-    font-weight:bold;
+  color:#444444;
+  border-radius:2px;
+  background-color: #f1f1f1;
+  font-family:"courier new";
 }
+
+div.example
+{
+  width:auto;
+  border:1px solid #d4d4d4;
+  background-color:#f1f1f1;
+  font-family:"courier new";
+  color:#444444;
+  padding:0;
+  margin:0 4em 0 2em;
+}
+
+
 
 
 a:link, 
@@ -33,11 +50,10 @@ a:visited,
 a:hover,
 a:active
 {
-    text-decoration:none;
-    color: #9D1309;
-    font-weight:bold;
+  text-decoration:none;
+  color:#000078;
 }
 a:hover
 {
-    color: #FC1501;
+  color:#0147FA;
 }

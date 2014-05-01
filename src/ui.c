@@ -65,6 +65,7 @@ setdefaultoptions(struct mockparams *p)
   p->outname   ="mock.fits";
 
   /* Internal settings: */
+  p->initcomments=NULL;
   p->profileparams=NULL;
   p->numppcols    =10;
 }
@@ -94,9 +95,15 @@ readinputinfo(struct mockparams *p)
 	  exit(EXIT_FAILURE);
 	}
       p->nummock=intable.s0;
+
       p->profileparams=intable.d;
       intable.d=malloc(sizeof *(intable.d));/*freeasciitable() has */
-      assert(intable.d!=NULL);		    /*something to free! */
+      assert(intable.d!=NULL);		    /*something to free!   */
+
+      p->initcomments=intable.c;
+      intable.c=malloc(sizeof *(intable.c));/*freeasciitable() has */
+      assert(intable.c!=NULL);		    /*something to free!   */ 
+
       freeasciitable(&intable);
       if(p->verb)
 	printf("- Information for %lu profile%sread from '%s'.\n\n",

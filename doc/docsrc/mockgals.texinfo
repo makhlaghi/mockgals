@@ -2,7 +2,7 @@
 @c %**start of header
 @setfilename mockgals.info
 
-@include ./docsrc/version.texi
+@include ./docsrc/generalmacros.texi
 @include ./docsrc/formath.texi
 
 @settitle MockGals @value{VERSION}
@@ -55,6 +55,15 @@ Texts.  A copy of the license is available online at
 @vskip 0pt plus 1filll
 @insertcopying
 
+@page
+@vskip 0pt plus 1filll
+@quotation
+Anticipations are a ground sufficiently firm for consent, for even if
+men went mad all after the same fashion, they might agree one with
+another well enough.
+@author Francis Bacon, Novum Organum Scientiarum, 1620.
+@end quotation
+
 @end titlepage
 
 @ifnottex
@@ -67,6 +76,10 @@ easily configurable. We have tried to give a very complete overview of
 how to install, understand and use MockGals version @value{VERSION}
 (@value{UPDATED}) for your scientific research. We sincerely hope it
 can be useful.
+
+Like the program, this manual will be constantly upgraded, so there
+might always be unwanted errors or parts of the text that can be
+explained better. I will try to correct any that I find.
 
 @ifhtml
 
@@ -92,10 +105,10 @@ with @code{$$...$$}.
 @menu
 * About::                       This manual, why we wrote it and how to read it.
 * Quick start::                 To get a fast start, have a look here.
-* Introduction::                General introduction to the purpose and ideas.
+* Concepts::                    The main methods and functions used in MockGals.
 * Installation::                Complete explanation on how to install MockGals.
 * Configuring::                 Explanation on how to tell MockGals what to do.
-* Mock Parameters::             The parameters that are input into MockGals.
+* Mock parameters::             The parameters that are input into MockGals.
 * How it works::                Detailed explanation of the coding.
 @end menu
 
@@ -388,7 +401,17 @@ then choose ``Save As'' in the list that opens.
 @node Summary,  , Conventions, About
 @section Summary
 @ref{Quick start} is a quick start to get you going with MockGals.  It
-explains the most frequently used inputs and outputs of mockgals so you can get started. Once you have used it in some simple situations and get a good understanding of what MockGals has to offer, you can go on with the rest of the manual.
+explains the most frequently used inputs and outputs of mockgals so
+you can get started. Once you have used it in some simple situations
+and get a good understanding of what MockGals has to offer, you can go
+on with the rest of the manual.
+
+In @ref{Concepts} the main functions and methods that are used are
+introduced generally. @ref{Installation} introduces how to install all
+the requirements of MockGals and its self. @ref{Configuring} explains
+the command-line options that you can use to define the general
+settings of MockGals. @ref{Mock parameters} explains how you can
+define the parameters for each profile.
 
 
 
@@ -408,19 +431,20 @@ explains the most frequently used inputs and outputs of mockgals so you can get 
 
 
 
-@node Quick start, Introduction, About, Top
+
+
+@node Quick start, Concepts, About, Top
 @chapter A Quick start
 
 Once MockGals is installed system wide, @pxref{Installation}, you can
 simply run @command{$mockgals -nm} any where and, 45 mock galaxies and
-5 stars will be randomly positioned in a square @code{FITS} image with
-sides of 200 pixels. @ref{quickpreview} shows one such random example.
-The central positions of some of these random profiles is
-intentionally placed outside of the actual image range in order to be
-more realistic. MockGals ignores objects that are completely out of
-the image, but if even a small fraction of their area (within the
-defined truncation radius) falls within the image, that part will be
-included.
+5 stars will be randomly positioned in a @mymath{200 \times 200} FITS
+image. @ref{quickpreview} shows one such random example.  The central
+positions of some of these random profiles is intentionally placed
+outside of the actual image range in order to be more
+realistic. MockGals ignores objects that are completely out of the
+image, but if even a small fraction of their area (within the defined
+truncation radius) falls within the image, that part will be included.
 
 @float Figure, quickpreview
 @center@image{./mockgals-figures/s1_noconv,5cm,,./mockgals-figures/s1_noconv.jpg,.jpg}@image{./mockgals-figures/s1_conv, 5cm,,./mockgals-figures/s1_conv.jpg,.jpg}@image{./mockgals-figures/s1_noised, 5cm,,./mockgals-figures/s1_noised.jpg,.jpg}
@@ -533,8 +557,8 @@ you just added as the default and click the ``Close'' button.
 
 
 
-@node Introduction, Installation, Quick start, Top
-@chapter Introduction
+@node Concepts, Installation, Quick start, Top
+@chapter Basic concepts
 
 Once the internal consistencies of theories has been verified, the
 only method scientists have to test their theories are gathering data
@@ -594,12 +618,12 @@ we plan to apply.
 
 
 @menu
-* Object profiles.::            Detailed explanations of the profiles used.
+* Object profiles::             Various functional profiles used in MockGals.
 * Why C::                       Why we chose the C langauge to write MockGals.
 * Intro References::            References to the papers mentioned here.
 @end menu
 
-@node Object profiles., Why C, Introduction, Introduction
+@node Object profiles, Why C, Concepts, Concepts
 @section Object profiles
 
 MockGals has been written for extra galactic studies, so the only
@@ -616,7 +640,7 @@ used for the PSF, stars and galaxies are explained separately.
 * Galaxies::                    Radial profiles for galaxies.
 @end menu
 
-@node Defining an ellipse, Integration, Object profiles., Object profiles.
+@node Defining an ellipse, Integration, Object profiles, Object profiles
 @subsection Defining an ellipse
 
 The PSF and galaxy radial profiles are generally defined on an ellipse
@@ -650,7 +674,7 @@ desired.
 
 
 
-@node Integration, PSF, Defining an ellipse, Object profiles.
+@node Integration, PSF, Defining an ellipse, Object profiles
 @subsection Integration over central regions
 All the radial profiles made here become extremely sharp as we
 approach the center of the profiles. This sharp change in the radial
@@ -669,7 +693,7 @@ will be used and no integration will be preformed.
 
 
 
-@node PSF, Stars, Integration, Object profiles.
+@node PSF, Stars, Integration, Object profiles
 @subsection Point Spread function
 
 Assume we have a ``point'' source. When we take an image of it, it
@@ -773,7 +797,7 @@ becomes sharper.
 
 
 
-@node Stars, Galaxies, PSF, Object profiles.
+@node Stars, Galaxies, PSF, Object profiles
 @subsection Star Profiles
 
 In MockGals, we generally consider stars to be a point source. This is
@@ -794,7 +818,7 @@ preformed by assuming the shapes of stars to be the PSF of the image.
 
 
  
-@node Galaxies,  , Stars, Object profiles.
+@node Galaxies,  , Stars, Object profiles
 @subsection Galaxies
 
 Today, most practitioners agree that galaxy profiles can be modeled
@@ -833,7 +857,7 @@ have to be 4.
 
 
 
-@node Why C, Intro References, Object profiles., Introduction
+@node Why C, Intro References, Object profiles, Concepts
 @section Why C programming language?
 
 Currently the programming language that is most commonly used in
@@ -873,7 +897,7 @@ higher level languages provide. The GNU coding standards also encourage
 the use of C over all other languages when generality of usage and
 ``high speed'' is desired.
 
-@node Intro References,  , Why C, Introduction
+@node Intro References,  , Why C, Concepts
 @section References
 
 @noindent
@@ -910,7 +934,7 @@ PSF''. In: MNRAS 328, pp. 977---985.
 
 
 
-@node Installation, Configuring, Introduction, Top
+@node Installation, Configuring, Concepts, Top
 @chapter Installation
 To install MockGals, there are three requirements which are all very
 easy to setup on your GNU/Linux system. Here is a short list:
@@ -978,11 +1002,11 @@ see @ref{Conventions}. That is why the third last command is
 @command{$su}, which is short for ``switch user''. It will prompt you
 with a request to provide the root password when no user name is
 provided. Since you want to be able to use the libraries of these
-three packages it is best that you do install them system wide by
-going through all the steps. The last command simply disables the root
-privileges and returns you back to your own user ID. It is best to
-avoid remaining root for a long time, because you might accidentally
-to something very harmful!
+three packages anywhere in your file system, it is best that you do
+install them system wide by going through all the steps above. The
+last command simply disables the root privileges and returns you back
+to your own user ID. It is best to avoid remaining root for a long
+time, because you might accidentally to something very harmful!
 
 The sequence above is enough for the first two programs in the list,
 namely GSL and FFTW, but CFITSIO needs a slight modification and ds9
@@ -1115,8 +1139,16 @@ that the second has to be run as root, see @ref{Conventions}.
 
 
 
-@node Configuring, Mock Parameters, Installation, Top
+@node Configuring, Mock parameters, Installation, Top
 @chapter Configuring MockGals
+The options to configure MockGals can generally be classified as two
+groups. A first group of options are those that are generally applied
+to all the objects or those that relate to the FITS image that acts as
+our canvas to build the mock galaxies on. A second set are options to
+define each particular profile you want to make. The first set of
+options are discussed here and the second set that are different for
+each profile are explained in @ref{Mock parameters}.
+
 Currently, the only way you can configure MockGals and ask it to do
 various actions is through command line options. MockGals is
 compatible with the
@@ -1130,12 +1162,11 @@ Arguments are options if they begin with a hyphen delimiter (@option{-}).
 
 @item
 Multiple options may follow a hyphen delimiter in a single token if
-the options do not take arguments. Thus, @option{-abc} is equivalent
-to @option{-a -b -c}.
+the options do not take arguments, see @ref{No argument
+options}. Thus, @option{-abc} is equivalent to @option{-a -b -c}.
 
 @item
-Certain options require an argument (for MockGals, they are identified
-below).
+Certain options require an argument, see @ref{Options with arguments}.
 
 @item
 An option and its argument may or may not appear as separate
@@ -1236,7 +1267,7 @@ option is called, as soon as MockGals makes the PSF, it will save it
 into @file{psf.fits}.
 
 @item -m
-Save unconvolved mock image as an extention of the output FITS
+Save the unconvolved mock image as an extention of the output FITS
 image. If this option is activated, MockGals will save a copy of the
 image before it gets convolved with the PSF. This image will be saved
 as an extention to the output file. So by switching between different
@@ -1282,8 +1313,9 @@ image. The default value is 200.
 @item -i FILENAME
 This is the name of the input ASCII text file. It can have any number
 of comments (lines begining with @code{#}). It has to be space
-separated table that is composed of 9 columns. The default file name
-is @file{mockinfo.txt}.
+separated table that is composed of @value{INPUTTABLENUMCOLS}
+columns. The default file name is @file{mockinfo.txt}. For a very
+detailed analysis of this file, please see @ref{Mock parameters}.
 
 @item -o FILENAME
 The name of the output FITS image. Default is @file{mock.fits}.
@@ -1371,11 +1403,191 @@ For Histogram. Maximum histogram value, default: 700.
 
 
 
-@node Mock Parameters, How it works, Configuring, Top
+@node Mock parameters, How it works, Configuring, Top
 @chapter Mock parameters
 The parameters of the profiles you want to build into a FITS image are
-fed to it though a table. In this section we will review how MockGals
-reads that table and how best to prepare it.
+fed to it though a table that is saved as an ASCII text file. MockGals
+uses the argument to the @command{-i} option identify that file, see
+@ref{Options with arguments}.
+
+The input ASCII text file has to be composed of columns of data (only
+numerical), separated by any number of @kbd{SPACE} or @kbd{TAB}
+characters. In total it has to have @value{INPUTTABLENUMCOLS} columns
+which are explained below. If it has a different number of columns,
+MockGals will complain. Each row in the text file shows the
+corresponding properties of a different object, with the total number
+of uncommented rows, being the total number of profiles that will be
+made, if they overlap with the image within their truncation radius of
+course. In general, an input table can contain objects that are far
+too distant from the region of the image size, such object will be
+totally ignored.
+
+After running the only output for each profile that MockGals can
+provide is the total flux of the profile, it will be saved in one of
+the columns in the input table and so, the file that is given as an
+input will also be the text output of MockGals. So this file will
+serve both as input and output.
+
+@menu
+* Input table comments::        Treatment of comments in the input ASCII file.
+* Input table columns::         How each column is interpreted in MockGals.
+@end menu
+
+@node Input table comments, Input table columns, Mock parameters, Mock parameters
+@section Comments in the input table.
+Any line in the input ASCII file that starts with a @code{#} will be
+considered as a comment and ignored in the production of mock
+galaxies. You can use such lines to add information for your own
+personal usage or you can add the @code{#} at the start of each row
+identifying an object so that MockGals does not build that particular
+object.
+
+In case the input file already has comments, they will all be stacked
+on the top of the output, before the output table and MockGals will
+not add any comments its self. On the other hand, if you don't supply
+any comments, a set of comments will be printed on the output that
+will explain the columns and some of the settings. An example of such
+comments can be seen below after asking MockGals to build randomly
+generated galaxies, see @ref{Quick start}.
+
+@example
+# Properties of 50 mock profiles.
+# The sky valued is assumed to be: 10000.00
+# Truncation at 5.00 * radial parameter
+# 
+# 0: ID.
+# 1: 0: Sersic, 1: Moffat, 2: Gaussian, 3: Point.
+# 2: X position (FITS definition).
+# 3: Y position (FITS definition).
+# 4: Sersic re or Moffat FWHM.
+# 5: Sersic n or Moffat beta.
+# 6: Position angle, degrees.
+# 7: Axis ratio.
+# 8: Signal to noise: (average profile flux-sky)/sqrt(sky).
+# 9: Total flux (Sky subtracted).
+@end example
+
+@noindent
+You might have noticed that the column counting start from zero in the
+output, this is because most programming languages start counting from
+zero and this form of numbering the columns will be easier for the
+user to use this data.
+
+The number of galaxies, the sky value and truncation radius would
+normally be set by the user in @ref{Options with arguments}, what ever
+their value, they will be shown here. The values currently shown are
+the default values.
+
+
+
+
+
+@node Input table columns,  , Input table comments, Mock parameters
+@section Columns of the input table.
+As mentioned above, the input table has to have
+@value{INPUTTABLENUMCOLS} columns in this section we will review how
+each column is interpreted by MockGals.Below is an example showing the
+properties of 5 of the profiles in @ref{quickpreview}.
+
+@example
+ 4 3  180.4836  198.6706  9.3  7    93   0.23  300.0000  30000.0000 
+ 5 3  37.2736   7.9144    9.4  6.5  35   0.77  110.0000  11000.0000 
+ 6 0  96.5600   155.6238  10   2.4  62   0.28  0.0006    504.4824   
+ 7 0  184.9011  152.5227  9.4  4.1  176  0.21  0.0005    324.7885   
+ 8 0  -19.1775  -2.6373   11   1.2  316  0.6   0.0009    2314.0616  
+@end example
+
+
+In the table below, each column is explained with the column counting
+beginging from zero. Counting the columns is intentionally started
+from zero to fit the way most programming languages count (starting
+from zero).
+
+@table @code
+@item COLUMN 0
+Your identifier for each profile. You can set an ID for each profile
+in this column. MockGals completely ignores what is in this column,
+the identifier you choose for a galaxy is a purely subjective matter!
+Therefore, if you don't need IDs for your mock galaxies, you can just
+set all the values in this column to the same value, for example
+@code{0}, it makes no difference for MockGals!
+
+Currently MockGals only reads numbers in the table, so after mockgals
+finishes, if your IDs have non-numeric characters in them (for example
+alphabetical characters), it will put a @code{-9999} in place of that
+ID. This will be corrected in future updates to keep the same
+alphabetic ID you had set.
+
+@item COLUMN 1
+The functional type of profile, see @ref{Object profiles}. In general,
+you can set a profile value from any of the following functions:
+S@'ersic, Moffat or Gaussian or Point. The codes for these three are
+respectively 0, 1, 2, 3. Point is used to show a star where only one
+pixel will be filled.
+
+@item COLUMN 2
+The position of the center of the profile along the first axis of the
+FITS image which is the horizontal axis when viewed in ds9. This value
+can be any floating point number such as larger than the image
+boundary or a negative value. Any profile that does not overlap with
+the image within its truncation radius will be ignored. The fractional
+value is very important for sharper profiles, see @ref{Galaxies}.
+
+Note that in the FITS standard, the middle of the first pixel in both
+axises (which is the bottom left pixel when viewed in ds0) is
+considered to have coordinates @code{(1,1)}. So for example the point
+@code{(1.51,1)} will be in the pixel positioned on the second column
+and first row of the FITS image. 
+
+@item COLUMN 3
+Same as @code{COLUMN 2}, but for the vertical axis.
+
+@item COLUMN 4
+Radial parameter of profile. Depending on the profile, this value
+determines the radial paramter. In all cases the units are pixels.
+
+@itemize
+@item
+Sersic: The effective radius (@mymath{r_e}).
+@item
+Moffat & Gaussian: The FWHM.
+@item
+Point: Ignored.
+@end itemize
+
+@item COLUMN 5
+Sharpness parameter of the profile. This value will only be used for
+the S@'ersic and Moffat functions that require a second paramter to determine their sharpness, see @ref{Object profiles}.
+
+@itemize
+@item 
+S@'ersic: The S@'ersic index (@mymath{n})
+@item
+Moffat: @mymath{\beta}.
+@item
+Gaussian & Point: Ignored.
+@end itemize
+
+@item COLUMN 6
+The position angle of the profile, see @ref{Defining an
+ellipse}. Ignored for Point profiles.
+
+@item COLUMN 7
+The axis ratio of the profile, see @ref{Defining an ellipse}. Ignored
+for Point profiles.
+
+@item COLUMN 8
+The total signal to noise (SN) of the profile. SN is defined as the
+average flux in the profile (its total flux divided by its area within
+the truncation radius) divided by the standard deviation of the
+noise.
+
+@item COLUMN 9
+The total flux in the profile. This column is filled in by MockGals,
+it can be filled with any value on the input file, but after MockGals
+finishes, this column is filled up.
+
+@end table
 
 
 
@@ -1396,25 +1608,283 @@ reads that table and how best to prepare it.
 
 
 
-@node How it works,  , Mock Parameters, Top
+@node How it works,  , Mock parameters, Top
 @chapter How mockgals works
-In this section we will give a complete review on how MockGals works
-and how this is implemented in its coding in order to facilitate your
-reading of the code and possibly modifying it and making it better.
+This chapter is for those readers who are interested in knowing how
+MockGals works. As discussed in @ref{Good Science}, we believe it is
+extremely important for you to be able to easily understand the
+details of the code without needing to invest a lot of time. We are
+not shy of the mistakes we might have made or the bad methods we might
+have chosen to do a certain task.
+
+In fact the reason behind writing this chapter is precisely to
+showcase the bare truth behind MockGals, to make you feel comfortable
+with looking through the code so you can find such mistakes or crude
+methods and hopefully inform us, or even better, join us in making it
+a good free and transparent tool for every Astronomer to use and learn
+from. Exposing the most intricate details is how we believe we can
+solve any unseen problems.
+
+We have tried to be as loyal as possible to the
+@url{http://www.gnu.org/prep/standards/,GNU Coding standards} in
+writing MockGals. This will hopefully help in understanding the coding
+style easily. 
+
+Lets assume that you have downloaded and unpacked or cloned MockGals,
+see @ref{MockGals Install} in the @file{MG/} directory. In this
+chapter all the files and folders will be discussed in relation to
+this directory. For the sake of simplicity, we will also choose a
+short name @file{SRC/} for the @file{MG/src/} directory.
+
+This chapter of the manual will be the part that undergoes the most
+change, therefore it can never be considered as a complete reference,
+it can only be viewed as a simple explanations of the functions in
+English and not in C.
+
+@menu
+* Reading method::              Our recommendation on how to read this chapter.
+* Program flow::                Explanation on the flow and functions in MockGals.
+@end menu
 
 
 
 
 
+@node Reading method, Program flow, How it works, How it works
+@section How to read this chapter
+In order to be able to follow this chapter, it is easiest if you open
+the code and the Info version of this manual in Emacs, each with its
+own ``window'' in a wide ``frame'', so you can see both this
+explanation and the code side by side. This will allow you to make
+changes and see the changes immediately with the Emacs compile
+command: @kbd{M-x compile} (and on subsequent calls, @kbd{M-x
+recompile}). 
+
+In case you want to compile the code and see the results
+simultaneously, remove the @code{#} from @code{# ./mockgals -mn} in
+@file{./MG/Makefile} so MockGals will be called to run as soon as the
+compilation finishes, without requiring any inputs from you! This will
+speed things up for you! You can chanage the options to any option you
+would like.
+
+Alternatively, if you aren't too faimilar with Emacs (in which case we
+strongly recommend to become familiar with it!) or you just want a
+fast preview, Github provides an exellent frame work. Go to
+@url{https://github.com/makhlaghi/mockgals, MockGals page on Github}
+and click on any directory (with the shape of a folder) or source code
+file to see the contents of that directory or file. Github tries to do
+a good job in color coding the coding grammer of the program, which is
+good for a fast online check of a section of the code. Emacs is
+fabulous at this job!
 
 
 
 
 
+@node Program flow,  , Reading method, How it works
+@section Program flow and functions
+
+As in any C/C++ program, @code{main()} is the place to start reading
+MockGals, you can find this function defined in
+@file{SRC/main.c}. In MockGals, @code{main()} is just a connector
+between two main types of functions: the ones that read the user input
+and set the default values that are defined in @code{MG/src/ui.c} and
+the one that actually makes the mock image: @code{mockimg()} based on
+those input values. @code{mockimg()} is defined in
+@file{SRC/mock.c}.
+
+@menu
+* Defining settings::           Reading input or setting the default values.
+* 2D arrays::                   2D arrays in MockGals(in C) and FITS.
+* Making canvas::               Making the canvas to build the galaxies into.
+@end menu
 
 
 
 
+
+@node Defining settings, 2D arrays, Program flow, Program flow
+@subsection Reading input or setting default values
+The functions in @file{SRC/ui.c} are very simple functions that can
+easily be understood. All of MockGals' parameters are stored as
+variables in the @code{mockparams} structure that is defined in
+@file{SRC/mock.h}. This is why the pointer to this structure is the
+input to all the functions in @file{SRC/ui.c}, where they fill it up.
+
+Once all the paramters are set and the program enters
+@code{mockimg()}, which you can find in @file{SRC/mock.c}. the
+exciting part begins to begin. First the PSF is either made or read
+from a FITS file in the function @code{readormakepsf()}, this function
+also checks for the sides of the input PSF FITS image to be odd
+numbers and also makes sure that the sum of the PSF is unity.  If the
+PSF image is also of any other type than a @code{float}, this function
+will make sure that the array that goes into the MockGals is a float.
+
+
+
+
+
+@node 2D arrays, Making canvas, Defining settings, Program flow
+@subsection 2D arrays, in C and FITS
+
+Before continuing it is important to mention a very important fact
+about 2D arrays. In C, an array is a contiguous set of elements (of
+what ever data type, like @code{int} or @code{float}, that you are
+using). This generic 1D array can easily be interpreted as a 2D array
+if its length, or the number of its elements, can be written as
+@mymath{a\times b} where @mymath{a} & @mymath{b} are two integers.
+
+The first element of the array has index (0,0) in this 2D
+interpretation of a 1D array, the second element is defined as being
+on the second column of the first row, at (0,1), the third, on the
+third column of the first row (0,2) and so on. Taking @mymath{b} as
+the number of columns in the 2D array, then the @mymath{b}th element
+of the 1D array can be interpreted as being the first element of the
+second row at (1,0). In this fashion, we can easily find the element
+at (x, y) on our hypothetical 2D array by finding element number
+@mymath{x\times b+y} on the real 1D array. Recall that we took
+@mymath{b} to represent the number of columns in the hypothetical 2D
+array.
+
+There are methods to use an array of pointers to point to the starting
+positions of each row in a C array and thus work on that array of
+pointers to create a better abstraction to of a 2D array. The
+advantage is that you can easily call element (x, y) with
+@code{a[x][y]} instead of @code{a[x*b+y]} as we explained above.
+
+But this level of abstraction is not without its costs. First of all
+you have to allocate another array of pointers (which are 8 bytes or
+64 bits on most current systems and thus much larger than an int or
+float which are usually only 4 bytes) This will take more memory on
+your system, especially if your images become large or numerous. Also,
+we have to consider that the CPU actually sees @code{a[x][y]} expanded
+to @code{*(*(a+i)+j)} where @code{*} is the dereference operator, not
+a multiple operator. We therefore see that calling element (x,y) as
+@code{a[x][y]} is both more CPU and memory intensive than calling it
+with @code{a[x*b+y]}.
+
+Another extremely useful aspect of acknowledging that we actually have
+a 1D array is when we want to just go over all of the elements. For
+example to calculate the sum of all the elements. In such cases we can
+totally ignore the 2D assumption and work as if we were working on a
+1D array (define one looping paramter, not two), see the loop in
+@ref{making binary image example}, this will result in a faster, less
+buggy and cleaner code.
+
+Based on these arguments, in MockGals we always find pixel (@code{x},
+@code{y}) on an array (lets name it @code{a}) which consider as having
+@code{b} columns with @code{a[x*b+y]}.
+
+Until now were were only considering arrays as defined in C and other
+languages that are based on it for example C++, Java, Python,
+etc. Unfortunately, the FITS standard is defined based on Fortran,
+which has two major differences with C that make a difference when we
+want to use the values from the FITS headers or when we want to
+interpret the FITS positions. The two major differences are:
+
+@itemize
+@item 
+Counting begins from 1 not 0.
+
+@item
+The second element of the 1D array is interpreted as being on (1,0) in
+the 2D illusion. Recall that in C, this same element was consdiered to
+be positioned at (0,1).
+@end itemize
+
+So in general a point positioned at @mymath{(x,y)} in a FITS image is
+positioned at @mymath{(y-1,x-1)} in the C array. Also the FITS header
+keyword @env{NAXIS1} is actually the number of columns in C and
+@env{NAXIS2} is the number of rows.
+
+
+@node Making canvas,  , 2D arrays, Program flow
+@subsection Making the canvas
+
+All the input parameters, possible input table and PSF have been read,
+now we are in @code{mockimg()} (@file{SRC/mock.c}) and the first thing
+we have to do is making the canvas (the array that will hold the final
+pixel values).
+
+It might seem to be an easy job: just allocate (with @code{calloc()}
+ofcourse to make a white a clean canvas) an array the size of the
+desired image. But unfortunately things aren't that simple! This is
+because we have to convolve the image with the PSF and the standard
+tool to do that has an unwanted consequence that we should take into
+account, see @ref{DFTdemo}. If we ignore this very serious consequence
+of our convolution method, the galaxies or the parts of galaxies that
+lie on the edges of the images will be affected.
+
+The image is convolved with the PSF using the
+@url{http://www.fftw.org/, FFTW3} package. It provides some functions
+to do very fast and accurate convolutions using discrete fourier
+transform (DFT) on the image and the Kernel which is the array keeping
+the PSF in our case. The basic concept behind DFT is very interesting
+and is far beyond the scope of this short manual. The book Digital
+Image Processing by Gonzalez and Woods gives a very nice introductory
+overview of the basic concept behind this facinating application of
+the fourier transform concept in a descrete space.
+
+The most important consequence of DFT is that the sides of the image
+will not be correctly blurred. To demonstrate this, we manually
+changed half of the pixel values in an input image to MockGals to 0
+and the other half to 1 by adding this simple function just after
+making the mock galaxies (only for this example of course!). By
+placing the following code right after the loop that makes the
+profiles one by one in @code{mockimg()}. 
+
+@anchor{making binary image example}
+@example
+/********************************************************************/
+for(i=0;i<nsize;i++)
+  @{
+    if(i<ns0/2*ns1) img[i]=0;
+    else            img[i]=1;
+  @}
+array_to_fits("tmp.fits", NULL, "NOCONV", FLOAT_IMG, img, ns0, ns1);
+/********************************************************************/
+@end example
+
+@noindent
+@code{array_to_fits()} is defined in @file{SRC/fitsarrayvv.c}.
+We show things like this to encourage you to play with the code and
+change it so you can learn the code better. This is the whole purpose
+that the source code is free, so you can read it, modify it, learn
+from it and finally correct it. This changing of values makes all the
+trouble of making 45 mock profiles go to absolute waste!  But it is
+just for a temporary demonstration, so we won't change too much of the
+code! One note of caution if you do attempt to make temporary changes
+in the code like this: Put some large segments of commented notes
+(like this example) around the code you have added temporarily to
+clearly mark them. In more complicated cases, you might forget to
+remove one line after a test and it might take hours to find it again!
+In future examples we will not put these lines in the text.
+
+The resulting array (after turning it to a binary image) before
+convolution can be seen on the left of @ref{DFTdemo}. To save the
+convolved image, we just run the @code{array_to_fits()} line, after
+calling @code{convolve()} (which is defined in
+@file{SRC/freqdomain.c}).
+
+@float Figure, DFTdemo
+@center@image{./mockgals-figures/s7_dft1,5cm,,./mockgals-figures/s7_dft1.jpg,.jpg}@image{./mockgals-figures/s7_dft2, 5cm,,./mockgals-figures/s7_dft2.jpg,.jpg}
+
+@caption{Left: A binary image, with half of the pixels being zero, the
+other half 1. The kernel used to convolve is the same PSF as
+@ref{quickpreview}. }
+@end float
+
+We see from this example that due to the nature of DFT, the sides will
+become darker than they should. The number of pixels that become
+darker on the sides is half the size of the PSF, so if the PSF is a
+box of 15 pixels width, 7 pixels of each side will become darker. To
+correct this defect the canvas we allocate to build the galaxy image
+on is larger by than the actual desired output image by the same size,
+namely, haf the PSF width, the new sizes are named @code{ns0} and
+@code{ns1}. After convolving the image we @code{floatshrinkarray()} to
+crop the central parts. with this correction we can be sure that the
+mock galaxies on the edges of our image have the same brightess as
+they would have after convolution of those in the center.
 
 
 

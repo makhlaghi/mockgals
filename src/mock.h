@@ -47,6 +47,7 @@ struct mockparams
   int vpsf;			/* View the PSF used. */
   int vnoconv;			/* View the not convolved image. */
   int vconv;			/* View the convolved image. */
+  char *initcomments;		/* Comments of the input table. */
   double *profileparams;	/* Table of profile parameters. */
   size_t numppcols;		/* Number of columns in the above. */
   size_t nummock;		/* Number of mock profiles. */

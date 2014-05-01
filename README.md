@@ -107,7 +107,17 @@ personally configured my linux system).
 
 Future updates:
 ------------
-0. Make a nice documentation.
+
+The list below is the list of things I can think of now that can make
+MockGals a much more workable tool. I plan to work on these in the
+future, when ever I get time. If you are interested in coding and would
+want to help in adding these functionalities to it, it would be great,
+please contact me and we can put them into action.
+
+My final aim is to be able to completely simulate an observation night
+at any telescope and make artifitial data so that we can test our
+observational methods with it.
+
 1. Add more functionality:
    - Positioning of stars.
    - 2D fits to galaxy light profiles.
@@ -115,7 +125,15 @@ Future updates:
    - Add a library of real objects from HST images to use.
    - Include instrumental defects: distortions, 
      various noise properties and varing sky among many.
+   - Read positional paramters of each mock object in RA 
+     and Dec. The user has to define the image center in RA 
+     and Dec also and size in angular scales. With this 
+     option physical criteria like extinction laws can also 
+     come into play making it more realistic.
 2. Work on a better user experience.
+   - Read and write to FITS tables.
+   - Keep the comments and IDs (possibly with letters) of the 
+     original input table.
 3. Fix any bugs I have not found yet!
 
 Comments and suggestions:

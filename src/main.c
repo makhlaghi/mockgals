@@ -67,6 +67,8 @@ main(int argc, char *argv[])
   mockimg(&p);			      /* mock.h */
   
   free(p.profileparams);
+  if(p.initcomments!=NULL) 	/* The input table might have had */
+    free(p.initcomments);	/* comments, free the space.      */
 
   if(p.verb)
     {

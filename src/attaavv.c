@@ -35,18 +35,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /* Get the comments string, add it to the comments array of
    pointers.  */
 void 
-ForComments(char *comments, long int *buff_comments, char *str)
+ForComments(char **comments, long int *buff_comments, char *str)
 {
-  /* If it is getting longer than the actual length, make the comments
-     array longer: */
-  if ((long)(strlen(comments)+strlen(str))>=*buff_comments) 
+  /* If the comments array is not already allocated (is NULL),
+     allocate it! */
+  if(*comments==NULL)
     {
-      *buff_comments+=BUFFER_NUM;
-      comments = realloc(comments, *buff_comments*sizeof(char));
-      assert(comments != NULL);
+      *comments=malloc(*buff_comments*sizeof(char));
+      assert(*comments!=NULL);
     }
 
-  strcat(comments, str);
+  /* If it is getting longer than the actual length, make the comments
+     array longer: */
+  if ((long)(strlen(*comments)+strlen(str))>=*buff_comments) 
+    {
+      *buff_comments+=BUFFER_NUM;
+      *comments = realloc(*comments, *buff_comments*sizeof(char));
+      assert(*comments != NULL);
+    }
+
+  strcat(*comments, str);
 }
 
 
@@ -174,7 +182,8 @@ AddRow(struct ArrayInfo *intable, long int *buff_num_rows,
 	 inform the user and replace it with CHAR_REPLACEMENT*/
       intable->d[z_index+num_cols++]=strtod(strdata, ExtraString);
       if (strlen(*ExtraString)>0)
-	replacenan(intable, num_cols-1, strdata, buff_num_replacements);
+	replacenan(intable, num_cols-1, strdata, 
+		   buff_num_replacements);
      
       /* Incase the number of columns has exceeded the desired value
 	 abort the program and inform the user. */
@@ -232,7 +241,8 @@ correctsizes(struct ArrayInfo *intable)
   /* Shrink the data array to the correct size: */
   if (intable->s0!=0 && intable->s1!=0)
     {
-      intable->d=realloc(intable->d, intable->s0*intable->s1*sizeof(double));
+      intable->d=realloc(intable->d, 
+			 intable->s0*intable->s1*sizeof(double));
       if(intable->d == NULL)
         {
 	  printf("\n### Error: Data array could ");
@@ -242,12 +252,14 @@ correctsizes(struct ArrayInfo *intable)
     }
 
   /* Shrink the comments array: */
-  intable->c=realloc(intable->c, strlen(intable->c)*sizeof(char));
-  if(intable->c == NULL)
+  if(intable->c!=NULL)
     {
-      printf("\n### Error: Comments could ");
-      printf("not be reallocated.\n\n");
-      exit(EXIT_FAILURE);
+      intable->c=realloc(intable->c, strlen(intable->c)*sizeof(char));
+      if(intable->c == NULL)
+	{
+	  printf("\n### Error: Couldn't reallocate comments.\n\n");
+	  exit(EXIT_FAILURE);
+	}
     }
 
   /* Shrink the replacements array: */
@@ -311,7 +323,7 @@ readasciitable (const char *filename, struct ArrayInfo *intable)
 
   /* Initialize all the sizes in the structure 
      to zero for later steps */
-  intable->c=malloc(buff_comments*sizeof(char));
+  intable->c=NULL;
   intable->s0=0;
   intable->s1=0;
   intable->nr=0;
@@ -332,14 +344,15 @@ readasciitable (const char *filename, struct ArrayInfo *intable)
       if ((long int) strlen(str)>MAX_ROW_CHARS-10)
         {
 	  printf("### Error: The number of characters in\n");
-	  printf("    line %ld are very near the buffer\n", line_counter); 
-	  printf("    limit set by MAX_ROW_CHARS, make it larger.\n\n");
+	  printf("   line %ld are very near the buffer\n", 
+		 line_counter); 
+	  printf("   limit set by MAX_ROW_CHARS, make it larger.\n\n");
 	  exit(EXIT_FAILURE);
         }
 
       /* Incase the line is a comment line: */
       if(str[0]==COMMENT_SIGN) 
-	ForComments(intable->c, &buff_comments, str);
+	ForComments(&intable->c, &buff_comments, str);
 
       /* If a line doesn't begin with a COMMENT_SIGN, it is 
 	 read as data and put into an array of data values. */

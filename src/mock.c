@@ -880,25 +880,31 @@ savemockinfo(struct mockparams *p)
   ai.s1=p->numppcols;
   ai.d=p->profileparams;
 
-  sprintf(temp, "# Properties of %lu mock galaxies.\n", p->nummock);
-  strcpy(ai.c, temp);
-  sprintf(temp, "# The sky valued is assumed to be: %.2f\n", p->sky);
-  strcat(ai.c, temp);
-  sprintf(temp, "# Truncation at %.2f * radial parameter\n# \n", 
-	  p->trunc);
-  strcat(ai.c, temp);
-  strcat(ai.c, "# 0: ID.\n");
-  strcat(ai.c, "# 1: 0: Sersic, 1: Moffat, 2: Gaussian.\n");
-  strcat(ai.c, "# 2: X position (FITS definition).\n");
-  strcat(ai.c, "# 3: Y position (FITS definition).\n");
-  strcat(ai.c, "# 4: Sersic n or Moffat beta.\n");    
-  strcat(ai.c, "# 5: Sersic re or Moffat FWHM.\n");    
-  strcat(ai.c, "# 6: Position angle, degrees.\n");    
-  strcat(ai.c, "# 7: Axis ratio.\n");    
-  strcat(ai.c, "# 8: Signal to noise: ");
-  strcat(ai.c, "(average profile flux-sky)/sqrt(sky).\n");    
-  strcat(ai.c, "# 9: Total flux (Sky subtracted).\n\n"); 
-
+  if(p->initcomments==NULL)
+    {
+      sprintf(temp, "# Properties of %lu mock profiles.\n", 
+	      p->nummock);
+      strcpy(ai.c, temp);
+      sprintf(temp, "# The sky valued is assumed to be: %.2f\n", 
+	      p->sky);
+      strcat(ai.c, temp);
+      sprintf(temp, "# Truncation at %.2f * radial parameter\n# \n", 
+	      p->trunc);
+      strcat(ai.c, temp);
+      strcat(ai.c, "# 0: ID.\n");
+      strcat(ai.c, "# 1: 0: Sersic, 1: Moffat, 2: Gaussian, ");
+      strcat(ai.c, "3: Point.\n");
+      strcat(ai.c, "# 2: X position (FITS definition).\n");
+      strcat(ai.c, "# 3: Y position (FITS definition).\n");
+      strcat(ai.c, "# 4: Sersic re or Moffat FWHM.\n");    
+      strcat(ai.c, "# 5: Sersic n or Moffat beta.\n");    
+      strcat(ai.c, "# 6: Position angle, degrees.\n");    
+      strcat(ai.c, "# 7: Axis ratio.\n");    
+      strcat(ai.c, "# 8: Signal to noise: ");
+      strcat(ai.c, "(average profile flux-sky)/sqrt(sky).\n");    
+      strcat(ai.c, "# 9: Total flux (Sky subtracted).\n\n"); 
+    }
+  else ai.c=p->initcomments;
   writeasciitable (p->infoname, &ai, int_cols, 
 		   accu_cols, space, prec);
 }
@@ -1130,7 +1136,10 @@ mockimg(struct mockparams *p)
     }
   if(p->verb)
     printf("\n\n");
-  
+
+  /* The user wants to see the unconvoved image. Since the image to
+     convolve is larger than the final image, first crop out the
+     sides, then save that central part. */
   if(p->vnoconv)
     {
       floatshrinkarraytonew(img, ns0, ns1, hs0, hs1, 

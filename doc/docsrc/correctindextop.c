@@ -13,7 +13,7 @@ main(int argc, char *argv[])
 
   char initline[]="Next: <a href=\"About.html#About\" accesskey=\"n\" rel=\"next\">About</a>, Previous: <a href=\"../dir/index.html\" accesskey=\"p\" rel=\"prev\">(dir)</a>, Up: <a href=\"../dir/index.html\" accesskey=\"u\" rel=\"up\">(dir)</a> &nbsp; [<a href=\"#SEC_Contents\" title=\"Table of contents\" rel=\"contents\">Contents</a>]</p>\n";
 
-  char changetoline[]="Next: <a href=\"About.html#About\" accesskey=\"n\" rel=\"next\">About</a>, Previous: <a href=\"../mockgals.html\" accesskey=\"p\" rel=\"prev\">(dir)</a>, Up: <a href=\"../mockgals.html\" accesskey=\"u\" rel=\"up\">(dir)</a> &nbsp; [<a href=\"#SEC_Contents\" title=\"Table of contents\" rel=\"contents\">Contents</a>]</p>\n";
+  char changetoline[]="Next: <a href=\"About.html#About\" accesskey=\"n\" rel=\"next\">About</a>, Previous: <a href=\"../index.html\" accesskey=\"p\" rel=\"prev\">(MockGals Home)</a>, Up: <a href=\"../index.html\" accesskey=\"u\" rel=\"up\">(MockGals Home)</a> &nbsp; [<a href=\"#SEC_Contents\" title=\"Table of contents\" rel=\"contents\">Contents</a>]</p>\n";
 
   in=fopen(argv[1], "r");
   out=fopen(tmpname, "w");
