@@ -2,7 +2,7 @@ mockgals
 =========
 
 Make mock astronomical profiles (galaxy, star, ...) in a FITS file.
-Please see [MockGal's Webpage](http://astr.tohoku.ac.jp/~akhlaghi/mockgals.html)
+Please see [MockGal's Webpage](http://astr.tohoku.ac.jp/~akhlaghi/mockgals)
 for a complete documentation. This here is just a short summary.
 
 Description:
