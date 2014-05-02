@@ -40,7 +40,7 @@ $$ around the math.
 @c info and plaintext
 @ifinfo
 @macro mymath{arg}
-@math{\arg\}
+@inlineraw{info,$\arg\$}
 @end macro
 
 @macro dispmath{arg}

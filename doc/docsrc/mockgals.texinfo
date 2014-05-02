@@ -82,7 +82,6 @@ might always be unwanted errors or parts of the text that can be
 explained better. I will try to correct any that I find.
 
 @ifhtml
-
 To navigate easily in this webpage, you can use the @code{Next},
 @code{Previous}, @code{Up} and @code{Contents} links in the top and
 bottom of each page. @code{Next} and @code{Previous} will take you to
@@ -100,13 +99,42 @@ with @code{\(...\)} and equations that are positioned in the center of
 a separate line for them selves (displayed mathematics) are marked
 with @code{$$...$$}.
 @end ifhtml
+
+@ifinfo
+This manual contains figures and equations, both of which cannot be
+shown on in plain text or on the command line, In order to enable you
+to follow the argument, we have these conventions for figures and
+equations:
+@itemize
+@item
+The location of the figures are given based on the position of the
+source file. If you have not downloaded the full source, you can find
+the figures in this address online: 
+@url{http://astr.tohoku.ac.jp/~akhlaghi/mockgals/mockgals/mockgals-figures/}
+
+@item
+In general we have two types of equations, inline equations and
+display equations. Inline equations are generally short and are placed
+in between the lines of a paragraph. Display equations are generally
+long and have a devoted line for them selves. In this manual inline
+equations are marked with $...$ (for example $E=mc^2$) and display
+equations are marked in a separate line with $$...$$, for example:
+
+@center $$F=ma$$
+
+@noindent
+To write equations in ASCII characters we use the method of TeX, if
+you are not familiar, you can learn here:
+@url{http://en.wikibooks.org/wiki/LaTeX/Mathematics}.
+@end itemize
+@end ifinfo
 @end ifnottex
 
 @menu
-* About::                       This manual, why we wrote it and how to read it.
+* About::                       Why we wrote this and how to read it.
 * Quick start::                 To get a fast start, have a look here.
-* Concepts::                    The main methods and functions used in MockGals.
-* Installation::                Complete explanation on how to install MockGals.
+* Concepts::                    The main methods and functions used.
+* Installation::                How to install MockGals.
 * Configuring::                 Explanation on how to tell MockGals what to do.
 * Mock parameters::             The parameters that are input into MockGals.
 * How it works::                Detailed explanation of the coding.
@@ -1589,7 +1617,11 @@ finishes, this column is filled up.
 
 @end table
 
-
+In MockGals, we use the
+@url{https://github.com/makhlaghi/attaavv,ATTAAVV} to read an ASCII
+file to a C array and write a C array to an ASCII file. ATTAAVV is
+distributed under GPL v3+ and can easily be incorporated into any
+program.
 
 
 
@@ -1696,7 +1728,8 @@ those input values. @code{mockimg()} is defined in
 @menu
 * Defining settings::           Reading input or setting the default values.
 * 2D arrays::                   2D arrays in MockGals(in C) and FITS.
-* Making canvas::               Making the canvas to build the galaxies into.
+* Making the canvas::           Array to build the galaxies on.
+* Making the profiles::         How MockGals builds each profile.
 @end menu
 
 
@@ -1724,52 +1757,63 @@ will make sure that the array that goes into the MockGals is a float.
 
 
 
-@node 2D arrays, Making canvas, Defining settings, Program flow
+@node 2D arrays, Making the canvas, Defining settings, Program flow
 @subsection 2D arrays, in C and FITS
 
 Before continuing it is important to mention a very important fact
-about 2D arrays. In C, an array is a contiguous set of elements (of
-what ever data type, like @code{int} or @code{float}, that you are
-using). This generic 1D array can easily be interpreted as a 2D array
-if its length, or the number of its elements, can be written as
-@mymath{a\times b} where @mymath{a} & @mymath{b} are two integers.
+about 2D arrays. A 2D array or matrix is a structure composed of a
+certain number of columns and rows, forming a rectangle. It is
+customary to label the elements on an array with a pair
+@mymath{(x,y)}, where the first number specifies the row number of
+that element and the second specifies its column number.
 
-The first element of the array has index (0,0) in this 2D
-interpretation of a 1D array, the second element is defined as being
-on the second column of the first row, at (0,1), the third, on the
-third column of the first row (0,2) and so on. Taking @mymath{b} as
-the number of columns in the 2D array, then the @mymath{b}th element
-of the 1D array can be interpreted as being the first element of the
-second row at (1,0). In this fashion, we can easily find the element
-at (x, y) on our hypothetical 2D array by finding element number
-@mymath{x\times b+y} on the real 1D array. Recall that we took
-@mymath{b} to represent the number of columns in the hypothetical 2D
-array.
+In C, an array is a contiguous set of elements (of what ever data
+type, like @code{int} or @code{float}, that you are using). This
+generic 1D array can easily be interpreted as a 2D (or any number of
+dimensions) array. To do that, it must be possible for its length, or
+the number of its elements, to be written as @mymath{a\times b} where
+@mymath{a} & @mymath{b} are both integers. In C the @code{i}th element
+of an array @code{A} is denoted by @code{A[i]} and counting begins
+from zero.
+
+The first element of any array has index (0,0) in this 2D illusion of
+a real 1D array. The second element is located at (0,1).  The third,
+on the third column of the first row (0,2) and so on. Taking
+@mymath{b} as the number of columns in the 2D array, then the
+@mymath{b}th element of the 1D array can be interpreted as being the
+first element of the second row at (1,0). In this fashion, we can
+easily find the element at (x, y) on our hypothetical 2D array by
+finding element number @mymath{x\times b+y} on the real 1D
+array. Recall that we took @mymath{b} to represent the number of
+columns in the hypothetical 2D array. So to see the value of the
+(@code{x},@code{y}) element on the 2D illusion we just have to call
+@code{a[x*b+y]}.
 
 There are methods to use an array of pointers to point to the starting
 positions of each row in a C array and thus work on that array of
 pointers to create a better abstraction to of a 2D array. The
 advantage is that you can easily call element (x, y) with
-@code{a[x][y]} instead of @code{a[x*b+y]} as we explained above.
+@code{a[x][y]}.
 
 But this level of abstraction is not without its costs. First of all
-you have to allocate another array of pointers (which are 8 bytes or
-64 bits on most current systems and thus much larger than an int or
-float which are usually only 4 bytes) This will take more memory on
-your system, especially if your images become large or numerous. Also,
-we have to consider that the CPU actually sees @code{a[x][y]} expanded
-to @code{*(*(a+i)+j)} where @code{*} is the dereference operator, not
-a multiple operator. We therefore see that calling element (x,y) as
+you have to allocate another array of pointers the size of the number
+of rows in the image. Pointers are 8 bytes or 64 bits on most current
+systems and thus much larger than an @code{int} or @code{float} which
+are usually only 4 bytes. This will take more memory on your system,
+especially if your images become large or numerous. Also, we have to
+consider that the C actually sees @code{a[x][y]} as
+@code{*(*(a+i)+j)}, where @code{*} is the dereference operator, not a
+multiple operator. Therefore we see that calling element (x,y) as
 @code{a[x][y]} is both more CPU and memory intensive than calling it
 with @code{a[x*b+y]}.
 
-Another extremely useful aspect of acknowledging that we actually have
-a 1D array is when we want to just go over all of the elements. For
-example to calculate the sum of all the elements. In such cases we can
-totally ignore the 2D assumption and work as if we were working on a
-1D array (define one looping paramter, not two), see the loop in
-@ref{making binary image example}, this will result in a faster, less
-buggy and cleaner code.
+Another useful aspect of acknowledging that we actually have a 1D
+array is when we want to just go over all of the elements. For example
+to calculate the sum of all the elements. In such cases we can totally
+ignore the 2D assumption and work as if we were working on a 1D array
+(define one looping paramter, not two), see the loop in @ref{making
+binary image example}, this will result in a faster, less buggy and
+cleaner code.
 
 Based on these arguments, in MockGals we always find pixel (@code{x},
 @code{y}) on an array (lets name it @code{a}) which consider as having
@@ -1795,10 +1839,24 @@ be positioned at (0,1).
 So in general a point positioned at @mymath{(x,y)} in a FITS image is
 positioned at @mymath{(y-1,x-1)} in the C array. Also the FITS header
 keyword @env{NAXIS1} is actually the number of columns in C and
-@env{NAXIS2} is the number of rows.
+@env{NAXIS2} is the number of rows. One place to see this difference
+is in the ds9 FITS viewer. Of course, MockGals was designed to
+completely hide this for the outside user such that the inputs and
+outputs are all done in the FITS standard. On ds9, the first element
+of the array is the bottom left pixel.
+
+In order to read from and write to a FITS image with relative ease we
+have written a very simple library so that only by calling one
+function, the pixels of one FITS image will be saved into a C
+array. It is @url{https://github.com/makhlaghi/fitsarrayvv, available
+on Github} and can easily be incorporated into any program. In
+MockGals we are using this program to interact with a FITS image.
 
 
-@node Making canvas,  , 2D arrays, Program flow
+
+
+
+@node Making the canvas, Making the profiles, 2D arrays, Program flow
 @subsection Making the canvas
 
 All the input parameters, possible input table and PSF have been read,
@@ -1828,20 +1886,21 @@ the fourier transform concept in a descrete space.
 The most important consequence of DFT is that the sides of the image
 will not be correctly blurred. To demonstrate this, we manually
 changed half of the pixel values in an input image to MockGals to 0
-and the other half to 1 by adding this simple function just after
+and the other half to 1 by adding the following simple loop just after
 making the mock galaxies (only for this example of course!). By
 placing the following code right after the loop that makes the
-profiles one by one in @code{mockimg()}. 
+profiles one by one in @code{mockimg()}.
 
 @anchor{making binary image example}
 @example
 /********************************************************************/
-for(i=0;i<nsize;i++)
-  @{
-    if(i<ns0/2*ns1) img[i]=0;
-    else            img[i]=1;
-  @}
-array_to_fits("tmp.fits", NULL, "NOCONV", FLOAT_IMG, img, ns0, ns1);
+/********************************************************************/
+
+for(i=0;i<nsize;i++)      /*'nsize': number of elements in 'img[]'. */
+  img[i]=i>nsize/2;       /* 1 if true, 0 if flase. */
+
+array_to_fits("tmp.fits", NULL, "NOCONV", FLOAT_IMG, img, ns0, ns1);  
+
 /********************************************************************/
 @end example
 
@@ -1850,15 +1909,17 @@ array_to_fits("tmp.fits", NULL, "NOCONV", FLOAT_IMG, img, ns0, ns1);
 We show things like this to encourage you to play with the code and
 change it so you can learn the code better. This is the whole purpose
 that the source code is free, so you can read it, modify it, learn
-from it and finally correct it. This changing of values makes all the
-trouble of making 45 mock profiles go to absolute waste!  But it is
-just for a temporary demonstration, so we won't change too much of the
-code! One note of caution if you do attempt to make temporary changes
-in the code like this: Put some large segments of commented notes
-(like this example) around the code you have added temporarily to
-clearly mark them. In more complicated cases, you might forget to
-remove one line after a test and it might take hours to find it again!
-In future examples we will not put these lines in the text.
+from it and finally correct it. 
+
+This changing of values makes all the trouble of making 45 mock
+profiles go to absolute waste! But it is just for a temporary
+demonstration, so we won't change too much of the code! One note of
+caution if you do attempt to make temporary changes in any code like
+this: put some large segments of commented notes (like this example)
+around the code you have added temporarily to clearly mark them. In
+more complicated cases, you might forget to remove one line after a
+test and it might take hours to find it again! In future examples we
+will not put these lines in example pieces of code.
 
 The resulting array (after turning it to a binary image) before
 convolution can be seen on the left of @ref{DFTdemo}. To save the
@@ -1869,9 +1930,10 @@ calling @code{convolve()} (which is defined in
 @float Figure, DFTdemo
 @center@image{./mockgals-figures/s7_dft1,5cm,,./mockgals-figures/s7_dft1.jpg,.jpg}@image{./mockgals-figures/s7_dft2, 5cm,,./mockgals-figures/s7_dft2.jpg,.jpg}
 
-@caption{Left: A binary image, with half of the pixels being zero, the
-other half 1. The kernel used to convolve is the same PSF as
-@ref{quickpreview}. }
+@caption{Left: A binary image, with half of the pixels being zero
+(black), the other half 1 (white). The kernel used to convolve is the
+same PSF as @ref{quickpreview}. Note how after convolution through
+DFT, the borders of the white region become dark.}
 @end float
 
 We see from this example that due to the nature of DFT, the sides will
@@ -1890,5 +1952,35 @@ they would have after convolution of those in the center.
 
 
 
+@node Making the profiles,  , Making the canvas, Program flow
+@subsection Making the profiles
+
+In order to be able to build the profiles most efficiently and most
+accurately, the canvas is not the only thing we need. In MockGals we
+have created a very simple Graph theory based approach to building the
+profiles.
+
+@menu
+* Graph canvas::        Graph based canvas.
+* Profiles on graph::   How we build the profiles using the graph.
+@end menu
+
+
+
+
+
+@node Graph canvas, Profiles on graph, Making the profiles, Making the profiles
+@subsubsection Graph canvas
+
+Graph theory enables a very easy method to parse through the pixels
+and their neighbors.
+
+
+
+
+@node Profiles on graph,  , Graph canvas, Making the profiles
+@subsubsection Building profiles on the graph
+
+Once the graph canvas is built, we can easily build the galaxies from their center to their outer parts.
 
 @bye

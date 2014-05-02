@@ -23,4 +23,7 @@ texi2any --docbook $TEXISRC
 texi2any --plaintext -o mockgals.txt $TEXISRC
 mv mockgals.info mockgals.txt mockgals.xml ./mockgals/
 
+#Also copy the source file:
+cp ./docsrc/mockgals.texinfo ./mockgals/
+
 

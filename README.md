@@ -3,7 +3,7 @@ mockgals
 
 Make mock astronomical profiles (galaxy, star, ...) in a FITS file.
 Please see [MockGal's Webpage](http://astr.tohoku.ac.jp/~akhlaghi/mockgals)
-for a complete documentation. This here is just a short summary.
+for a complete documentation. This README is just a short summary.
 
 Description:
 ------------
@@ -129,11 +129,12 @@ observational methods with it.
      and Dec. The user has to define the image center in RA 
      and Dec also and size in angular scales. With this 
      option physical criteria like extinction laws can also 
-     come into play making it more realistic.
+     come into play making it more realistic.راستی، فکر می کنم از نقل قولی که از فرانسیس بیکن توی صفحه اول ورژن پی.دی.اف دفترچه راهنما گذاشتم خوشت بیات ;-).
 2. Work on a better user experience.
    - Read and write to FITS tables.
    - Keep the comments and IDs (possibly with letters) of the 
      original input table.
+   - Add a form for users to provide their experience.
 3. Fix any bugs I have not found yet!
 
 Comments and suggestions:
