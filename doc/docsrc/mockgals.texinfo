@@ -1957,7 +1957,7 @@ they would have after convolution of those in the center.
 
 In order to be able to build the profiles most efficiently and most
 accurately, the canvas is not the only thing we need. In MockGals we
-have created a very simple Graph theory based approach to building the
+have created a very simple Graph based approach to building the
 profiles.
 
 @menu
@@ -1972,8 +1972,44 @@ profiles.
 @node Graph canvas, Profiles on graph, Making the profiles, Making the profiles
 @subsubsection Graph canvas
 
-Graph theory enables a very easy method to parse through the pixels
-and their neighbors.
+We want to build the profiles inside-out, in other words, we want to
+begin building the profile from its central pixel or the pixel in the
+image that is most nearest to it if the central pixel is out of the
+image. The reason we want to do this is because we want to integrate
+over the central pixels where it is very important, and stop
+integrating at a certain point beyond which there is no big difference
+between integration and the central pixel value.
+
+So once we find the first pixel to start with (the pixel closest to
+the center of the profile), we have to continuesly look around at its
+neighbors, and the neighbors of those neighbors to completely
+construct the galaxy. In this process we can stop integrating when the
+difference between integration over the pixel valu and the central
+pixel value become smaller than a user defined tollerance level. This
+type of searching is called
+@url{http://en.wikipedia.org/wiki/Breadth-first_search, Breadth first
+search} in graph theory.
+
+But doing this search without knowning the neighbors of a pixel before
+hand is very hard! For every pixel you have to search all eight
+neighbors and for each, you have to check if the assumed neighbor is
+lying outside the image boundaries or not! This checking is going to
+take a lot of the CPU power, especially if you want to do this over a
+large number of pixels for a large object.
+
+By looking at the image as a graph, we define the neighbors and the
+relation of the neighbors to each pixel before working on the image in
+one pass. Then in future passes, since the neighbors of all the pixels
+are already defined, we just go through them. In image processing we
+have two types of connectivity (neighbors): four and eight. A pixel is
+four connected to another if it touches the pixel on its
+sides. Therefore a pixel located at (@code{x},@code{y}) is four
+connected to the four pixels at @code{(x-1},@code{y}),
+(@code{x+1},@code{y}), (@code{x},@code{y-1}) and
+(@code{x},@code{y+1}).
+
+Also all the pixels don't have the same number of neighbors. For
+example in 8 connectivity
 
 
 
