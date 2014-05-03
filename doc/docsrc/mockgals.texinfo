@@ -1982,34 +1982,121 @@ between integration and the central pixel value.
 
 So once we find the first pixel to start with (the pixel closest to
 the center of the profile), we have to continuesly look around at its
-neighbors, and the neighbors of those neighbors to completely
-construct the galaxy. In this process we can stop integrating when the
-difference between integration over the pixel valu and the central
-pixel value become smaller than a user defined tollerance level. This
-type of searching is called
+neighbors, and the neighbors of those neighbors and so on, until we
+can completely construct the profile. In this process we can stop
+integrating when the difference between integration over the pixel
+value and the central pixel value becomes smaller than a user defined
+tollerance level. This type of searching is called
 @url{http://en.wikipedia.org/wiki/Breadth-first_search, Breadth first
 search} in graph theory.
 
 But doing this search without knowning the neighbors of a pixel before
-hand is very hard! For every pixel you have to search all eight
-neighbors and for each, you have to check if the assumed neighbor is
-lying outside the image boundaries or not! This checking is going to
-take a lot of the CPU power, especially if you want to do this over a
-large number of pixels for a large object.
+hand is very hard! For every pixel you have to search for all the
+neighbors and for each potential neighbor, you have to check if it is
+lying outside the image boundaries or not! This many checks for each
+pixel, is going to take a lot of our CPU's power, especially if you
+want to do this over a large number of pixels for a large object. In
+effect, it will slow down the program.
 
 By looking at the image as a graph, we define the neighbors and the
-relation of the neighbors to each pixel before working on the image in
-one pass. Then in future passes, since the neighbors of all the pixels
-are already defined, we just go through them. In image processing we
-have two types of connectivity (neighbors): four and eight. A pixel is
-four connected to another if it touches the pixel on its
-sides. Therefore a pixel located at (@code{x},@code{y}) is four
-connected to the four pixels at @code{(x-1},@code{y}),
-(@code{x+1},@code{y}), (@code{x},@code{y-1}) and
-(@code{x},@code{y+1}).
+relation of the neighbors to each pixel before working on the image,
+in one pass. Then in future passes, since the neighbors of all the
+pixels are already defined, we just go through them, not worrying
+about how many of them lie in the image. In image processing we have
+two types of connectivity (neighbors): four and eight. Generally we
+also want to have the ability to distinguish between such neighbors,
+so in some applications we can only look at the 4 connected neighbors
+and in others at the 8 connected neighbors.
 
-Also all the pixels don't have the same number of neighbors. For
-example in 8 connectivity
+A pixel is four connected to another if it touches the pixel on its
+sides. Therefore a pixel located at (@code{x},@code{y}) is four
+connected to the four pixels at (@code{x-1},@code{y}),
+(@code{x+1},@code{y}), (@code{x},@code{y-1}) and
+(@code{x},@code{y+1}). Adding these last four with the four pixels
+that are diagonally connected or (@code{x-1},@code{y-1}),
+(@code{x-1},@code{y+1}), (@code{x+1},@code{y-1}) and
+(@code{x+1},@code{y+1}), we get to the 8 connected pixels.
+
+The way we propose to achieve this goal is through a simple array
+keeping the positions of the neighbors for each pixel, lets call it
+@code{ngbs[]}.  Assuming the image has @code{s0} rows and @code{s1}
+columns, then @code{ngbs[]} will have @code{s0*s1*NGBSCOLS} elements,
+@code{NGBSCOLS} is explained below. @code{ngbs[]} is defined to be
+@code{size_t}, which can be thought of as @code{unsigned long} (8
+bytes on 64 bit machines).
+
+For each pixel in the image we have a row of @code{NGBSCOLS}
+columns. Column 1 until and including column 8 will contain the
+indexes of the maximum 8 possible neighbors. If there are less
+neighbors, we put a @code{NONINDEX=(size_t)(-1)=18446744073709551615}
+(on 64bit machines) after the last neighbor. This makes our neighbor
+searching tool very similar to how C defines strings (which end with
+the impossible character @code{\0}). In our case, the impossible value
+is @code{NONINDEX}. Since any 4 connected neighbor is also an
+8-connected neighbor, first the indices of the 8-connected neighbors
+are placed in these columns, and then the 4-connected
+neighbors. Column 0 keeps the index of the column where the four
+connected neighbors begin. The last column is reserved for those
+pixels that have all 8 neighbors and will use this to keep
+@code{NONINDEX}. Therefore @code{NGBSCOLS=1+8+1=10}.
+
+In this fashion, if we want the 8 connected neighbors of a pixel
+located at (@code{x},@code{y}), which has index @code{i=x*s1+y}, then
+a simple loop like the following will do the job:
+
+@example
+numngb=1;
+printf("%lu: ", i);
+do 
+  printf("%lu, ", ngbs[i*NGBSCOLS+numngb]);
+while(ngbs[i*NGBSCOLS+ ++numngb]!=NONINDEX); 
+printf("\b\b.\n");
+@end example
+
+If we want the list of 4 connected indexes to that pixel, we just
+simply change the first line to @code{numngb=n[i*NGBSCOLS];}.  As an
+example, assuming we have @code{s0=4} and @code{s1=4}, then the list
+of four and eight connected neighbors can easily be printed as below
+(by placing the code above in a loop over all the pixels). Note that
+we only need the indexes of each pixel in the actual array, we don't
+need the row and column number of each pixel. In the table below, the
+number before the colon (@code{:}) is the index of the pixel in
+question.
+
+@example
+--------------------------------------------------------------
+      8-connected neighbors       | 4-connected neighbors
+--------------------------------------------------------------
+0: 5, 1, 4.                       |    0: 1, 4.
+1: 6, 4, 2, 0, 5.                 |    1: 2, 0, 5.
+2: 7, 5, 3, 1, 6.                 |    2: 3, 1, 6.
+3: 6, 2, 7.                       |    3: 2, 7.
+4: 1, 9, 5, 8, 0.                 |    4: 5, 8, 0.
+5: 0, 2, 8, 10, 6, 4, 9, 1.       |    5: 6, 4, 9, 1.
+6: 1, 3, 9, 11, 7, 5, 10, 2.      |    6: 7, 5, 10, 2.
+7: 2, 10, 6, 11, 3.               |    7: 6, 11, 3.
+8: 5, 13, 9, 12, 4.               |    8: 9, 12, 4.
+9: 4, 6, 12, 14, 10, 8, 13, 5.    |    9: 10, 8, 13, 5.
+10: 5, 7, 13, 15, 11, 9, 14, 6.   |    10: 11, 9, 14, 6.
+11: 6, 14, 10, 15, 7.             |    11: 10, 15, 7.
+12: 9, 13, 8.                     |    12: 13, 8.
+13: 10, 8, 14, 12, 9.             |    13: 14, 12, 9.
+14: 11, 9, 15, 13, 10.            |    14: 15, 13, 10.
+15: 10, 14, 11.                   |    15: 14, 11.
+@end example
+@noindent
+In MockGals, @code{ngbs[]} is made and filled in the @code{imgngbs()}
+function which is defined in @code{SRC/pix.c}. @code{imgngbs()} does
+this job without any conditionals in the loops, thus it is very
+efficient. With an infra structure like this, we can go through all
+the neighbors of all the pixels or even all the neighbors of the
+neighbors, very fast, without worrying about how many neighbors of
+each pixel are in the image or what kind of connectivity we want, all
+the necessary information is in this one array. The code to do a
+breadth-first search with this structure can thus be very short and
+thus less buggy, easier to read and last but not least, more CPU
+efficent.
+
 
 
 
@@ -2017,6 +2104,7 @@ example in 8 connectivity
 @node Profiles on graph,  , Graph canvas, Making the profiles
 @subsubsection Building profiles on the graph
 
-Once the graph canvas is built, we can easily build the galaxies from their center to their outer parts.
+Now that the graph canvas is built, see @ref{Graph canvas} building
+the profiles is very easy with a very simple 
 
 @bye

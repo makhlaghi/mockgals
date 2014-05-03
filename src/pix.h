@@ -29,107 +29,11 @@ along with pix. If not, see <http://www.gnu.org/licenses/>.
 #ifndef PIX_H
 #define PIX_H
 
-#define NGBSCOLS 9
-
-struct pix;
-
-/* In some cases (for example when separating objects) we want some of
-   the neighbors (in the example, those that are not part of the
-   object) to be ignored. */
-struct pixlist
-{
-  int ignore;
-  struct pix *p;
-  struct pixlist *next;
-};
-
-/* Similar to pixlist but will be placed in an array. So no next is
-   necessary.  */
-struct ngbarrpix
-{
-  unsigned char ignore;
-  struct pix *p;
-};
-
-/* We have 4 and 8 connectivity of the pixels.  The ngb4 linked list
-   is a subset of the ngb8 linked list. The reason I have added ngb is
-   that the desired connectivity might not be known before hand. So
-   the user can easily set ngb to ngb4 or ngb8 based on the
-   connectivity they want ontop of their function and the rest of the
-   job is really easy. */
-struct pix
-{
-  size_t i;
-  float v;
-  struct ngbarrpix *ngb4;
-  struct ngbarrpix *ngb8;
-  struct ngbarrpix *ngb;
-};
+#define NGBSCOLS 10
+#define NONINDEX (size_t)(-1)
 
 void
-addtopixlist(struct pixlist **queue, struct pix *p);
+imgngbs(size_t s0, size_t s1, size_t **ngbs);
 
-void
-addtoanotherpixlist(struct pixlist **newq, 
-        struct pixlist *oldq, struct pix *p);
-
-void
-popfrompixlist(struct pixlist **queue, struct pix **p);
-
-void
-freepixlist(struct pixlist *queue);
-
-void
-printpixlist(struct pixlist *queue);
-
-
-
-void 
-printpixarray(struct pix *D, size_t size);
-
-void
-setngb(struct pix *D, size_t size, int con_type);
-
-void
-addpixval(struct pix *D, float *img, size_t size);
-
-void
-resetignores(struct pix *D, size_t size);
-
-void 
-freepixarray(struct pix *D);
-
-
-
-int
-pix_v_increasing(const void *a, const void *b);
-
-int
-pix_v_decreasing(const void *a, const void *b);
-
-int
-pix_i_increasing(const void *a, const void *b);
-
-
-
-
-
-
-
-
-
-void
-imgtopix(size_t s0, size_t s1, struct pix **D);
-
-
-
-
-
-void
-freeobjpixarray(struct pix ***objs, size_t size);
-
-void
-separateobjpixarray(struct pix *D, long *lab, size_t size,
-		    size_t numlabs, struct pix ****out);
 
 #endif

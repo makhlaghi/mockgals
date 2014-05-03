@@ -34,6 +34,7 @@ along with mockgals. If not, see <http://www.gnu.org/licenses/>.
 #include <gsl/gsl_integration.h> /* gsl_integration_qng*/
 
 #include "pix.h"
+#include "sll.h"
 #include "mock.h"
 #include "stats.h"
 #include "attaavv.h"
@@ -622,12 +623,12 @@ addnoise(float *array, size_t size, double sky)
    the C standard. So by the time they get here, the inputs are
    all in the C standard.*/
 void
-findstartingpixel(struct pix *D, size_t s0, size_t s1, float truncr, 
-		  struct elraddistp *e, struct pix **p)
+findstartingpixel(size_t s0, size_t s1, float truncr, 
+		  struct elraddistp *e, size_t *p)
 {
   float rmin, x_c, y_c, fs0, fs1;
-  size_t x_w, y_w, xmin=-1, ymin=-1;
   int is0, is1, i, j, x, y, x1, y1, x2, y2;
+  size_t x_w, y_w, xmin=NONINDEX, ymin=NONINDEX;
 
   is0=s0; is1=s1;
   x_c=e->xc; y_c=e->yc;
@@ -644,7 +645,7 @@ findstartingpixel(struct pix *D, size_t s0, size_t s1, float truncr,
   fs1=s1;
   if(x_c>=0 && x_c<fs0 && y_c>=0 && y_c<fs1)
     {
-      *p=D+x*s1+y;
+      *p=x*s1+y;
       return;
     }
 
@@ -663,7 +664,7 @@ findstartingpixel(struct pix *D, size_t s0, size_t s1, float truncr,
   checkifinarray(&x1, &y1, &x2, &y2, s0, s1);
   if(x1==x2 || y1==y2)	    
     {			     /* The profile's region is */
-      *p=NULL;		     /* Completely out of the image. */
+      *p=NONINDEX;	     /* Completely out of the image. */
       return;		     /* Return NULL. */
     }
   else			     /* The profile and the image overlap */
@@ -697,9 +698,9 @@ findstartingpixel(struct pix *D, size_t s0, size_t s1, float truncr,
               xmin=i; ymin=s1-1;
 	      rmin=elraddist(e, i, s1-1);
 	    }
-      if(rmin<truncr && xmin!=(size_t)-1 && ymin!=(size_t)-1)
-	*p=D+xmin*s1+ymin;
-      else *p=NULL;
+      if(rmin<truncr && xmin!=NONINDEX && ymin!=NONINDEX)
+	*p=xmin*s1+ymin;
+      else *p=NONINDEX;
     }
 }
 
@@ -709,35 +710,37 @@ findstartingpixel(struct pix *D, size_t s0, size_t s1, float truncr,
 
 /* Make a profile in an array.
 
-   The logic: byt is an array the same size as the image, that 
+   The logic: 'byt' is an array the same size as the image, that 
    should be completely zero upon making each profile. If it is
    zero at first, it will be zero once this function is finished
    with it. It is used to mark which pixels have been checked in 
-   the image. indexs will keep the index (1D) of those pixels that
+   the image. 'bytind[]' will keep the index (1D) of those pixels that
    have been marked so after the job is finished, it can set them
    all back to zero and not bother with resetting the whole array!
 
    We begin with the pixel in the image that is closest to the desired
-   center of the profile. A pixel queue (a FIFO) will keep all the
-   neighbors of pixels in order to check them all. Since some profiles
-   will fall on the sides of the image, there is no way we can
-   calculate the whole flux by summing of the pixels and then setting
-   them to the desired value. So we have to use integration, the
-   profiles were all made with their constant set to 1. We integrate
-   over the profile to infinity over a surface and consider that as
-   the total flux. Note that when the truncation radius is small, this
-   theoretical total flux will be much larger (>10%) than the actual
-   total flux of what is actually put in the image if it all fits in.
-   Since that total flux will be set to the desired value, then if the
-   truncation radius is too small, the real total flux in the image is
-   slightly lower than the desired value. This problem did not exist
-   in the makeprofile_old() function which actually allocated an array
-   for each profile, summed over it to find the total flux and then
-   only used the intersection with the main image to put the profile's
-   image into the main image. But that was too slow, especially if a
-   large number of profiles were needed. It was removed on April 12th,
-   2014. So if you are interested, you can see it in the commits before
-   this date.
+   center of the profile. A pixel queue (a FIFO or simple linked list)
+   will keep all the neighbors of all the pixels in order to check
+   them all. 
+
+   Since some profiles will fall on the sides of the image, there is
+   no way we can calculate the whole flux by summing of the pixels and
+   then setting them to the desired value. So we have to use
+   integration, the profiles were all made with their constant set to
+   1. We integrate over the profile to infinity over a surface and
+   consider that as the total flux. Note that when the truncation
+   radius is small, this theoretical total flux will be much larger
+   (>10%) than the actual total flux of what is actually put in the
+   image if it all fits in.  Since that total flux will be set to the
+   desired value, then if the truncation radius is too small, the real
+   total flux in the image is slightly lower than the desired
+   value. This problem did not exist in the makeprofile_old() function
+   which actually allocated an array for each profile, summed over it
+   to find the total flux and then only used the intersection with the
+   main image to put the profile's image into the main image. But that
+   was too slow, especially if a large number of profiles were
+   needed. It was removed on April 12th, 2014. So if you are
+   interested, you can see it in the commits before this date.
 
    For all pixels, first it is checked if the pixel is within the
    truncation radius. If it isn't, its neighbors will not be added to
@@ -746,19 +749,18 @@ findstartingpixel(struct pix *D, size_t s0, size_t s1, float truncr,
  */
 int
 makeprofile(float *img, unsigned char *byt, size_t *bytind, 
-	    struct pix *D, size_t s0, size_t s1, float trunc, 
+	    size_t *ngbs, size_t s0, size_t s1, float trunc, 
 	    float integaccu, float s0_m1_g2_p3, float x_c, float y_c, 
 	    double p1, double p2, float pa_d, float q, float avflux, 
 	    double *totflux)
 {
-  struct pix *p;
   float t_i, t_j;		/* 2D position from 1D. */
   char profletter;
+  struct ssll *Q=NULL;
   struct elraddistp e;
-  size_t j, counter=0;
   struct integparams ip;
-  struct pixlist *Q=NULL;
   double sum=0, area=0, co;
+  size_t i, numngb, counter=0, p;
   double (*func)(double, double, double);
   float r, truncr, maxir, integ, tmp, multiple=0;
   
@@ -772,9 +774,9 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
   setintegparams(s0_m1_g2_p3, p1, p2, pa_d, q, trunc, 
 		 &truncr, &profletter, &ip);
 
-  findstartingpixel(D, s0, s1, truncr, &e, &p);
-  if(p==NULL)
-    return 0;			/* Profile is completely out. */
+  findstartingpixel(s0, s1, truncr, &e, &p);
+  if(p==NONINDEX)
+    return 0;			/* Profile is completely out of image. */
 
   if(s0_m1_g2_p3==0)
     {
@@ -785,12 +787,12 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
     }
   else if(s0_m1_g2_p3==3)
     {
-      img[p->i]=avflux;
+      img[p]=avflux;
       *totflux=avflux;
       return 1;			/* Successful. */
     }
 
-  addtopixlist(&Q, p);
+  add_to_ssll(&Q, p);
 
   maxir=truncr;
   co=ip.co;
@@ -800,22 +802,19 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
 
   while(Q!=NULL)
     {
-      popfrompixlist(&Q, &p);
+      pop_from_ssll(&Q, &p);
 
       /* A pixel might be added to this list more than once.
          check if it has already been checked:*/
-      if(byt[p->i]==1) continue;
+      if(byt[p]==1) continue;
 
-      byt[p->i]=1;		/* Mark as checked. */
-      bytind[counter++]=p->i;
+      byt[p]=1;			/* Mark as checked. */
+      bytind[counter++]=p;
 
-      t_i=p->i/s1;
-      t_j=p->i%s1;
-      if( (r=elraddist(&e, t_i, t_j)) > truncr) 
-	{
-	  p->v=0;		/* Read above. */
-	  continue;
-	}
+      t_i=p/s1;
+      t_j=p%s1;
+      r=elraddist(&e, t_i, t_j);
+      if(r>truncr) continue;
       
       /* Find the value for this pixel: */
       tmp=func(r/p1, p2, co); 
@@ -829,16 +828,18 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
 	    tmp=integ;
 	  else maxir=r;
 	}
-      img[p->i]+=tmp*multiple;
+      img[p]+=tmp*multiple;
 
-      for(j=0;p->ngb8[j].p!=NULL;j++)
-	if(byt[p->ngb8[j].p->i]==0)
-	  addtopixlist(&Q, p->ngb8[j].p);
+      numngb=1;
+      do
+	if(byt[ ngbs[p*NGBSCOLS+numngb] ]==0)
+	  add_to_ssll(&Q, ngbs[p*NGBSCOLS+numngb]);
+      while(ngbs[p*NGBSCOLS+ ++numngb]!=NONINDEX);
     }
 
   /* Clean the byt image for the next profile. */
-  for(j=0;j<counter;j++)
-    byt[bytind[j]]=0;
+  for(i=0;i<counter;i++)
+    byt[bytind[i]]=0;
   return 1;
 }
 
@@ -1085,30 +1086,29 @@ readormakepdf(float **psf, size_t *psf_s0, size_t *psf_s1,
 void
 mockimg(struct mockparams *p)
 {
-  struct pix *D;
   double *pp, ss;
   unsigned char *byt;
   int extcounter=0, suc;
   float *psf, *img, integaccu=0.01;
-  size_t i, psf_s0, psf_s1, ns0, ns1;
   float *nonoisehist, *preconv, trunc=10;
+  size_t i, psf_s0, psf_s1, ns0, ns1, *ngbs;
   size_t nc, nsize, size, hs0, hs1, *bytind;
 
   readormakepdf(&psf, &psf_s0, &psf_s1, p);
 
   hs0=psf_s0/2;          hs1=psf_s1/2;
   ns0=p->s0+2*hs0;       ns1=p->s1+2*hs1;
-  size=p->s0*p->s1;		/* Shorter name ;-). */
-  nsize=ns0*ns1;		/* Shorter name ;-). */
-  nc=p->numppcols;		/* Shorter name ;-). */
-  pp=p->profileparams;		/* Shorter name ;-). */
-  ss=sqrt(p->sky);		/* Shorter name ;-). */
+  size=p->s0*p->s1;	 /* Shorter name ;-). */
+  nsize=ns0*ns1;	 /* Shorter name ;-). */
+  nc=p->numppcols;	 /* Shorter name ;-). */
+  pp=p->profileparams;	 /* Shorter name ;-). */
+  ss=sqrt(p->sky);	 /* Shorter name ;-). */
 
   assert( (img=calloc(nsize,sizeof *img))!=NULL );
   assert( (byt=calloc(nsize,sizeof *byt))!=NULL );
   assert( (bytind=malloc(nsize*sizeof *bytind))!=NULL );
 
-  imgtopix(ns0, ns1, &D);
+  imgngbs(ns0, ns1, &ngbs);
 
   if(p->verb)
     {
@@ -1119,7 +1119,7 @@ mockimg(struct mockparams *p)
 
   for(i=0;i<p->nummock;i++)
     {
-      suc=makeprofile(img, byt, bytind, D, ns0, 
+      suc=makeprofile(img, byt, bytind, ngbs, ns0, 
 		      ns1, trunc, integaccu, 
 		      pp[i*nc+1],	  /* Profile function. */
 		      pp[i*nc+3]+hs0-1,   /* x_c (C format) */
@@ -1193,5 +1193,5 @@ mockimg(struct mockparams *p)
   free(img);
   free(byt);
   free(bytind);
-  freepixarray(D);
+  free(ngbs);
 }
