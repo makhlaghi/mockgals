@@ -756,11 +756,11 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
 {
   float t_i, t_j;		/* 2D position from 1D. */
   char profletter;
-  struct ssll *Q=NULL;
   struct elraddistp e;
   struct integparams ip;
   double sum=0, area=0, co;
   size_t i, numngb, counter=0, p;
+  struct tssll *Qlast=NULL, *Qfirst;
   double (*func)(double, double, double);
   float r, truncr, maxir, integ, tmp, multiple=0;
   
@@ -792,7 +792,8 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
       return 1;			/* Successful. */
     }
 
-  add_to_ssll(&Q, p);
+  add_to_tssll_end(&Qlast, p);
+  Qfirst=Qlast;
 
   maxir=truncr;
   co=ip.co;
@@ -800,9 +801,9 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
   p1=ip.p1;
   p2=ip.p2;
 
-  while(Q!=NULL)
+  while(Qfirst!=NULL)
     {
-      pop_from_ssll(&Q, &p);
+      pop_from_tssll_start(&Qfirst, &p);
 
       /* A pixel might be added to this list more than once.
          check if it has already been checked:*/
@@ -824,16 +825,22 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
 	  ip.xl=t_i-0.5;       ip.xh=t_i+0.5;
 	  ip.yl=t_j-0.5;       ip.yh=t_j+0.5;
 	  integ=integ2d(&ip);	  
+
 	  if (fabs(integ-tmp)/integ>integaccu) 
 	    tmp=integ;
 	  else maxir=r;
 	}
       img[p]+=tmp*multiple;
 
+      /*array_to_fits("tmp.fits", NULL, "", FLOAT_IMG, img, s0, s1);*/
+
       numngb=1;
       do
 	if(byt[ ngbs[p*NGBSCOLS+numngb] ]==0)
-	  add_to_ssll(&Q, ngbs[p*NGBSCOLS+numngb]);
+	  {
+	    add_to_tssll_end(&Qlast, ngbs[p*NGBSCOLS+numngb]);
+	    if(Qfirst==NULL) Qfirst=Qlast;
+	  }
       while(ngbs[p*NGBSCOLS+ ++numngb]!=NONINDEX);
     }
 

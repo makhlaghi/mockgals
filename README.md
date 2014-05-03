@@ -129,7 +129,7 @@ observational methods with it.
      and Dec. The user has to define the image center in RA 
      and Dec also and size in angular scales. With this 
      option physical criteria like extinction laws can also 
-     come into play making it more realistic.راستی، فکر می کنم از نقل قولی که از فرانسیس بیکن توی صفحه اول ورژن پی.دی.اف دفترچه راهنما گذاشتم خوشت بیات ;-).
+     come into play making it more realistic.
 2. Work on a better user experience.
    - Read and write to FITS tables.
    - Keep the comments and IDs (possibly with letters) of the 

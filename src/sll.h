@@ -75,4 +75,22 @@ sslltoarray(struct ssll *list, size_t **f, size_t *num);
 void
 freessll(struct ssll *list);
 
+
+/******************* Two way size_t: */
+struct tssll
+{
+  size_t v;
+  struct tssll *next;
+  struct tssll *prev;
+};
+
+void
+add_to_tssll_end(struct tssll **last, size_t value);
+
+void
+pop_from_tssll_start(struct tssll **first,  size_t *value);
+
+
+
+
 #endif

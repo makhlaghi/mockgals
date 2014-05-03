@@ -54,7 +54,7 @@ add_to_fsll(struct fsll **list, float value)
 {
   struct fsll *newnode;
 
-  newnode=malloc(sizeof(struct fsll));
+  newnode=malloc(sizeof *newnode);
   assert(newnode!=NULL);
 
   newnode->v=value;
@@ -167,7 +167,7 @@ add_to_ssll(struct ssll **list, size_t value)
 {
   struct ssll *newnode;
 
-  newnode=malloc(sizeof(struct ssll));
+  newnode=malloc(sizeof *newnode);
   assert(newnode!=NULL);
 
   newnode->v=value;
@@ -237,4 +237,60 @@ freessll(struct ssll *list)
       free(tmp);
       tmp=ttmp;
     }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/****************************************************************
+ ******************        Two way SLL    ***********************
+ *****************           size_t          ********************
+ ****************************************************************/
+
+void
+add_to_tssll_end(struct tssll **last, size_t value)
+{
+  struct tssll *newnode;
+
+  assert(( newnode=malloc(sizeof *newnode) )!=NULL);
+
+  newnode->v=value;
+  newnode->next=*last;
+  newnode->prev=NULL;
+  if(*last)			/* If *list is not NULL */
+    (*last)->prev=newnode;
+  *last=newnode;
+}
+
+
+
+
+
+/* Note that start has to be initialized. */
+void
+pop_from_tssll_start(struct tssll **first,  size_t *value)
+{
+  struct tssll *tmp;
+  tmp=*first;
+  *value=tmp->v;
+  *first=tmp->prev;
+  free(tmp);
+  if(*first)
+    (*first)->next=NULL;
 }

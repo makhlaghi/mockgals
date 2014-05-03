@@ -24,21 +24,21 @@ along with forqsort. If not, see <http://www.gnu.org/licenses/>.
 #define FORQSORT_H
 
 int 
-intdecreasing(const void * a, const void * b);
+intdecreasing(const void *a, const void *b);
 
 int 
-intincreasing(const void * a, const void * b);
+intincreasing(const void *a, const void *b);
 
 int
-floatdecreasing(const void * a, const void * b);
+floatdecreasing(const void *a, const void *b);
 
 int
-floatincreasing(const void * a, const void * b);
+floatincreasing(const void *a, const void *b);
 
 int
-doubledecreasing(const void * a, const void * b);
+doubledecreasing(const void *a, const void *b);
 
 int
-doubleincreasing(const void * a, const void * b);
+doubleincreasing(const void *a, const void *b);
 
 #endif
