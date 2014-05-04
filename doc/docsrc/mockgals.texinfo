@@ -662,13 +662,13 @@ used for the PSF, stars and galaxies are explained separately.
 
 @menu
 * Defining an ellipse::         Defining an ellipse in 2D.
-* Integration::                 How integration is preformed over a pixel.
 * PSF::                         Radial profiles for the PSF.
 * Stars::                       Making mock star profiles.
 * Galaxies::                    Radial profiles for galaxies.
+* Integration::                 How integration is preformed over a pixel.
 @end menu
 
-@node Defining an ellipse, Integration, Object profiles, Object profiles
+@node Defining an ellipse, PSF, Object profiles, Object profiles
 @subsection Defining an ellipse
 
 The PSF and galaxy radial profiles are generally defined on an ellipse
@@ -678,7 +678,7 @@ its minor axis with @mymath{b}, the axis ratio is defined as:
 @mymath{q\equiv b/a}. The major axis of an ellipse can be aligned in any
 direction, we therefore define the angle of the major axis to the
 horizontal axis of the image as position angle of the ellipse and in
-this manual, we show it with @mymath{p}.
+this manual, we show it with @mymath{\theta}.
 
 Our aim is to put a radial profile of any functional form @mymath{f(r)}
 over an ellipse. Lets define the radial distance @mymath{r_{el}} as the
@@ -686,11 +686,11 @@ distance on the major axis to the center of the ellipse which is
 located at @mymath{x_c} and @mymath{y_c}. We want to find the elliptical
 distance of a point located at @mymath{(i,j)}, in the image coordiate
 system, from the center of the ellipse. First we rotate the coordinate
-system by @mymath{p} to get the new rotated coordiantes of that point
+system by @mymath{\theta} to get the new rotated coordiantes of that point
 @mymath{(i_r,j_r)}:
 
-@dispmath{i_r(i,j)=(i_c-i)\cos(p)+(j_c-j)\sin(p)}
-@dispmath{j_r(i,j)=(j_c-j)\cos(p)-(i_c-i)\sin(p)}
+@dispmath{i_r(i,j)=(i_c-i)\cos(\theta)+(j_c-j)\sin(\theta)}
+@dispmath{j_r(i,j)=(j_c-j)\cos(\theta)-(i_c-i)\sin(\theta)}
 
 @noindent The elliptical distance of a point located at @mymath{(i,j)} 
 can now be defined as: @mymath{r_{el}^2=\sqrt{i_r^2+j_r^2/q^2} }. To
@@ -702,26 +702,7 @@ desired.
 
 
 
-@node Integration, PSF, Defining an ellipse, Object profiles
-@subsection Integration over central regions
-All the radial profiles made here become extremely sharp as we
-approach the center of the profiles. This sharp change in the radial
-profile will produce a strong gradient over the central few pixels of
-the object. In those cases we will integrate @mymath{f(r)} over the
-pixel area to find the pixel value. 
-
-The building of the profile begins from its central pixel and
-continues outwards. As we go to larger radii, the difference between
-integration over the pixel area and using the central pixel distance
-as a proxy for the whole pixel will become smaller. Therefore to
-increase the preformance speed of MockGals, the user can define a
-certain tollerance level beyond which only the central pixel value
-will be used and no integration will be preformed.
-
-
-
-
-@node PSF, Stars, Integration, Object profiles
+@node PSF, Stars, Defining an ellipse, Object profiles
 @subsection Point Spread function
 
 Assume we have a ``point'' source. When we take an image of it, it
@@ -846,7 +827,7 @@ preformed by assuming the shapes of stars to be the PSF of the image.
 
 
  
-@node Galaxies,  , Stars, Object profiles
+@node Galaxies, Integration, Stars, Object profiles
 @subsection Galaxies
 
 Today, most practitioners agree that galaxy profiles can be modeled
@@ -880,6 +861,67 @@ fits the galaxy light profiles, with the only difference that he held
 @mymath{n} fixed to a value of 4. 20 years later, S@'ersic 1968 showed
 that @mymath{n} can have a variety of values and does not necessarily
 have to be 4.
+
+
+
+
+
+@node Integration,  , Galaxies, Object profiles
+@subsection Integration over central regions
+All the radial profiles made here become extremely sharp as we
+approach the center of the profiles. This sharp change in the radial
+profile will produce a strong gradient over the central few pixels of
+the object. In those cases we will integrate @mymath{f(r)} over the
+pixel area to find the pixel value. 
+
+The building of the profile begins from its central pixel and
+continues outwards, see @ref{makingprofile} in @ref{Profiles on
+graph}. As we go to larger radii, the difference between integration
+over the pixel area and using the central pixel distance as a proxy
+for the whole pixel will become smaller. Therefore to increase the
+preformance speed of MockGals, the user can define a certain
+tollerance level beyond which only the central pixel value will be
+used and no integration will be preformed.
+
+@ref{pixinteg} shows the the difference between integration and the
+central pixel value for the first 2000 pixels in a mock S@'ersic
+profile, the same profile as @ref{makingprofile}. Let @mymath{I_i} be
+the pixel value if integration is preformed over it and @mymath{I_c}
+represent the profile value at the pixel center. The tollerance level
+that the user can set is defined as: @mymath{T=|I_i-I_c|/I_i}. The
+marked pixels in @ref{pixinteg} show the pixels that integration will
+be applied to if the user sets @mymath{T=10^{-2}}.
+
+The method that we build the profile on the image, see @ref{Profiles
+on graph}, is not based on the elliptical radius, but on the immediate
+pixels neighboring to the central pixel of the profile and their
+neighbors and etc. This is why some pixels with @mymath{r_{el}} larger
+than the radius where the tollerance was first reached are also
+integrated over. But as @ref{pixinteg} shows, these same pixels have a
+much larger fractional difference between a @mymath{I_c} and
+@mymath{I_i}, even though their elliptical radius is larger. This is
+due to the pixel area relative to the profile parameters and the
+particular way we build the profile.
+
+Since the fractional difference of all these more distant pixels is
+more than 0.01 (or one percent) and they are relatively numerous,
+@ref{pixinteg} shows that our method to build the galaxies does
+produce a very good level accuracy.
+
+@float Figure, pixinteg
+@center@image{./mockgals-figures/s7_pixinteg,15cm,,./mockgals-figures/s7_pixinteg.pdf,.png}
+
+@caption{Difference between integrating over the pixel area
+(@mymath{I_i}) and using the central pixel value (@mymath{I_c}). Each
+point is colored based on the logarithm of the fraction of the total
+object flux that is in that pixel. The profile used here is a S@'ersic
+profile with @mymath{n=4}, @mymath{r_e=5} pixels, @mymath{\theta=22}
+degrees and @mymath{q=0.3}, see @ref{makingprofile}. The solid
+horizontal line shows where the fractional difference of the profile
+becomes 1/100 and the dashed vertical line shows the first pixel that
+has a smaller difference. The pixels with a plus (@mymath{+}) sign on
+them show the pixels that integration has been applied to. }
+@end float
 
 
 
@@ -1961,8 +2003,8 @@ have created a very simple Graph based approach to building the
 profiles.
 
 @menu
-* Graph canvas::        Graph based canvas.
-* Profiles on graph::   How we build the profiles using the graph.
+* Graph canvas::                Graph based canvas.
+* Profiles on graph::           How we build the profiles using the graph.
 @end menu
 
 
@@ -2147,7 +2189,7 @@ exists, finds the pixel on the border of the image that is closest to
 the center of the profile and returns that point.
 
 Once the starting pixel is found, its neighbors are added to the end
-of a queue and all the neighbors are checked based on a First in,
+of a queue and all the neighbors are checked based on a first in,
 first out principle. The structure to define the queue is shown below
 (defined in @file{SRC/sll.h})
 
@@ -2161,13 +2203,16 @@ struct tssll                /* Two directional simple linked list. */
 @end example
 
 @noindent
-Pixel indices are added to the end (last element added) of the queue
-using @code{add_to_tssll_end()} and they are poped out of the start of
-the queue using @code{pop_from_tssll_start()}. Both these functions
-are defined in @file{SRC/sll.h}. A clean (all zeros) array the size of
-the image is used to mark if a pixel for each profile has already been
-filed, a neighbor is only added to the queue if it has not been marked
-in tthat array.
+Pixel indices are added to the end of the queue (most recent element
+added) using @code{add_to_tssll_end()} and they are poped out of the
+start of the queue (oldest element in the queue) using
+@code{pop_from_tssll_start()}. Both these functions are defined in
+@file{SRC/sll.h}. A clean (all zeros) array the size of the image is
+used to mark if a pixel for each profile has already been filed, a
+neighbor is only added to the queue if it has not been marked in that
+array, also, since neighbors share neighbors, a pixel will be added
+more than once to the queue. So before trying to fill a popped
+element, it is first checked if it has been filled or not.
 
 @ref{makingprofile} shows  this process in  an easy to  understand and
 pixel by pixel  manner, in this case  the profile is in  the center of
@@ -2183,5 +2228,11 @@ with @mymath{r_e=5}pixels and @mymath{n=4} is built in a small
 box. Due to space limitations the whole profile cannot be shown in
 this manner}
 @end float
+
+
+
+
+
+
 
 @bye

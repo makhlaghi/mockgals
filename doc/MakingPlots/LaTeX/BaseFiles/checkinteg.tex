@@ -1,0 +1,25 @@
+\begin{figure}[t]
+  \centering
+  \begin{tikzpicture}
+    \begin{axis}[ymode=log, ymin=0.00001, ymax=1,
+        xmin=0, xmax=50, width=\linewidth, height=0.4\linewidth, 
+        xlabel=Radius ($r_{el}$), ylabel=$|I_i-I_c|/I_i$, colorbar horizontal,
+        colormap/bluered, 
+        colorbar style={at={(0.5,1.03)}, anchor=south, xticklabel pos=upper}]
+
+      \addplot+ [black, no markers, thick] coordinates {(-1,0.01) (60,0.01)};
+
+      \addplot+ [black, no markers, dashed] coordinates {(4.505,1e-5) (4.505,10)};
+
+      \addplot+[only marks, mark=*, scatter, point meta={\thisrow{f}}, 
+	        solid, very thick]
+      table [x index=0, y index=1]
+      {./BaseFiles/checkinteg.txt};
+
+      \addplot+[only marks, mark=+, mark size=3pt]
+      table [x index=0, y index=1]
+      {./BaseFiles/checkinteg2.txt};
+
+    \end{axis}
+  \end{tikzpicture}
+\end{figure}

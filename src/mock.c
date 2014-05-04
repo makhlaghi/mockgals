@@ -747,6 +747,7 @@ findstartingpixel(size_t s0, size_t s1, float truncr,
    the queue, but it's byt value will be set to one and a value of
    zero will be put into its D[i]->v value.
  */
+#define CHECKINTEG 0
 int
 makeprofile(float *img, unsigned char *byt, size_t *bytind, 
 	    size_t *ngbs, size_t s0, size_t s1, float trunc, 
@@ -819,7 +820,7 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
       
       /* Find the value for this pixel: */
       tmp=func(r/p1, p2, co); 
-      if(r<maxir)		
+      if(r<maxir)
 	{
 	  t_i-=x_c;             t_j-=y_c;
 	  ip.xl=t_i-0.5;       ip.xh=t_i+0.5;
