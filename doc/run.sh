@@ -11,6 +11,7 @@ mkdir ./mockgals/mockgals-figures/
 cp ./docsrc/manualstyle.css ./mockgals/
 cp ./mockgals-figures/*.jpg ./mockgals/mockgals-figures/
 cp ./mockgals-figures/*.png ./mockgals/mockgals-figures/
+cp ./mockgals-figures/*.gif ./mockgals/mockgals-figures/
 
 #Make the PDF:
 texi2pdf $TEXISRC

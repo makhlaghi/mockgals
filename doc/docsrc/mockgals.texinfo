@@ -2104,7 +2104,84 @@ efficent.
 @node Profiles on graph,  , Graph canvas, Making the profiles
 @subsubsection Building profiles on the graph
 
-Now that the graph canvas is built, see @ref{Graph canvas} building
-the profiles is very easy with a very simple 
+Now that the graph canvas is built, see @ref{Graph canvas}, building
+the profiles is very easy. @code{mockimg()} (in @file{SRC/mock.c}) now
+begins building the profiles one by one (through
+@code{makeprofile()}). The first thing @code{makeprofile()} does is to
+find the closest pixel in the image to the center of the profile. To
+do that it calls @code{findstartingpixel()}. Which does the job based
+on the input coordinates, axis ratio, position angle and truncation
+radius.
+
+If the center of the profile lies within the image boundaries, that
+point, the pixel is returned as the starting pixel. If the center is
+outside of the image boundary, it finds the box that encloses the
+profile ellipse within the truncation radius. To find this box,
+@code{findstartingpixel()} calls @code{encloseellipse()} which is
+located in @file{SRC/raddist.c}. All the points on the circumference
+of an ellipse that is aligned on the x axis can be written
+parametrically as:
+
+@dispmath{(a\cos(t),b\sin(t))\quad\rm{where}\quad t\in(0,2\pi)}
+
+@noindent  
+But when we rotate the ellipse by @mymath{\theta}, the points can be
+characterized by:
+
+@dispmath{(a\cos(t)\cos(\theta)+b\sin(t)\sin(\theta),-a\cos(t)\sin(\theta)+b\sin(t)\cos(\theta) )}
+
+To find the maximum and minimum points of this function you just have
+to take the derivative of each with respect to @mymath{t} and set it
+to zero. This will give you the @mymath{t} that maximizes x and the
+@mymath{t} that maximizes y.  Once you do that, you will get:
+
+@dispmath{\rm{x:}\quad tan(t)=(b/a)tan(\theta)}
+@dispmath{\rm{y:}\quad tan(t)=(-b/a)cot(\theta)}
+
+Placing @mymath{t} it in the second equation above for the respective
+coordinate, you will find the distance, about the center of the
+ellipse that encloses the whole ellipse. This defines a box for us
+that will enclose the whole ellipse. @code{findstartingpixel()} then
+checks for an possible overlap of this box with the image and if it
+exists, finds the pixel on the border of the image that is closest to
+the center of the profile and returns that point.
+
+Once the starting pixel is found, its neighbors are added to the end
+of a queue and all the neighbors are checked based on a First in,
+first out principle. The structure to define the queue is shown below
+(defined in @file{SRC/sll.h})
+
+@example
+struct tssll                /* Two directional simple linked list. */
+@{
+  size_t v;                 /* Pixel index  */
+  struct tssll *next;       /* Pointer to the next added element.*/
+  struct tssll *prev;       /* Pointer to the previous added element.*/
+@};
+@end example
+
+@noindent
+Pixel indices are added to the end (last element added) of the queue
+using @code{add_to_tssll_end()} and they are poped out of the start of
+the queue using @code{pop_from_tssll_start()}. Both these functions
+are defined in @file{SRC/sll.h}. A clean (all zeros) array the size of
+the image is used to mark if a pixel for each profile has already been
+filed, a neighbor is only added to the queue if it has not been marked
+in tthat array.
+
+@ref{makingprofile} shows  this process in  an easy to  understand and
+pixel by pixel  manner, in this case  the profile is in  the center of
+the image,  but it  can easily  be located at  any position  inside or
+outside of the image.  @inlinefmt{html, Note that the @file{.gif} file
+to show this step by step process is 3.6 MegaBytes.}
+
+@float Figure, makingprofile
+@center@image{./mockgals-figures/s7_pixfill,15cm,,./mockgals-figures/s7_pixfill.gif,.gif}
+
+@caption{Pixel by pixel demonstration of how a mock S@'ersic profile
+with @mymath{r_e=5}pixels and @mymath{n=4} is built in a small
+box. Due to space limitations the whole profile cannot be shown in
+this manner}
+@end float
 
 @bye

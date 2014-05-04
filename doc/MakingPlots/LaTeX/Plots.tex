@@ -32,15 +32,29 @@
     eprint=false,
     maxnames=5
 ]{biblatex}
-\addbibresource{ref.bib}
+\addbibresource{./ref.bib}
 
 \begin{document}
 
-  \input{./BaseFiles/MoffatGaussianComp.tex}
+\input{./BaseFiles/MoffatGaussianComp.tex}
 
-  \input{./BaseFiles/SersicComp.tex}
+\input{./BaseFiles/SersicComp.tex}
 
-\cite{Sersicb}, \cite{Moffatb}, \cite{Moffat}, \cite{deVo}, \cite{sersic}
-\printbibliography 
+\input{./BaseFiles/pixfill.tex}
+
+%\cite{Sersicb}.
+
+%This is an exmaple paragraph with a referenc \parencite{Moffatb}.
+
+%\cite{Moffat}.
+
+%\cite{deVo}.
+
+%\cite{sersic}.
+
+Here is an example sentance.
+
+
+%\printbibliography 
 
 \end{document}

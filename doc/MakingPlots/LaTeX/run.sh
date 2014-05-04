@@ -1,5 +1,5 @@
 rm *.aux
-rm -rf `biber --cache`
+#rm -rf `biber --cache`
 if pdflatex -shell-escape Plots.tex
 then
   if biber Plots.bcf
