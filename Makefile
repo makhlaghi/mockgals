@@ -14,7 +14,7 @@ LDLIBS=-lcfitsio -lfftw3 -pthread -lcblas -lgsl -lm
 mockgals: $(objects) 
 	@$(CC) -o mockgals $(LDFLAGS) $(objects) $(LDLIBS) 
 	@rm *.o
-	./mockgals -mne
+#	./mockgals -mne
 
 .SILENT: $(objects)
 

@@ -890,43 +890,28 @@ tollerance level beyond which only the central pixel value will be
 used and no integration will be preformed.
 
 @ref{pixinteg} shows the the difference between integration and the
-central pixel value for the first 2000 pixels in a mock S@'ersic
-profile, the same profile as @ref{makingprofile}. Let @mymath{I_i} be
-the pixel value if integration is preformed over it and @mymath{I_c}
-represent the profile value at the pixel center. The tollerance level
-that the user can set is defined as: @mymath{T=|I_i-I_c|/I_i}. The
-marked pixels in @ref{pixinteg} show the pixels that integration will
-be applied to if the user sets @mymath{T=10^{-2}}.
-
-The method that we build the profile on the image, see @ref{Profiles
-on graph}, is not based on the elliptical radius, but on the immediate
-pixels neighboring to the central pixel of the profile and their
-neighbors and etc. This is why some pixels with @mymath{r_{el}} larger
-than the radius where the tollerance was first reached are also
-integrated over. But as @ref{pixinteg} shows, these same pixels have a
-much larger fractional difference between a @mymath{I_c} and
-@mymath{I_i}, even though their elliptical radius is larger. This is
-due to the pixel area relative to the profile parameters and the
-particular way we build the profile.
-
-Since the fractional difference of all these more distant pixels is
-more than 0.01 (or one percent) and they are relatively numerous,
-@ref{pixinteg} shows that our method to build the galaxies does
-produce a very good level accuracy.
+central pixel value for the first @mymath{\sim2000} pixels in a mock
+S@'ersic profile. Let @mymath{I_i} be the pixel value if integration
+is preformed over it and @mymath{I_c} represent the profile value at
+the pixel center. The tollerance level that the user can set is
+defined as: @mymath{T=|I_i-I_c|/I_i}. The marked pixels in
+@ref{pixinteg} show the pixels that integration will be applied to if
+the user sets @mymath{T=10^{-2}}. Integration will stop at the first
+pixel that gives a smaller tollerance.
 
 @float Figure, pixinteg
 @center@image{./mockgals-figures/s7_pixinteg,15cm,,./mockgals-figures/s7_pixinteg.pdf,.png}
 
 @caption{Difference between integrating over the pixel area
 (@mymath{I_i}) and using the central pixel value (@mymath{I_c}). Each
-point is colored based on the logarithm of the fraction of the total
-object flux that is in that pixel. The profile used here is a S@'ersic
-profile with @mymath{n=4}, @mymath{r_e=5} pixels, @mymath{\theta=22}
-degrees and @mymath{q=0.3}, see @ref{makingprofile}. The solid
+point shows one pixel and is colored based on the logarithm of the
+fraction of the total object flux that is in that pixel. The profile
+used here is a S@'ersic profile with @mymath{n=4}, @mymath{r_e=5}
+pixels, @mymath{\theta=20^\circ} and @mymath{q=0.3}. The The solid
 horizontal line shows where the fractional difference of the profile
-becomes 1/100 and the dashed vertical line shows the first pixel that
-has a smaller difference. The pixels with a plus (@mymath{+}) sign on
-them show the pixels that integration has been applied to. }
+becomes 1/100. The pixels with a plus (@mymath{+}) sign on them show
+the pixels that integration has been applied to. In total, they
+constitute @mymath{\sim0.68} of the total light. }
 @end float
 
 
@@ -1102,7 +1087,25 @@ include it. The second one says where to put the final compiled
 libraries, the given value is the standard place to put them. The last
 one is if you want to access the fits files in a multithread manner.
 
+Both GSL and CFITSIO install their libraries in @file{/usr/local/}
+which is the default directory for user installed programs. To inform
+GCC to look into this directory, put this line in your
+@file{~/.bashrc} file:
 
+@example
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib; export LD_LIBRARY_PATH
+@end example
+
+You can edit @file{~/.bashrc} through these commands if you are using
+the bash shell (default in GNU/Linux):
+
+@example
+$ cd ~
+$ gedit .bashrc
+@end example
+
+Once you have made the changes, you can simply save the changes and
+close gedit.
 
 
 
@@ -1137,18 +1140,12 @@ files} for an explanation on how to do that.
 
 XPA is the ``X Public Access'' mechanism, its a messaging system in
 DS9 that allows e.g. host scripts to load images or control the
-display. After running ds9, if you get an error regarding XPA enter
-these commands if you are using the bash shell (default in GNU/Linux):
-
+display. After running ds9, if you get an error regarding XPA you can
+put this line in @file{~/.bashrc} file, see @ref{Requirements}:
 @example
-$ cd ~
-$ vim .bashrc
+export XPA_METHOD=local
 @end example
 
-Once inside vim, press @kbd{i} to be able to insert text, add
-@code{export XPA_METHOD=local}. Save by pressing @kbd{Esc} first and
-then @kbd{ZZ} (the @kbd{Shift} and @kbd{z} keys together,
-twice). @kbd{Esc} followed by @kbd{:wq} can also be used.
 
 To stop this command when you run ds9 from the Graphic User Interface,
 follow the above procedures on @file{~/.profile} also, if you don't

@@ -533,7 +533,7 @@ setprflprms(double **prflprms, size_t numprflprms,
 			     0.5,8,       /* n range */
 			     0,360,       /* position angle range */
 			     0.2,1,       /* Axis ration range. */
-			     0.0005,0.001}; /* S/N range. */
+			     0.001,0.1}; /* S/N range. */
   randparamranges[1]+=size1;
   randparamranges[3]+=size2;
     
@@ -755,16 +755,19 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
 	    double p1, double p2, float pa_d, float q, float avflux, 
 	    double *totflux)
 {
+  /*FILE *fp;*/
   float t_i, t_j;		/* 2D position from 1D. */
   char profletter;
   struct elraddistp e;
   struct ssll *Q=NULL;
   struct ossll *oQ=NULL;
   struct integparams ip;
-  double sum=0, area=0, co;
+  double sum=0, suminteg=0, area=0, co;
   double (*func)(double, double, double);
   size_t i, numngb, nrow, counter=0, p, tp;
-  float r, truncr, maxir, integ, tmp, multiple=0;
+  float r, truncr, maxir=0, integ, tmp, multiple=0;
+
+  /*fp=fopen("checkinteg.txt", "w");*/
   
   e.q=q;
   e.t=M_PI*pa_d/180;
@@ -780,7 +783,7 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
 
   if(s0_m1_g2_p3==0)
     {
-      sum=totsersic(p1, p2, sersic_b(p1), q);
+      sum=totsersic(p2, p1, sersic_b(p2), q);
       area=M_PI*truncr*truncr*q;
       *totflux=avflux*area;
       multiple=*totflux/sum;
@@ -821,14 +824,18 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
 
       img[p]+=integ*multiple;
 
-      /*array_to_fits("tmp.fits", NULL, "", FLOAT_IMG, img, s0, s1);*/
+      suminteg+=integ;
 
+      /*array_to_fits("tmp.fits", NULL, "", FLOAT_IMG, img, s0, s1);*/
+      /*fprintf(fp, "%-10.4f %-10.4f %-10.8f\n", r, fabs(integ-tmp)/integ,
+	log10(integ/sum));*/
+      
       if (fabs(integ-tmp)/integ<integaccu) 
 	{
 	  maxir=r;
 	  break;
 	}
-
+   
       /* It is very important to go over the 8 connected neighbors,
 	 because we are dealing with elliptical radii, not a cartesian
 	 space. So the diagonal neighbor might be closer (in
@@ -840,6 +847,9 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
 	  add_to_ossll( &oQ, tp, elraddist(&e, tp/s1, tp%s1) );
       while(ngbs[nrow+ ++numngb]!=NONINDEX);
     }
+
+  /*printf("r: %f, %f\n", maxir, suminteg/sum);
+    fclose(fp);*/
 
   /* All the pixels that required integration are now done, so we
      don't need an ordered array any more! */
@@ -1168,8 +1178,9 @@ mockimg(struct mockparams *p)
 		      ss*pp[i*nc+8],	  /* average flux.*/
 		      &pp[i*nc+9]);	  /* Total flux of profile*/ 
       if(p->verb)
-	printf(" - (%-.2f, %-.2f)\t%s\n", pp[i*nc+2], pp[i*nc+3], 
-	       suc ? " Y" : "-*-");
+	printf(" -(%-.2f, %-.2f), n=%.2f, re=%.2f, pa=%.2f, q=%.2f\t%s\n",
+	       pp[i*nc+2], pp[i*nc+3], pp[i*nc+5], pp[i*nc+4], pp[i*nc+6],
+	       pp[i*nc+7], suc ? " Y" : "-*-");
     }
   if(p->verb)
     printf("\n\n");
