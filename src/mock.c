@@ -758,26 +758,25 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
   float t_i, t_j;		/* 2D position from 1D. */
   char profletter;
   struct elraddistp e;
+  struct ssll *Q=NULL;
+  struct ossll *oQ=NULL;
   struct integparams ip;
   double sum=0, area=0, co;
-  size_t i, numngb, counter=0, p;
-  struct tssll *Qlast=NULL, *Qfirst;
   double (*func)(double, double, double);
+  size_t i, numngb, nrow, counter=0, p, tp;
   float r, truncr, maxir, integ, tmp, multiple=0;
   
   e.q=q;
-  e.xc=x_c;
-  e.yc=y_c;
   e.t=M_PI*pa_d/180;
-  e.cos=cos(e.t);
-  e.sin=sin(e.t);
+  e.xc=x_c;          e.yc=y_c;
+  e.cos=cos(e.t);    e.sin=sin(e.t);
 
   setintegparams(s0_m1_g2_p3, p1, p2, pa_d, q, trunc, 
 		 &truncr, &profletter, &ip);
 
   findstartingpixel(s0, s1, truncr, &e, &p);
   if(p==NONINDEX)
-    return 0;			/* Profile is completely out of image. */
+    return 0;	      /* Profile is completely out of image. */
 
   if(s0_m1_g2_p3==0)
     {
@@ -793,18 +792,16 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
       return 1;			/* Successful. */
     }
 
-  add_to_tssll_end(&Qlast, p);
-  Qfirst=Qlast;
+  add_to_ossll( &oQ, p, elraddist(&e, p/s1, p%s1) );
 
-  maxir=truncr;
   co=ip.co;
   func=ip.profile;
   p1=ip.p1;
   p2=ip.p2;
 
-  while(Qfirst!=NULL)
+  while(oQ!=NULL)
     {
-      pop_from_tssll_start(&Qfirst, &p);
+      pop_from_ossll(&oQ, &p, &r);
 
       /* A pixel might be added to this list more than once.
          check if it has already been checked:*/
@@ -813,36 +810,68 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
       byt[p]=1;			/* Mark as checked. */
       bytind[counter++]=p;
 
-      t_i=p/s1;
-      t_j=p%s1;
-      r=elraddist(&e, t_i, t_j);
       if(r>truncr) continue;
       
       /* Find the value for this pixel: */
       tmp=func(r/p1, p2, co); 
-      if(r<maxir)
-	{
-	  t_i-=x_c;             t_j-=y_c;
-	  ip.xl=t_i-0.5;       ip.xh=t_i+0.5;
-	  ip.yl=t_j-0.5;       ip.yh=t_j+0.5;
-	  integ=integ2d(&ip);	  
+      t_i=p/s1-x_c;        t_j=p%s1-y_c;
+      ip.xl=t_i-0.5;       ip.xh=t_i+0.5;
+      ip.yl=t_j-0.5;       ip.yh=t_j+0.5;
+      integ=integ2d(&ip);	  
 
-	  if (fabs(integ-tmp)/integ>integaccu) 
-	    tmp=integ;
-	  else maxir=r;
-	}
-      img[p]+=tmp*multiple;
+      img[p]+=integ*multiple;
 
       /*array_to_fits("tmp.fits", NULL, "", FLOAT_IMG, img, s0, s1);*/
 
-      numngb=1;
+      if (fabs(integ-tmp)/integ<integaccu) 
+	{
+	  maxir=r;
+	  break;
+	}
+
+      /* It is very important to go over the 8 connected neighbors,
+	 because we are dealing with elliptical radii, not a cartesian
+	 space. So the diagonal neighbor might be closer (in
+	 elliptical radii) then the 4 connected pixels. */
+      numngb=1;	   /* all 8-connected neighbors will be checked.*/
+      nrow=p*NGBSCOLS;
       do
-	if(byt[ ngbs[p*NGBSCOLS+numngb] ]==0)
-	  {
-	    add_to_tssll_end(&Qlast, ngbs[p*NGBSCOLS+numngb]);
-	    if(Qfirst==NULL) Qfirst=Qlast;
-	  }
-      while(ngbs[p*NGBSCOLS+ ++numngb]!=NONINDEX);
+	if(byt[ tp=ngbs[nrow+numngb] ]==0)
+	  add_to_ossll( &oQ, tp, elraddist(&e, tp/s1, tp%s1) );
+      while(ngbs[nrow+ ++numngb]!=NONINDEX);
+    }
+
+  /* All the pixels that required integration are now done, so we
+     don't need an ordered array any more! */
+  ossll_into_ssll(oQ, &Q);
+
+  while(Q!=NULL)
+    {
+      pop_from_ssll(&Q, &p);
+
+      /* A pixel might be added to this list more than once.
+         check if it has already been checked:*/
+      if(byt[p]==1) continue;
+
+      byt[p]=1;			/* Mark as checked. */
+      bytind[counter++]=p;
+
+      r=elraddist(&e, p/s1, p%s1);
+      if(r>truncr) continue;
+      
+      /* Find the value for this pixel: */
+      img[p]+=func(r/p1, p2, co)*multiple; 
+
+      /*array_to_fits("tmp.fits", NULL, "", FLOAT_IMG, img, s0, s1);*/
+
+      /* Here it is best to use 4 connectivity, because the 8
+      connected ones have most probably been done before. */
+      nrow=p*NGBSCOLS;
+      numngb=ngbs[nrow];
+      do
+	if(byt[ tp=ngbs[nrow+numngb] ]==0)
+	  add_to_ssll(&Q, tp);
+      while(ngbs[nrow+ ++numngb]!=NONINDEX);
     }
 
   /* Clean the byt image for the next profile. */
@@ -1155,7 +1184,6 @@ mockimg(struct mockparams *p)
       array_to_fits(p->outname, NULL, "NOCONV", FLOAT_IMG, 
 		    preconv, p->s0, p->s1);
       free(preconv);
-
       if(p->verb)
 	printf("- Pre-convolved profiles saved in '%s' (ext %d)\n",
 	       p->outname, extcounter++);

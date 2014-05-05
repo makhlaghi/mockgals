@@ -279,6 +279,11 @@ riddles of nature. Also, through writing the manual, the programmer
 gets to understand her/his own program and its strengths and
 weaknesses much better, which can most of the time result in changes
 in the program that will make it much more accurate and user friendly.
+MockGals its self is an excellent example, while writing @ref{How it
+works}, we recognized several inefficient processes that MockGals was
+doing and corrected them. The result was that while the accuracy
+remained unchanged, the CPU efficiency doubled (it done the same job
+in half the time). 
 
 Bjarne Stroustrup (creator of the C++ language) says: ``Without
 understanding software, you are reduced to believing in magic''.  Ken
@@ -417,9 +422,9 @@ puctuation marks that might follow them.
 
 @item
 When mentioning the order of menus to choose on a graphical user
-interface application, we will list them like this example: ``File''
--> ``Save As'', which means to first click on the ``File'' menu and
-then choose ``Save As'' in the list that opens.
+interface application, we will list them like this example:
+@clicksequence{File @click{} Save as}, which means to first click on
+the ``File'' menu and then choose ``Save As'' in the list that opens.
 @end itemize
 
 
@@ -551,8 +556,9 @@ you ordinarily open a multi-extension FITS file with ds9, by double
 clicking on it or running @command{$ds9 foo.fits} for example, ds9
 will only show you the first extension. To be able to switch between
 the extensions you have to follow these menus in the ds9 window:
-``File'' -> ``Open Other'' -> ``Open Multi Ext Cube'' and then choose
-the Multi extension FITS file in your computer's file structure.
+@clicksequence{File@click{}Open Other@click{}Open Multi Ext Cube} and
+then choose the Multi extension FITS file in your computer's file
+structure.
 
 The method above is a little tedious to do every time you want view a
 multi-extension FITS file. Fortunately ds9 also provides options that
@@ -566,14 +572,14 @@ usual.
 It is really convenient if you set ds9 to always run with the
 @option{-mecube} option on your graphical display. On a GNU/Linux
 operating system, you can do this by following the following steps.
-Right click on a FITS file and choose ``Properties''. Open the ``Open
-With'' tab on top of the Properties window and click on the ``Add''
-button. A list of applications will show up, ds9 might already be
-present in the list, but don't choose it because it will run with no
-options. Below the list is an option ``Use a custom
-command''. Click on it and write the following command: @command{ds9
--mecube} in the box and click ``Add''. Then finally choose the command
-you just added as the default and click the ``Close'' button.
+Right click on a FITS file and choose
+@clicksequence{Properties@click{}Open With@click{}Add} button. A list
+of applications will show up, ds9 might already be present in the
+list, but don't choose it because it will run with no options. Below
+the list is an option ``Use a custom command''. Click on it and write
+the following command: @command{ds9 -mecube} in the box and click
+``Add''. Then finally choose the command you just added as the default
+and click the ``Close'' button.
 
 
 
@@ -1827,9 +1833,14 @@ first element of the second row at (1,0). In this fashion, we can
 easily find the element at (x, y) on our hypothetical 2D array by
 finding element number @mymath{x\times b+y} on the real 1D
 array. Recall that we took @mymath{b} to represent the number of
-columns in the hypothetical 2D array. So to see the value of the
-(@code{x},@code{y}) element on the 2D illusion we just have to call
-@code{a[x*b+y]}.
+columns in the hypothetical 2D array. 
+
+To see the value of the (@code{x},@code{y}) element on the 2D illusion
+we just have to call @code{a[x*b+y]}. Also, supposing a 1D index of
+@code{i} (where @code{i} is not a floating point type), we can find
+the 2D coordinates with: @code{x=i/b} and @code{y=i%b}, where @code{%}
+is the remainder or modulus and @code{/} is integer division where for
+example @code{5/2=2}.
 
 There are methods to use an array of pointers to point to the starting
 positions of each row in a C array and thus work on that array of
@@ -1837,9 +1848,9 @@ pointers to create a better abstraction to of a 2D array. The
 advantage is that you can easily call element (x, y) with
 @code{a[x][y]}.
 
-But this level of abstraction is not without its costs. First of all
-you have to allocate another array of pointers the size of the number
-of rows in the image. Pointers are 8 bytes or 64 bits on most current
+This level of abstraction is not without its costs. First of all you
+have to allocate another array of pointers the size of the number of
+rows in the image. Pointers are 8 bytes or 64 bits on most current
 systems and thus much larger than an @code{int} or @code{float} which
 are usually only 4 bytes. This will take more memory on your system,
 especially if your images become large or numerous. Also, we have to
@@ -1889,10 +1900,12 @@ of the array is the bottom left pixel.
 
 In order to read from and write to a FITS image with relative ease we
 have written a very simple library so that only by calling one
-function, the pixels of one FITS image will be saved into a C
-array. It is @url{https://github.com/makhlaghi/fitsarrayvv, available
-on Github} and can easily be incorporated into any program. In
-MockGals we are using this program to interact with a FITS image.
+function, the pixels of one FITS image will be saved into a C array
+and vice versa. It is @url{https://github.com/makhlaghi/fitsarrayvv,
+available on Github} and can be considered as a wrapper for CFITSIO,
+which does the main job! It can easily be incorporated into any
+program. In MockGals we are using this program to interact with a FITS
+image.
 
 
 
@@ -1936,13 +1949,10 @@ profiles one by one in @code{mockimg()}.
 @anchor{making binary image example}
 @example
 /********************************************************************/
-/********************************************************************/
-
 for(i=0;i<nsize;i++)      /*'nsize': number of elements in 'img[]'. */
   img[i]=i>nsize/2;       /* 1 if true, 0 if flase. */
 
 array_to_fits("tmp.fits", NULL, "NOCONV", FLOAT_IMG, img, ns0, ns1);  
-
 /********************************************************************/
 @end example
 
