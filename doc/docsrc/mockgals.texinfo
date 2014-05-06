@@ -279,6 +279,11 @@ riddles of nature. Also, through writing the manual, the programmer
 gets to understand her/his own program and its strengths and
 weaknesses much better, which can most of the time result in changes
 in the program that will make it much more accurate and user friendly.
+MockGals its self is an excellent example, while writing @ref{How it
+works}, we recognized several inefficient processes that MockGals was
+doing and corrected them. The result was that while the accuracy
+remained unchanged, the CPU efficiency doubled (it done the same job
+in half the time). 
 
 Bjarne Stroustrup (creator of the C++ language) says: ``Without
 understanding software, you are reduced to believing in magic''.  Ken
@@ -417,9 +422,9 @@ punctuation marks that might follow them.
 
 @item
 When mentioning the order of menus to choose on a graphical user
-interface application, we will list them like this example: ``File''
--> ``Save As'', which means to first click on the ``File'' menu and
-then choose ``Save As'' in the list that opens.
+interface application, we will list them like this example:
+@clicksequence{File @click{} Save as}, which means to first click on
+the ``File'' menu and then choose ``Save As'' in the list that opens.
 @end itemize
 
 
@@ -551,8 +556,9 @@ you ordinarily open a multi-extension FITS file with ds9, by double
 clicking on it or running @command{$ds9 foo.fits} for example, ds9
 will only show you the first extension. To be able to switch between
 the extensions you have to follow these menus in the ds9 window:
-``File'' -> ``Open Other'' -> ``Open Multi Ext Cube'' and then choose
-the Multi extension FITS file in your computer's file structure.
+@clicksequence{File@click{}Open Other@click{}Open Multi Ext Cube} and
+then choose the Multi extension FITS file in your computer's file
+structure.
 
 The method above is a little tedious to do every time you want view a
 multi-extension FITS file. Fortunately ds9 also provides options that
@@ -566,14 +572,14 @@ usual.
 It is really convenient if you set ds9 to always run with the
 @option{-mecube} option on your graphical display. On a GNU/Linux
 operating system, you can do this by following the following steps.
-Right click on a FITS file and choose ``Properties''. Open the ``Open
-With'' tab on top of the Properties window and click on the ``Add''
-button. A list of applications will show up, ds9 might already be
-present in the list, but don't choose it because it will run with no
-options. Below the list is an option ``Use a custom
-command''. Click on it and write the following command: @command{ds9
--mecube} in the box and click ``Add''. Then finally choose the command
-you just added as the default and click the ``Close'' button.
+Right click on a FITS file and choose
+@clicksequence{Properties@click{}Open With@click{}Add} button. A list
+of applications will show up, ds9 might already be present in the
+list, but don't choose it because it will run with no options. Below
+the list is an option ``Use a custom command''. Click on it and write
+the following command: @command{ds9 -mecube} in the box and click
+``Add''. Then finally choose the command you just added as the default
+and click the ``Close'' button.
 
 
 
@@ -884,43 +890,28 @@ tollerance level beyond which only the central pixel value will be
 used and no integration will be preformed.
 
 @ref{pixinteg} shows the the difference between integration and the
-central pixel value for the first 2000 pixels in a mock S@'ersic
-profile, the same profile as @ref{makingprofile}. Let @mymath{I_i} be
-the pixel value if integration is preformed over it and @mymath{I_c}
-represent the profile value at the pixel center. The tollerance level
-that the user can set is defined as: @mymath{T=|I_i-I_c|/I_i}. The
-marked pixels in @ref{pixinteg} show the pixels that integration will
-be applied to if the user sets @mymath{T=10^{-2}}.
-
-The method that we build the profile on the image, see @ref{Profiles
-on graph}, is not based on the elliptical radius, but on the immediate
-pixels neighboring to the central pixel of the profile and their
-neighbors and etc. This is why some pixels with @mymath{r_{el}} larger
-than the radius where the tollerance was first reached are also
-integrated over. But as @ref{pixinteg} shows, these same pixels have a
-much larger fractional difference between a @mymath{I_c} and
-@mymath{I_i}, even though their elliptical radius is larger. This is
-due to the pixel area relative to the profile parameters and the
-particular way we build the profile.
-
-Since the fractional difference of all these more distant pixels is
-more than 0.01 (or one percent) and they are relatively numerous,
-@ref{pixinteg} shows that our method to build the galaxies does
-produce a very good level accuracy.
+central pixel value for the first @mymath{\sim2000} pixels in a mock
+S@'ersic profile. Let @mymath{I_i} be the pixel value if integration
+is preformed over it and @mymath{I_c} represent the profile value at
+the pixel center. The tollerance level that the user can set is
+defined as: @mymath{T=|I_i-I_c|/I_i}. The marked pixels in
+@ref{pixinteg} show the pixels that integration will be applied to if
+the user sets @mymath{T=10^{-2}}. Integration will stop at the first
+pixel that gives a smaller tollerance.
 
 @float Figure, pixinteg
 @center@image{./mockgals-figures/s7_pixinteg,15cm,,./mockgals-figures/s7_pixinteg.pdf,.png}
 
 @caption{Difference between integrating over the pixel area
 (@mymath{I_i}) and using the central pixel value (@mymath{I_c}). Each
-point is colored based on the logarithm of the fraction of the total
-object flux that is in that pixel. The profile used here is a S@'ersic
-profile with @mymath{n=4}, @mymath{r_e=5} pixels, @mymath{\theta=22}
-degrees and @mymath{q=0.3}, see @ref{makingprofile}. The solid
+point shows one pixel and is colored based on the logarithm of the
+fraction of the total object flux that is in that pixel. The profile
+used here is a S@'ersic profile with @mymath{n=4}, @mymath{r_e=5}
+pixels, @mymath{\theta=20^\circ} and @mymath{q=0.3}. The The solid
 horizontal line shows where the fractional difference of the profile
-becomes 1/100 and the dashed vertical line shows the first pixel that
-has a smaller difference. The pixels with a plus (@mymath{+}) sign on
-them show the pixels that integration has been applied to. }
+becomes 1/100. The pixels with a plus (@mymath{+}) sign on them show
+the pixels that integration has been applied to. In total, they
+constitute @mymath{\sim0.68} of the total light. }
 @end float
 
 
@@ -1096,7 +1087,25 @@ include it. The second one says where to put the final compiled
 libraries, the given value is the standard place to put them. The last
 one is if you want to access the fits files in a multithread manner.
 
+Both GSL and CFITSIO install their libraries in @file{/usr/local/}
+which is the default directory for user installed programs. To inform
+GCC to look into this directory, put this line in your
+@file{~/.bashrc} file:
 
+@example
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib; export LD_LIBRARY_PATH
+@end example
+
+You can edit @file{~/.bashrc} through these commands if you are using
+the bash shell (default in GNU/Linux):
+
+@example
+$ cd ~
+$ gedit .bashrc
+@end example
+
+Once you have made the changes, you can simply save the changes and
+close gedit.
 
 
 
@@ -1131,18 +1140,12 @@ files} for an explanation on how to do that.
 
 XPA is the ``X Public Access'' mechanism, its a messaging system in
 DS9 that allows e.g. host scripts to load images or control the
-display. After running ds9, if you get an error regarding XPA enter
-these commands if you are using the bash shell (default in GNU/Linux):
-
+display. After running ds9, if you get an error regarding XPA you can
+put this line in @file{~/.bashrc} file, see @ref{Requirements}:
 @example
-$ cd ~
-$ vim .bashrc
+export XPA_METHOD=local
 @end example
 
-Once inside vim, press @kbd{i} to be able to insert text, add
-@code{export XPA_METHOD=local}. Save by pressing @kbd{Esc} first and
-then @kbd{ZZ} (the @kbd{Shift} and @kbd{z} keys together,
-twice). @kbd{Esc} followed by @kbd{:wq} can also be used.
 
 To stop this command when you run ds9 from the Graphic User Interface,
 follow the above procedures on @file{~/.profile} also, if you don't
@@ -1827,9 +1830,14 @@ first element of the second row at (1,0). In this fashion, we can
 easily find the element at (x, y) on our hypothetical 2D array by
 finding element number @mymath{x\times b+y} on the real 1D
 array. Recall that we took @mymath{b} to represent the number of
-columns in the hypothetical 2D array. So to see the value of the
-(@code{x},@code{y}) element on the 2D illusion we just have to call
-@code{a[x*b+y]}.
+columns in the hypothetical 2D array. 
+
+To see the value of the (@code{x},@code{y}) element on the 2D illusion
+we just have to call @code{a[x*b+y]}. Also, supposing a 1D index of
+@code{i} (where @code{i} is not a floating point type), we can find
+the 2D coordinates with: @code{x=i/b} and @code{y=i%b}, where @code{%}
+is the remainder or modulus and @code{/} is integer division where for
+example @code{5/2=2}.
 
 There are methods to use an array of pointers to point to the starting
 positions of each row in a C array and thus work on that array of
@@ -1837,9 +1845,9 @@ pointers to create a better abstraction to of a 2D array. The
 advantage is that you can easily call element (x, y) with
 @code{a[x][y]}.
 
-But this level of abstraction is not without its costs. First of all
-you have to allocate another array of pointers the size of the number
-of rows in the image. Pointers are 8 bytes or 64 bits on most current
+This level of abstraction is not without its costs. First of all you
+have to allocate another array of pointers the size of the number of
+rows in the image. Pointers are 8 bytes or 64 bits on most current
 systems and thus much larger than an @code{int} or @code{float} which
 are usually only 4 bytes. This will take more memory on your system,
 especially if your images become large or numerous. Also, we have to
@@ -1889,10 +1897,12 @@ of the array is the bottom left pixel.
 
 In order to read from and write to a FITS image with relative ease we
 have written a very simple library so that only by calling one
-function, the pixels of one FITS image will be saved into a C
-array. It is @url{https://github.com/makhlaghi/fitsarrayvv, available
-on Github} and can easily be incorporated into any program. In
-MockGals we are using this program to interact with a FITS image.
+function, the pixels of one FITS image will be saved into a C array
+and vice versa. It is @url{https://github.com/makhlaghi/fitsarrayvv,
+available on Github} and can be considered as a wrapper for CFITSIO,
+which does the main job! It can easily be incorporated into any
+program. In MockGals we are using this program to interact with a FITS
+image.
 
 
 
@@ -1936,13 +1946,10 @@ profiles one by one in @code{mockimg()}.
 @anchor{making binary image example}
 @example
 /********************************************************************/
-/********************************************************************/
-
 for(i=0;i<nsize;i++)      /*'nsize': number of elements in 'img[]'. */
   img[i]=i>nsize/2;       /* 1 if true, 0 if flase. */
 
 array_to_fits("tmp.fits", NULL, "NOCONV", FLOAT_IMG, img, ns0, ns1);  
-
 /********************************************************************/
 @end example
 

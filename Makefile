@@ -9,12 +9,12 @@ vpath %.c $(src)
 CC=gcc
 CFLAGS=-Wall -W -O -pedantic -I$(src)
 LDFLAGS=-L/usr/lib64/atlas/
-LDLIBS=-lcfitsio -lfftw3 -pthread -lcblas -lgsl -lm
+LDLIBS=-lcfitsio -lfftw3 -pthread -lgsl -lgslcblas -lm
 
 mockgals: $(objects) 
 	@$(CC) -o mockgals $(LDFLAGS) $(objects) $(LDLIBS) 
 	@rm *.o
-#	./mockgals
+#	./mockgals -mne
 
 .SILENT: $(objects)
 

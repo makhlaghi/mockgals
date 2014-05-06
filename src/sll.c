@@ -294,3 +294,96 @@ pop_from_tssll_start(struct tssll **first,  size_t *value)
   if(*first)
     (*first)->next=NULL;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/****************************************************************
+ ******************        Ordered SLL       ********************
+ *****************           size_t          ********************
+ ****************************************************************/
+/* We want to put the nodes in order based on the 'tosort' value of
+each node. The top element should always have the smallest radius. */
+void
+add_to_ossll(struct ossll **list, size_t value, float tosort)
+{
+  struct ossll *newnode, *tmp=*list, *prev=NULL;
+
+  assert(( newnode=malloc(sizeof *newnode) )!=NULL);
+
+  newnode->v=value;
+  newnode->s=tosort;
+
+  /* *list points to the smallest value in the queue!*/
+  while(tmp!=NULL)
+    {
+      if(tosort<tmp->s) break;
+      /* No need for else, it will only come here if the condition
+	 above is not satisfied. */
+      prev=tmp;
+      tmp=tmp->next;
+    }
+
+  if(tmp==NULL)	     /* This is the largest value so far. */
+    {		     /* '*list' only changes if it is NULL. */
+      newnode->next=NULL;
+      if(prev) prev->next=newnode;   /* 'prev' is not NULL! */
+      else     *list=newnode;	     /* Only for initial node. */
+    }
+  else
+    {
+      if(prev) prev->next=newnode;
+      else     *list=newnode;	/* 'tosort' is smaller than all. */
+      newnode->next=tmp;
+    }
+}
+
+
+
+
+
+/* Note that the popped element is the smallest! */
+void
+pop_from_ossll(struct ossll **list,  size_t *value, float *sortvalue)
+{
+  struct ossll *tmp;
+  tmp=*list;
+  *value=tmp->v;
+  *sortvalue=tmp->s;
+  *list=tmp->next;
+  free(tmp);
+}
+
+
+
+
+
+/* Add the elements of an ossll to a ssll. */
+void
+ossll_into_ssll(struct ossll *in, struct ssll **out)
+{
+  struct ossll *tmp;
+  while(in!=NULL)
+    {
+      tmp=in->next;
+      add_to_ssll(out, in->v);
+      free(in);
+      in=tmp;
+    }
+}

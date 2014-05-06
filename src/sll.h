@@ -91,6 +91,22 @@ void
 pop_from_tssll_start(struct tssll **first,  size_t *value);
 
 
+/******************* Ordered size_t: */
+struct ossll
+{
+  size_t v;			/* The actual value. */
+  float s;			/* The parameter to sort by. */
+  struct ossll *next;
+};
+
+void
+add_to_ossll(struct ossll **list, size_t value, float tosort);
+
+void
+pop_from_ossll(struct ossll **list,  size_t *value, float *sortvalue);
+
+void
+ossll_into_ssll(struct ossll *in, struct ssll **out);
 
 
 #endif
