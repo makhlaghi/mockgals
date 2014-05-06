@@ -594,8 +594,8 @@ and click the ``Close'' button.
 @node Concepts, Installation, Quick start, Top
 @chapter Basic concepts
 
-Once the internal consistencies of theories has been verified, the
-only method scientists have to test their theories are gathering data
+Once the internal consistencies of theories have been verified, the
+only method scientists have to test their theories is gathering data
 from scientific experiments. For example in Physics and Chemistry
 where we are an active element in the experiment, or through
 observations, like in Astronomy where we are only passive observers to
@@ -615,7 +615,7 @@ observation. The data analysis techniques that are applied to the real
 data can then be first tested on the mock data to see how accurately
 our method measures the properties we want it to measure in known
 objects. Of course, whether our model actually resembles the data is
-an issue we have to have accertained before this step.
+an issue we have to have ascertained before this step.
 
 This is the fundamental raison d'@^etre of MockGals. In astronomy,
 faint objects or the fainter parts of bright objects are the most
@@ -1370,7 +1370,7 @@ In this list, after each option the terms @option{INTEGER},
 type of argument that each gets. If floating point value is given
 instead of an integer, only its integer section will be used. In other
 cases supplying the wrong type or argument to an option is not defined 
-and might result in unexpected out comes.
+and might result in unexpected outcomes.
 
 @table @option
 @item -x INTEGER
@@ -1479,8 +1479,8 @@ For Histogram. Maximum histogram value, default: 700.
 @node Mock parameters, How it works, Configuring, Top
 @chapter Mock parameters
 The parameters of the profiles you want to build into a FITS image are
-fed to it though a table that is saved as an ASCII text file. MockGals
-uses the argument to the @command{-i} option identify that file, see
+fed to it through a table that is saved as an ASCII text file. MockGals
+uses the argument to the @command{-i} option to identify that file, see
 @ref{Options with arguments}.
 
 The input ASCII text file has to be composed of columns of data (only
@@ -1547,7 +1547,7 @@ zero and this form of numbering the columns will be easier for the
 user to use this data.
 
 The number of galaxies, the sky value and truncation radius would
-normally be set by the user in @ref{Options with arguments}, what ever
+normally be set by the user in @ref{Options with arguments}, whatever
 their value, they will be shown here. The values currently shown are
 the default values.
 
@@ -1558,8 +1558,8 @@ the default values.
 @node Input table columns,  , Input table comments, Mock parameters
 @section Columns of the input table.
 As mentioned above, the input table has to have
-@value{INPUTTABLENUMCOLS} columns in this section we will review how
-each column is interpreted by MockGals.Below is an example showing the
+@value{INPUTTABLENUMCOLS} columns. In this section we will review how
+each column is interpreted by MockGals. Below is an example showing the
 properties of 5 of the profiles in @ref{quickpreview}.
 
 @example
@@ -1607,7 +1607,7 @@ the image within its truncation radius will be ignored. The fractional
 value is very important for sharper profiles, see @ref{Galaxies}.
 
 Note that in the FITS standard, the middle of the first pixel in both
-axises (which is the bottom left pixel when viewed in ds0) is
+axes (which is the bottom left pixel when viewed in ds0) is
 considered to have coordinates @code{(1,1)}. So for example the point
 @code{(1.51,1)} will be in the pixel positioned on the second column
 and first row of the FITS image. 
@@ -1741,12 +1741,12 @@ In case you want to compile the code and see the results
 simultaneously, remove the @code{#} from @code{# ./mockgals -mn} in
 @file{./MG/Makefile} so MockGals will be called to run as soon as the
 compilation finishes, without requiring any inputs from you! This will
-speed things up for you! You can chanage the options to any option you
+speed things up for you! You can change the options to any option you
 would like.
 
 Alternatively, if you aren't too faimilar with Emacs (in which case we
 strongly recommend to become familiar with it!) or you just want a
-fast preview, Github provides an exellent frame work. Go to
+fast preview, Github provides an exellent framework. Go to
 @url{https://github.com/makhlaghi/mockgals, MockGals page on Github}
 and click on any directory (with the shape of a folder) or source code
 file to see the contents of that directory or file. Github tries to do
@@ -1790,8 +1790,8 @@ variables in the @code{mockparams} structure that is defined in
 input to all the functions in @file{SRC/ui.c}, where they fill it up.
 
 Once all the paramters are set and the program enters
-@code{mockimg()}, which you can find in @file{SRC/mock.c}. the
-exciting part begins to begin. First the PSF is either made or read
+@code{mockimg()}, which you can find in @file{SRC/mock.c}, the
+exciting part begins. First the PSF is either made or read
 from a FITS file in the function @code{readormakepsf()}, this function
 also checks for the sides of the input PSF FITS image to be odd
 numbers and also makes sure that the sum of the PSF is unity.  If the
@@ -1812,7 +1812,7 @@ customary to label the elements on an array with a pair
 @mymath{(x,y)}, where the first number specifies the row number of
 that element and the second specifies its column number.
 
-In C, an array is a contiguous set of elements (of what ever data
+In C, an array is a contiguous set of elements (of whatever data
 type, like @code{int} or @code{float}, that you are using). This
 generic 1D array can easily be interpreted as a 2D (or any number of
 dimensions) array. To do that, it must be possible for its length, or
@@ -1841,7 +1841,7 @@ example @code{5/2=2}.
 
 There are methods to use an array of pointers to point to the starting
 positions of each row in a C array and thus work on that array of
-pointers to create a better abstraction to of a 2D array. The
+pointers to create a better abstraction of a 2D array. The
 advantage is that you can easily call element (x, y) with
 @code{a[x][y]}.
 
@@ -1869,7 +1869,7 @@ Based on these arguments, in MockGals we always find pixel (@code{x},
 @code{y}) on an array (lets name it @code{a}) which consider as having
 @code{b} columns with @code{a[x*b+y]}.
 
-Until now were were only considering arrays as defined in C and other
+Until now we were only considering arrays as defined in C and other
 languages that are based on it for example C++, Java, Python,
 etc. Unfortunately, the FITS standard is defined based on Fortran,
 which has two major differences with C that make a difference when we
@@ -1917,7 +1917,7 @@ we have to do is making the canvas (the array that will hold the final
 pixel values).
 
 It might seem to be an easy job: just allocate (with @code{calloc()}
-ofcourse to make a white a clean canvas) an array the size of the
+ofcourse to make a white and clean canvas) an array the size of the
 desired image. But unfortunately things aren't that simple! This is
 because we have to convolve the image with the PSF and the standard
 tool to do that has an unwanted consequence that we should take into
@@ -2191,7 +2191,7 @@ Placing @mymath{t} it in the second equation above for the respective
 coordinate, you will find the distance, about the center of the
 ellipse that encloses the whole ellipse. This defines a box for us
 that will enclose the whole ellipse. @code{findstartingpixel()} then
-checks for an possible overlap of this box with the image and if it
+checks for a possible overlap of this box with the image and if it
 exists, finds the pixel on the border of the image that is closest to
 the center of the profile and returns that point.
 
@@ -2211,7 +2211,7 @@ struct tssll                /* Two directional simple linked list. */
 
 @noindent
 Pixel indices are added to the end of the queue (most recent element
-added) using @code{add_to_tssll_end()} and they are poped out of the
+added) using @code{add_to_tssll_end()} and they are popped out of the
 start of the queue (oldest element in the queue) using
 @code{pop_from_tssll_start()}. Both these functions are defined in
 @file{SRC/sll.h}. A clean (all zeros) array the size of the image is
