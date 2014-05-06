@@ -2240,32 +2240,6 @@ struct ossll
 @};
 @end example
 @noindent
-<<<<<<< HEAD
-Pixel indices are added to the end of the queue (most recent element
-added) using @code{add_to_tssll_end()} and they are popped out of the
-start of the queue (oldest element in the queue) using
-@code{pop_from_tssll_start()}. Both these functions are defined in
-@file{SRC/sll.h}. A clean (all zeros) array the size of the image is
-used to mark if a pixel for each profile has already been filed, a
-neighbor is only added to the queue if it has not been marked in that
-array, also, since neighbors share neighbors, a pixel will be added
-more than once to the queue. So before trying to fill a popped
-element, it is first checked if it has been filled or not.
-
-@ref{makingprofile} shows  this process in  an easy to  understand and
-pixel by pixel  manner, in this case  the profile is in  the center of
-the image,  but it  can easily  be located at  any position  inside or
-outside of the image.  @inlinefmt{html, Note that the @file{.gif} file
-to show this step by step process is 3.6 MegaBytes.}
-
-@float Figure, makingprofile
-@center@image{./mockgals-figures/s7_pixfill,15cm,,./mockgals-figures/s7_pixfill.gif,.gif}
-
-@caption{Pixel by pixel demonstration of how a mock S@'ersic profile
-with @mymath{r_e=5}pixels and @mymath{n=4} is built in a small
-box. Due to space limitations the whole profile cannot be shown in
-this manner}
-=======
 A pixel (a node in the queue) is added to this ordered queue with
 @code{add_to_ossll()}. The new node is positioned in the queue such
 that its next element has a larger @mymath{r_{el}}. In this fashion,
@@ -2310,7 +2284,6 @@ which require integration are found. The last step shows the full
 profile in the same frame. The pixels are colored based on the
 logarithm of their flux and truncated, such that the central regions
 are completely black, to easily demonstrate the pixels used. }
->>>>>>> 6ff5da00ede02c27b8e093d609187877a6c47c0d
 @end float
 
 
@@ -2349,11 +2322,11 @@ The distance of the pixels no longer matters, therefore we just define
 4-connectivity to decrease the number of tests if the pixel has
 already been done. @ref{restpixfill} demonstrates how the rest of the
 pixels are filled for the same profile of
-@ref{integpixfill}. @inlinefmtifelse{html, The @file{.gif} image to
+@ref{integpixfill}. image to
 show all the steps is 7.4 MB. it might take some time to download if
 you have a slow connection., The HTML version of this manual has a GIF
 animation showing the pixel by pixel placement of the pixels of the
-profile.}
+profile.
 
 
 @float Figure, restpixfill
