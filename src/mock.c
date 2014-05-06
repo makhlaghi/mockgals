@@ -747,7 +747,6 @@ findstartingpixel(size_t s0, size_t s1, float truncr,
    the queue, but it's byt value will be set to one and a value of
    zero will be put into its D[i]->v value.
  */
-#define CHECKINTEG 0
 int
 makeprofile(float *img, unsigned char *byt, size_t *bytind, 
 	    size_t *ngbs, size_t s0, size_t s1, float trunc, 
@@ -755,7 +754,6 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
 	    double p1, double p2, float pa_d, float q, float avflux, 
 	    double *totflux)
 {
-  /*FILE *fp;*/
   float t_i, t_j;		/* 2D position from 1D. */
   char profletter;
   struct elraddistp e;
@@ -766,8 +764,6 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
   double (*func)(double, double, double);
   size_t i, numngb, nrow, counter=0, p, tp;
   float r, truncr, maxir=0, integ, tmp, multiple=0;
-
-  /*fp=fopen("checkinteg.txt", "w");*/
   
   e.q=q;
   e.t=M_PI*pa_d/180;
@@ -835,7 +831,7 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
 	  maxir=r;
 	  break;
 	}
-   
+      
       /* It is very important to go over the 8 connected neighbors,
 	 because we are dealing with elliptical radii, not a cartesian
 	 space. So the diagonal neighbor might be closer (in
@@ -847,9 +843,6 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
 	  add_to_ossll( &oQ, tp, elraddist(&e, tp/s1, tp%s1) );
       while(ngbs[nrow+ ++numngb]!=NONINDEX);
     }
-
-  /*printf("r: %f, %f\n", maxir, suminteg/sum);
-    fclose(fp);*/
 
   /* All the pixels that required integration are now done, so we
      don't need an ordered array any more! */

@@ -1,0 +1,30 @@
+\begin{figure}[tbp]
+  \begin{center}
+
+    \begin{tikzpicture}
+      \foreach \j/\y in {0/0,1/-0.09,2/-0.18}
+          \foreach \i/\x in {0/0,1/0.09,2/0.18,3/0.27,4/0.36,5/0.45,6/0.54,7/0.63,8/0.72,9/0.81,10/0.90}
+                   {
+                     \node[anchor=south west, draw, inner sep=0pt,
+                       line width=1pt] (img) 
+                     at (\x\linewidth,\y\linewidth) 
+                          {\includegraphics[width=0.09\linewidth]
+                            {./BaseFiles/IntegPixfill/\j_\i.jpg}};
+                   }
+    \end{tikzpicture}
+
+
+    \begin{tikzpicture}
+      \foreach \j/\y in {0/0,1/-0.09,2/-0.18}
+          \foreach \i/\x in {0/0,1/0.09,2/0.18,3/0.27,4/0.36,5/0.45,6/0.54,7/0.63,8/0.72,9/0.81,10/0.90}
+                   {
+                     \node[anchor=south west, draw, inner sep=0pt,
+                       line width=1pt] (img) 
+                     at (\x\linewidth,\y\linewidth) 
+                          {\includegraphics[width=0.09\linewidth]
+                            {./BaseFiles/RestPixfill/\j_\i.jpg}};
+                   }
+    \end{tikzpicture}
+
+  \end{center}
+\end{figure}
