@@ -3,7 +3,7 @@ The docs:
 
 The sources for making the documentation are in `./docsrc`.
 
-To compile the documentation you need to run `run.sh`. But `run.sh' 
+To compile the documentation you need to run `run.sh`. But `run.sh` 
 depends on two compiled files (from `docsrc/`), to compile them (only
 once is enough), simply run the `makerunrequirements.sh` that is 
 available in this directory. It will compile these two programs that
