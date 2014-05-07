@@ -15,7 +15,7 @@ cp ./mockgals-figures/*.gif ./mockgals/mockgals-figures/
 
 #Make the PDF:
 texi2pdf $TEXISRC
-rm *.aux *.cp *.fn *.ky *.log *.pg *.toc *.tp *.vr *.cps
+rm *.aux *.cp *.fn *.ky *.log *.pg *.toc *.tp *.vr *.cps *.fns
 mv mockgals.pdf ./mockgals/
 
 #Make the three other verions:

@@ -15,6 +15,11 @@
 
 @c Use section titles in cross references, not node titles.
 @xrefautomaticsectiontitle on
+
+@syncodeindex fn cp
+@syncodeindex vr cp
+@syncodeindex pg cp
+
 @c %**end of header
 
 
@@ -36,8 +41,8 @@ Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.3 or
 any later version published by the Free Software Foundation; with no
 Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
-Texts.  A copy of the license is available online at
-@uref{http://www.gnu.org/copyleft/fdl.html, GNU FDL webpage}.
+Texts.  A copy of the license is available in @ref{GNU Free
+Documentation License}.
 @end quotation
 @end copying
 
@@ -69,11 +74,13 @@ another well enough.
 @ifnottex
 @node Top, About, (dir), (dir)
 @top MockGals
+
 MockGals is a tool to produce mock galaxies and stars based on an
-input catalog, or randomly, into a FITS image of any given size. All
-paramters to define mock galaxies and to define background noise are
-easily configurable. We have tried to give a very complete overview of
-how to install, understand and use MockGals version @value{VERSION}
+input catalog, or randomly, into a FITS image, which is the standard
+format to store astronomical data, of any given size. All paramters to
+define mock galaxies and to define background noise are easily
+configurable. We have tried to give a very complete overview of how to
+install, understand and use MockGals version @value{VERSION}
 (@value{UPDATED}) for your scientific research. We sincerely hope it
 can be useful.
 
@@ -138,6 +145,8 @@ you are not familiar, you can learn here:
 * Configuring::                 Explanation on how to tell MockGals what to do.
 * Mock parameters::             The parameters that are input into MockGals.
 * How it works::                Detailed explanation of the coding.
+* GNU General Public License::  GNU GPLv3, Licence of MockGals.
+* GNU Free Documentation License:: Licence of this manual.
 * Manual Index::                Index, to find exact concepts.
 @end menu
 
@@ -196,6 +205,11 @@ summary of the manual.
 
 @node Good Science, Your rights, About, About
 @section Objective/critical science and its software
+@cindex Transparent software
+@cindex Approximations in science
+@cindex Simplifications in science
+@cindex Software in Science
+@cindex Science and software
 History of science shows us that no interpretation, model or technique
 (software) is perfect.  There are always inevitably unseen faults,
 hidden assumptions, simplifications and approximations in all of our
@@ -216,6 +230,7 @@ process them individually to achieve an analysis, today scientits
 mainly leave the first two steps to pre-written software libraries,
 therefore distancing themselves from the pure observational data.
 
+@cindex Anscombe, F.J
 @quotation
 Unfortunately, most persons who have recourse to a computer for
 statistical analysis of data are not much interested either in
@@ -228,11 +243,16 @@ fighting spirit. It's time that was changed.
 @author F. J. Anscombe. The American Statistician, Vol. 27, No. 1. 1973
 @end quotation
 
+@cindex Good statistical analysis
+@cindex Anscombe quartet
+@cindex Obscure software
 Anscombe argues that ``Good statistical analysis is not a purely
 routine matter, and generally calls for more than one pass through the
-computer''. He showed how four data sets with widely different shapes
-(when plotted) give nearly identical output from standard regression
-techinques. Thus he showed how wrong it is to only rely on outputs of
+computer''. He demonstrated how four data sets with widely different
+shapes (when plotted) give nearly identical output from standard
+regression techinques, see
+@url{http://en.wikipedia.org/wiki/Anscombe%27s_quartet, Anscombe's
+quartet}. Thus he showed how wrong it is to only rely on outputs of
 standard methods to interpret the data. Although we have much better
 graphic displays today, unfortuantely the general situation has not
 changed too much from Anscombe's time.  Obscure software, either
@@ -244,6 +264,8 @@ before trying to understand the inner workings of a software.  Thus
 the wide use of free and transparent software may be one step in a
 larger scheme to save the sciences...
 
+@cindex Karl Popper
+@cindex Popper, Karl
 @quotation
 ...from narrow specialization and from an obscurantist faith in the
 expert's special skill and in his personal knowledge and authority; a
@@ -258,17 +280,21 @@ understand its intricate details at their will, a software has to be
 accompanied by a good and up to date manual. The user of a software
 cannot claim to understand how it works only based on the experience
 they have gained by frequently using it. This kind of subjective
-experience is prone to very serious mis-understandings that only help
-in producing dogmas and the above mentioned ``obscurationist faith in
-the expert's special skill''.  Unfortunately in the commonly used
-astronomical softwares at least, most are either closed source or
-don't have a good manual. The scientific results that are deduced from
-such software are thus not objective, because in the former case
-scientists have to look at it as a black box and trust its results on
-faith or their subjective experience. In the latter, it is very hard
-to find enough time to understand the programming of an open source
-project without a clearly written and up to date manual explaining all
-the ideas behind the major functions, data structures or objects.
+experience is prone to very serious mis-understandings about how it
+really works. This kind of experience only helps in producing dogmas
+and the above mentioned ``obscurationist faith in the expert's special
+skill''.  
+
+@cindex Black box
+Unfortunately in the commonly used astronomical software packages at
+least, most are either closed source or don't have a good manual. The
+scientific results that are deduced from such software are thus not
+objective, because in the former case scientists have to look at it as
+a black box and trust its results on faith or their subjective
+experience. In the latter, it is very hard to find enough time to
+understand the programming of an open source project without a clearly
+written and up to date manual explaining all the ideas behind the
+major functions, data structures or objects.
 
 It is certainly time consuming for the author of a software to make
 such a manual. But if our greater common experience is considered,
@@ -286,6 +312,12 @@ doing and corrected them. The result was that while the accuracy
 remained unchanged, the CPU efficiency doubled (it done the same job
 in half the time). 
 
+@cindex Bjarne Stroustrup
+@cindex Stroustrup, Bjarne
+@cindex Ken Thomson
+@cindex Thomson, Ken
+@cindex user
+@findex C++
 Bjarne Stroustrup (creator of the C++ language) says: ``Without
 understanding software, you are reduced to believing in magic''.  Ken
 Thomson (the designer or the Unix operating system) says ``I abhor
@@ -310,6 +342,7 @@ determines all our scientific results.
 @node Your rights, Manual formats, Good Science, About
 @section Your rights as a user of MockGals
 
+@cindex Free software
 MockGals is ``free software''; this means that everyone is free to use
 it and free to redistribute it on certain conditions. MockGals is not
 in the public domain; it is copyrighted and there are restrictions on
@@ -340,10 +373,9 @@ reputation.
 
 The precise conditions of the licenses for the programs currently
 being distributed that relate to MockGals are found in the General
-Public license@footnote{ @url{https://www.gnu.org/copyleft/gpl.html}}
-that accompany them.  This manual is covered by the GNU Free
-Documentation License@footnote{
-@url{https://www.gnu.org/copyleft/fdl.html}}.
+Public license, see @ref{GNU General Public License} that accompany
+them.  This manual is covered by the GNU Free Documentation License,
+see @ref{GNU Free Documentation License}.
 
 The paragraphs above, in this section, belong to the GNU Texinfo manual
 and are not written by us! We have just changed the name ``Texinfo''
@@ -356,15 +388,29 @@ licenses and it is beautifully written to inform you of your rights.
 
 @node Manual formats, Conventions, Your rights, About
 @section Manual Formats and reading recommendations
+@pindex Emacs
 This manual is available in plain text, HTML, Info, Docbook, PDF and
 finally the Texinfo format. The last one is the basis for creating all
 the other formats. As an initial introduction the PDF and HTML formats
 might be easier to begin using MockGals, but if you would like to
 understand the code while reading @ref{How it works}, it is much
-easier to do so in the Info format. For example in Emacs, you can have
-one window on the code and another on the Info versin of this manual
-and follow the functions and explanations together.
+easier to do so in the Info format. For example in Emacs, which is an
+extensible, customizable text editor that is made for programming, you
+can have one window on the code and another on the Info version of
+this manual and follow the functions and explanations together.
 
+@cindex Ubuntu
+@cindex Fedora
+@cindex Linux Mint
+@cindex Debian
+@cindex OpenSUSE
+@cindex RedHat
+@cindex RHEL
+@cindex CentOS
+@cindex Scientific Linux
+@pindex info
+@cindex info, learning
+@cindex learning info
 Info is a very convenient format particularly useful for software
 documentation. We strongly recommend becoming familiar with it if you
 are not already because it can significantly enhance your experience
@@ -376,6 +422,9 @@ facilities to navigate easily in long manuals. To learn more about it
 in any GNU/linux terminal you can run: @command{$ info info}. It does
 a fantastic job in explaining its self in practice interactively.
 
+@cindex A4 paper size
+@cindex Letter paper size
+@cindex Convert to Letter paper size
 By default, the PDF version of this manual is prepared in the A4 paper
 size (21.0cm by 29.7cm). In case you prefer a letter size (8.5in by
 11in), you can simply change it by following the steps below. You must
@@ -406,14 +455,23 @@ the documenation formats.
 @itemize
 @item
 Commands to be input into the command line as normal user begin with
-@command{$}.
+@command{$}. On the command line, before @command{$}, you will have
+something like this: @command{[idname@@computername D]} where
+@command{D} stands for the directory you are in, which is @command{~}
+(your home directory) by default.
 
+@cindex Super-user
+@cindex root
 @item
 Commands that to be input as root (or super-user), start with
 @command{#}. Note that you need the root password in order to execute
-the latter commands. To switch to the root user (or super-user) you
-can simply run @command{$ su}. You will be prompted with a password
-and if it is correct you will gain super-user privileges. 
+the latter commands. 
+
+To switch to the root user (or super-user) you can simply run
+@command{$ su}. You will be prompted with a password and if it is
+correct you will gain super-user privileges.  After switching to root,
+the @command{idname}, see previous list item, changes to
+@command{root}.
 
 @item
 The @command{commands}, @option{-options}, @file{file_names},
@@ -470,15 +528,20 @@ define the parameters for each profile.
 @node Quick start, Concepts, About, Top
 @chapter A Quick start
 
+@cindex Randomly positioned galaxies
+@cindex FITS
 Once MockGals is installed system wide, @pxref{Installation}, you can
-simply run @command{$mockgals -nm} any where and, 45 mock galaxies and
-5 stars will be randomly positioned in a @mymath{200 \times 200} FITS
-image. @ref{quickpreview} shows one such random example.  The central
-positions of some of these random profiles is intentionally placed
-outside of the actual image range in order to be more
-realistic. MockGals ignores objects that are completely out of the
-image, but even if a small fraction of their area (within the defined
-truncation radius) falls within the image, that part will be included.
+simply run @command{$mockgals -nme}, any where and, 45 mock galaxies
+and 5 stars will be randomly positioned in a @mymath{200 \times 200}
+FITS image, which is the standard format to store astronomical
+data. These options are not necessary for the production of the final
+noised FITS image and explained below. @ref{quickpreview} shows one
+such random example.  The central positions of some of these random
+profiles is intentionally placed outside of the actual image range in
+order to be more realistic. MockGals ignores objects that are
+completely out of the image, but even if a small fraction of their
+area (within the defined truncation radius) falls within the image,
+that part will be included.
 
 @float Figure, quickpreview
 @center@image{./mockgals-figures/s1_noconv,5cm,,./mockgals-figures/s1_noconv.jpg,.jpg}@image{./mockgals-figures/s1_conv, 5cm,,./mockgals-figures/s1_conv.jpg,.jpg}@image{./mockgals-figures/s1_noised, 5cm,,./mockgals-figures/s1_noised.jpg,.jpg}
@@ -494,13 +557,17 @@ generally a multi-extension FITS file and the second is a text file
 listing the properties of all the profiles that are positioned in this
 image.
 
+@findex -m
+@findex -n
+@findex -e
 To view the full list of options, see @ref{Configuring} where all the
 options are explained. The two options used here, namely @option{-m}
 and @option{-n}, will output the desired image prior to convolution
-(left in @ref{quickpreview}) and the convolved image prior to
-adding noise (middle in @ref{quickpreview}) respectively. So if
-you don't pass along these two options, you will only get the right
-image of @ref{quickpreview}.
+(left in @ref{quickpreview}) and the convolved image prior to adding
+noise (middle in @ref{quickpreview}) respectively. @option{-e} will
+print out all the steps MockGals takes in making the image. So if you
+don't pass these options along, you will only get the right image
+of @ref{quickpreview}, with out any reporting.
 
 
 
@@ -517,14 +584,22 @@ image of @ref{quickpreview}.
 @node InputOutput, Viewing multiextension FITS files, Quick start, Quick start
 @section Setting input and output
 
+@findex -x
+@findex -y
+@cindex Galaxy list
+@cindex List of galaxies
 Normally, you wouldn't want MockGals to give you 45 random galaxies
-and stars! You want to give it a list of galaxies with known
+and 5 stars! You want to give it a list of galaxies with known
 properties so MockGals can make those galaxies for you. The output
 image size is determined on the command line by the @option{-x} and
 @option{-y} options. The first sets the horizontal width and the
 second the height of the output image, see @ref{Configuring} for more
-information. 
+information.
 
+@cindex ASCII table
+@findex -i
+@cindex Ouput table
+@cindex Input table
 MockGals reads the properties you want for the galaxies through an
 ASCII table, a simple ASCII text file, where columns are separated by
 white space or @kbd{TAB}. An example is the @file{mockinfo.txt} table
@@ -532,11 +607,13 @@ that was created above. The file name of the table you have created
 with the profile properties can be specified with the @option{-i}
 option. If it doesn't exist, MockGals will make the default 50 random
 profiles (5 stars and 45 galaxies) as it did when you ran
-@command{$mockgals -nm}. If you run this command again, one more time,
+@command{$mockgals -nme}. If you run this command again, one more time,
 it is going to make exactly the same image it made the first time,
 this is because if no input is given, it is going to read the profile
-properties from @file{mockinfo.txt} and make an exact duplicate.
+properties from @file{mockinfo.txt}, that it made after its first run,
+and make an exact duplicate.
 
+@cindex Output FITS
 By default the output FITS file is named @file{mock.fits} you can also
 ask for a different output file name through the option
 @option{-o}. When reading for input, MockGals does not read the
@@ -549,6 +626,9 @@ the profiles and then fill this column by its self.
 @node Viewing multiextension FITS files,  , InputOutput, Quick start
 @section Viewing multi-extension FITS files
 
+@cindex Multiextention FITS
+@pindex ds9
+@cindex Opening multiextention FITS
 If you run @command{$mockgals} with the @option{-m} or @option{-n}
 options, the output will be a multi-extention FITS file. Lets assume
 you use SAOImage ds9@footnote{@url{http://ds9.si.edu/}} (from now on,
@@ -561,6 +641,7 @@ the extensions you have to follow these menus in the ds9 window:
 then choose the Multi extension FITS file in your computer's file
 structure.
 
+@findex ds9 -mecube
 The method above is a little tedious to do every time you want view a
 multi-extension FITS file. Fortunately ds9 also provides options that
 you can add to it. One of those options is @option{-mecube} which
@@ -595,6 +676,10 @@ and click the ``Close'' button.
 @node Concepts, Installation, Quick start, Top
 @chapter Basic concepts
 
+@cindex Validating theory
+@cindex Active experimenter
+@cindex Passive observer
+@cindex Uncertainty in observations.
 Once the internal consistencies of theories have been verified, the
 only method scientists have to test their theories is gathering data
 from scientific experiments. For example in Physics and Chemistry
@@ -606,6 +691,7 @@ the nature of the subject we are observing or we think we understand
 the nature fine enough but the data is diluted with a lot of noise, or
 both, which is unfortunately the case most of the time.
 
+@cindex Calibrate analysis tools
 In order to be able to tackle these two problems, before actually
 doing any form of analysis on real data, a scientist first has to
 calibrate the data analysis tools with a set of mock subjects where
@@ -618,6 +704,7 @@ our method measures the properties we want it to measure in known
 objects. Of course, whether our model actually resembles the data is
 an issue we have to have ascertained before this step.
 
+@cindex Faint objects, importance
 This is the fundamental raison d'@^etre of MockGals. In astronomy,
 faint objects or the fainter parts of bright objects are the most
 curious aspects of the universe, simply because they are extremely
@@ -626,25 +713,29 @@ objects. Both are the most curious objects in Astronomy, and
 understanding their nature is the primary reason behind investing so
 much in larger ground and space based telescopes.
 
+@cindex Purpose of mock galaxies
 So any tool we use to observe such real galaxies, has to be first
 tested with mock galaxies, because identifying a diffuse faint galaxy
 in a large noise is extremely hard and prone to very serious
 systematic bias if we don't test our detection methods accurately and
 understand the systematic biases they inevitably have.
 
+@cindex Parametric fitting
 Mock galaxies can also be used to fit known parametric models to the
 observed galaxies, for example suppose we have a real galaxy image and
-we have a radial functional profile (for example the S@'ersic profile)
-and we want to see what values of the free parameters of the S@'ersic
-profile fit best with the observed galaxy, or more generally, if that
-functional radial profile is suitable or not for that particular
-object. In this case, we can make various mock 2D S@'ersic profiles
-with various properties that have the observable properties of our
-desired object and check to see which one best resembles the real
-galaxy. This feature will be a future addition to MockGals. The
-infra-structure for this capability is already in place, we just have
-to find the time to add this capability.
+we have a radial functional profile, for example the S@'ersic profile,
+see @ref{Galaxies},  and we want to see what values of the free
+parameters of the S@'ersic profile fit best with the observed galaxy,
+or more generally, if that functional radial profile is suitable or
+not for that particular object. In this case, we can make various mock
+2D S@'ersic profiles with various properties that have the observable
+properties of our desired object and check to see which one best
+resembles the real galaxy. This feature will be a future addition to
+MockGals. The infra-structure for this capability is already in place,
+we just have to find the time to add this capability.
 
+@cindex 2D surface
+@cindex 3D volume
 Currently MockGals makes mock profiles on a 2D surface, but the
 infra-structure is there to make the profiles on a 3D volume and find
 a real projection of a real 3D object. This is also a future upgrade
@@ -678,15 +769,24 @@ used for the PSF, stars and galaxies are explained separately.
 @node Defining an ellipse, PSF, Object profiles, Object profiles
 @subsection Defining an ellipse
 
-The PSF and galaxy radial profiles are generally defined on an ellipse
-so in this section we will first review how an ellipse can be defined
-on a 2D surface. Labeling the major axis of an ellipse @mymath{a}, and
-its minor axis with @mymath{b}, the axis ratio is defined as:
-@mymath{q\equiv b/a}. The major axis of an ellipse can be aligned in any
-direction, we therefore define the angle of the major axis to the
-horizontal axis of the image as position angle of the ellipse and in
-this manual, we show it with @mymath{\theta}.
+@cindex Ellipse
+@cindex Ellipse major axis
+@cindex Ellipse minor axis
+@cindex Major axis, ellipse
+@cindex Minor axis, ellipse
+@cindex Position angle
+The PSF, see @ref{PSF}, and galaxy radial profiles are generally
+defined on an ellipse so in this section we will first review how an
+ellipse can be defined on a 2D surface. Labeling the major axis of an
+ellipse @mymath{a}, and its minor axis with @mymath{b}, the axis ratio
+is defined as: @mymath{q\equiv b/a}. The major axis of an ellipse can
+be aligned in any direction, we therefore define the angle of the
+major axis to the horizontal axis of the image as position angle of
+the ellipse and in this manual, we show it with @mymath{\theta}.
 
+@cindex Radial distance
+@cindex Radial function
+@cindex Function, radial
 Our aim is to put a radial profile of any functional form @mymath{f(r)}
 over an ellipse. Lets define the radial distance @mymath{r_{el}} as the
 distance on the major axis to the center of the ellipse which is
@@ -712,37 +812,47 @@ desired.
 @node PSF, Stars, Defining an ellipse, Object profiles
 @subsection Point Spread function
 
+@cindex PSF
+@cindex Point spread function
+@cindex Atmospheric spread
+@cindex Diffraction limit
 Assume we have a ``point'' source. When we take an image of it, it
 will ``spread'' over an area. To quantify that spread, we can define a
-parametric ``function'', which we call the point spread function or
-the PSF of the image. This ``spread'' can have various causes, for
-example in ground based astronomy, due to the atmosphere. In practice
-we can never surpass the ``spread'' due to the diffraction of our lens
+a ``function''. This is how we define the point spread function or the
+PSF of the image. This ``spread'' can have various causes, for example
+in ground based astronomy, due to the atmosphere. In practice we can
+never surpass the ``spread'' due to the diffraction of our lens
 aperture. Vairous other effects can also be quantified through a PSF,
 for example, the simple fact that we are sampling in a discrete space,
 namely the pixels, also produces a very small ``spread'' in the image
 we take.
 
+@cindex PSF image, odd sides
+@cindex Odd sides of PSF image
 Since we want the total flux of an object to remain unchanged after
 convolution by the PSF, in both cases, it is important that the sum of
-all the pixels of the PSF be unity. The image also has to be a square
-and have an odd number of pixels on its sides so one pixel can be
-defined as the center. In MockGals, the PSF can be set by the two
-methods explained below.
+all the pixels of the PSF be unity. The image also has to have an odd
+number of pixels on its sides so one pixel can be defined as the
+center. In MockGals, the PSF can be set by the two methods explained
+below.
 
 @table @asis
 
+@cindex Parametric PSF
+@cindex PSF, parametric
+@cindex Full width at half maximum
+@cindex FWHM
 @item Parametric functions
 A known mathematical function is used to make the PSF. In this case,
 only the paramaters to define the functions are necessary and MockGals
 will make a PSF based on the given parameters for each function. In
 both cases, the center of the profile has to be exactly in the middle
 of the central pixel of the PSF (which is automatically done by
-MockGals). When talking about the PSF, usually, the FWHM is used as a
-scale of the width of the PSF. This is because, identifying two point
-sources that are FWHM appart is impossibe.
+MockGals). When talking about the PSF, usually, the full width at half
+maximum or FWHM is used as a scale of the width of the PSF.
 
 @table @cite
+@cindex Gaussian function
 @item Gaussian
 In the older papers, and to a lesser extent even today, some
 researchers use the 2D gaussian function to approximate the PSF of
@@ -756,7 +866,8 @@ Since the center of the profile is pre-defined, @mymath{\mu} and
 the function to be normalized. So the only important parameter for
 MockGals is the @mymath{\sigma}. In the Gaussian function we have this
 relation between the FWHM and @mymath{\sigma}:
-FWHM@mymath{=2\sqrt{2\ln{2}}\sigma \approx 2.35482\sigma}.
+
+@dispmath{\rm{FWHM}_g=2\sqrt{2\ln{2}}\sigma \approx 2.35482\sigma}.
 
 @item Moffat
 The Gaussian profile is much sharper than the images taken from stars
@@ -768,27 +879,34 @@ this functional form for the image of stars:
 Again, @mymath{a} is constrained by the normalization, therefore two
 paramters define the shape of the Moffat function: @mymath{\alpha} and
 @mymath{\beta}. The radial parameter is @mymath{\alpha} which is related
-to the FWHM by @mymath{\alpha=}FWHM@mymath{/(2\sqrt{2^{1/\beta}-1})}.
+to the FWHM by
+
+@dispmath{\rm{FWHM}_m=2\alpha\sqrt{2^{1/\beta}-1})}
+
+@noindent
 Comparing with the PSF predicted from atmospheric turbulence theory
-with a Moffat function, Trujillo et al. 2001 claim that
-@mymath{\beta} should be 4.765.
+with a Moffat function, Trujillo et al. 2001 claim that @mymath{\beta}
+should be 4.765. They also show how the Moffat PSF contains the
+Gaussian PSF as a limiting case when @mymath{\beta\to\infty}.
 
 @end table
 
-
+@cindex PSF, input FITS
+@cindex Input FITS as PSF
 @item An input FITS image
-Pixel values from an input image will be used. As stated above, it is
-extremely important for the input FITS image to be a square with odd
-pixel sides. If the sum of the pixels of the input FITS image is not
-unity, MockGals will divide all pixels by their sum to make it so.
+An input image can also be specified to be used as a PSF. See
+@option{-f} in @ref{Options with arguments}.
 @end table
 
 
-Below, see @ref{MoffatGaussianComp}, you can see a comparison of the
-Gaussian and Moffat profiles. All profiles have the same FWHM of 5
-units. While the Gaussian is only dependent on the FWHM, the Moffat
-function is also dependant on @mymath{\beta}. Therefore we have shown
-the Moffat function for 4 @mymath{\beta} values.
+@cindex Gaussian/Moffat comparison
+@cindex Comparison Gaussian/Moffat
+@cindex Moffat/Gaussian comparison
+In @ref{MoffatGaussianComp}, you can see a comparison of the Gaussian
+and Moffat profiles. All profiles have the same FWHM of 5 units. While
+the Gaussian is only dependent on the FWHM, the Moffat function is
+also dependant on @mymath{\beta}. Therefore we have shown the Moffat
+function for 4 @mymath{\beta} values.
 
 @float Figure, MoffatGaussianComp
 @center@image{./mockgals-figures/S3_MoffatGaussianComp,15cm,,./mockgals-figures/s3_MoffatGaussianComp.pdf,}
@@ -816,6 +934,9 @@ becomes sharper.
 @node Stars, Galaxies, PSF, Object profiles
 @subsection Star Profiles
 
+@cindex Stars, profile
+@cindex Profile, stars
+@cindex Point source
 In MockGals, we generally consider stars to be a point source. This is
 usually the case for extra galactic studies, were nearby stars are
 also in the field. Since a star is only a point source, we assume that
@@ -825,6 +946,7 @@ convolution) and the middle (after convolution) images. Therefore the
 final shape of a star can be considered as the shape of the PSF used
 to make the mock images.
 
+@cindex Star image as PSF
 Infact, exactly for this reason, in astronomical images the light
 profiles of stars are one of the best methods to understand the shape
 of the PSF and a very large fraction of scientific research is
@@ -837,22 +959,33 @@ preformed by assuming the shapes of stars to be the PSF of the image.
 @node Galaxies, Integration, Stars, Object profiles
 @subsection Galaxies
 
+@cindex Profile, galaxies
+@cindex Galaxy profiles
+@cindex S@'ersic profile
+@cindex Generalized de Vaucouleurs profile
+@cindex de Vaucouleurs profile
 Today, most practitioners agree that galaxy profiles can be modeled
 with one or a few generalized de Vaucouleur's (or S@'ersic) profiles.
 
 @dispmath{I(r) = I_e exp \left ( -b_n \left[ \left( r \over r_e \right)^{1/n} -1 \right] \right )}
 
+@cindex Effective radius
+@cindex Radius effective
+@cindex Total brightness
+@cindex S@'ersic index
 This profile depends on the effective radius (@mymath{r_e}) which is
 defined as the radius which contains half of the total brightness of
-the object. @mymath{I_e} is the surface brightness at the effective
-radius.  The S@'ersic index @mymath{n} is used to define the
+the object. The total brightness is defined as the integration of the
+profile to infinity. @mymath{I_e} is the surface brightness at the
+effective radius.  The S@'ersic index @mymath{n} is used to define the
 concentration of the profile within @mymath{r_e} and @mymath{b_n} is a
 constant dependent on @mymath{n}. MacArthur et al. 2003 show that for
-@mymath{n>0.35}, @mymath{b_n} can be accurately approximated using this
-equation:
+@mymath{n>0.35}, @mymath{b_n} can be accurately approximated using
+this equation:
 
 @dispmath{b_n=2n - {1\over 3} + {4\over 405n} + {46\over 25515n^2} + {131\over 1148175n^3}-{2194697\over 30690717750n^4}}
- 
+
+@cindex S@'ersic index comparison
 Below, see @ref{SersicComp}, 5 example S@'ersic profiles with various
 @mymath{n} values are shown. All the profiles have been divided by their
 central value in order to compare their behavior especially in the
@@ -863,11 +996,15 @@ central parts of the profile
 @caption{S@'ersic profiles with various @mymath{n} values, all profiles have the same @mymath{r_e=5} units.}
 @end float
 
-deVaucouleurs 1948 was actually first showed that this function best
-fits the galaxy light profiles, with the only difference that he held
-@mymath{n} fixed to a value of 4. 20 years later, S@'ersic 1968 showed
-that @mymath{n} can have a variety of values and does not necessarily
-have to be 4.
+@cindex G@'erard de Vaucouleurs
+@cindex de Vaucouleurs, G@'rard
+@cindex S@'ersic J. L.
+@cindex J. L. Sersic
+G@'erard de Vaucouleurs (1918-1995) was first to show in 1948 that
+this function best fits the galaxy light profiles, with the only
+difference that he held @mymath{n} fixed to a value of 4. 20 years
+later in 1968, J. L. S@'ersic showed that @mymath{n} can have a
+variety of values and does not necessarily have to be 4.
 
 
 
@@ -875,6 +1012,10 @@ have to be 4.
 
 @node Integration,  , Galaxies, Object profiles
 @subsection Integration over central regions
+@cindex Gradient over pixel
+@cindex Pixel, gradient of flux
+@cindex Integrate over pixel
+@cindex Pixel, integrate flux
 All the radial profiles made here become extremely sharp as we
 approach the center of the profiles. This sharp change in the radial
 profile will produce a strong gradient over the central few pixels of
@@ -890,16 +1031,20 @@ MockGals, the user can define a certain tollerance level beyond which
 only the central pixel value will be used and no integration will be
 preformed.
 
+@cindex Comparison, integration over pixels
+@cindex Integration over pixels, comparison
+@cindex Tolerance, integration
+@cindex Integration tolerance
 @ref{pixintegq1}, @ref{pixintegq65} and @ref{pixintegq3} show the
 difference between integration and the central pixel value for the
 first @mymath{\sim2000} pixels in a mock S@'ersic profile with various
 axis ratios (@mymath{q}). Let @mymath{I_i} be the pixel value if
 integration is preformed over it and @mymath{I_c} represent the
-profile value at the pixel center. The tollerance level that the user
+profile value at the pixel center. The tolerance level that the user
 can set is defined as: @mymath{T=|I_i-I_c|/I_i}. The marked pixels in
 @ref{pixintegq1} show the pixels that integration will be applied to
 if the user sets @mymath{T=10^{-2}}. Integration will stop at the
-first pixel that gives a smaller tollerance.
+first pixel that gives a smaller tolerance.
 
 @float Figure, pixintegq1
 @center@image{./mockgals-figures/s7_pixintegq1,15cm,,./mockgals-figures/s7_pixintegq1.pdf,.png}
@@ -936,7 +1081,11 @@ over are found for this profile.}
 
 @node Why C, Intro References, Object profiles, Concepts
 @section Why C programming language?
-
+@findex C
+@findex C++
+@cindex Object oriented paradigm
+@cindex Programming abstraction
+@cindex Abstraction, programming
 Currently the programming language that is most commonly used in
 scientific applications is the C++ language, not plain C. One of the
 main reasons behind this choice is that through the Object Oriented
@@ -949,10 +1098,11 @@ extremely important in a scientific software. A simple comparison of
 the main books of the two langauges can act as a guide. The C
 programming language book is only 286 pages and covers a very good
 fraction of the language, it has also remained unchanged from
-1988. The C++ programming language (fourth edition, 2013) book on the
-other hand has 1366 pages! As discussed in @ref{Good Science}, it is
-very important for other scientists to be able to readily read the
-code of a program at their will with minimum requirements.
+1988. The most recent C++ programming language book on the other hand
+has 1366 pages and its fourth edition came out in 2013! As discussed
+in @ref{Good Science}, it is very important for other scientists to be
+able to readily read the code of a program at their will with minimum
+requirements.
 
 In C++, inheriting objects and their internal functions make the code
 very easy to write for the programmer who is deeply invested in those
@@ -967,12 +1117,15 @@ their pointers to define arrays. So when an outside reader is only
 interested in one part of the program, that part is all they have to
 understand.
 
+@cindex Low level programming
+@cindex Programming, low level
 Being a very low level (closer to the hardware) language, C also
 allows for much more closer relation to the actual data we have in our
 disposal, rather than the illusion of high-level abstractions that the
-higher level languages provide. The GNU coding standards also encourage
-the use of C over all other languages when generality of usage and
-``high speed'' is desired.
+higher level languages provide. The
+@url{http://www.gnu.org/prep/standards/, GNU coding standards} also
+encourage the use of C over all other languages when generality of
+usage and ``high speed'' is desired.
 
 @node Intro References,  , Why C, Concepts
 @section References
@@ -1013,29 +1166,46 @@ PSF''. In: MNRAS 328, pp. 977---985.
 
 @node Installation, Configuring, Concepts, Top
 @chapter Installation
+
+@cindex Requirements of MockGals
+@cindex MockGals requirements
 To install MockGals, there are three requirements which are all very
 easy to setup on your GNU/Linux system. Here is a short list:
 
 @itemize
+@cindex GNU scientific library
+@cindex GSL
 @item
 GNU scientific library, @url{http://www.gnu.org/software/gsl/, GSL},
 which is mainly used to generate random numbers (for noise mainly) and
 integration over the surface of pixels.
 
 @item 
+@cindex FFTW
+@cindex Fasterst fourier transform in the west
 Fastest Fourier Transform in the West, @url{http://www.fftw.org/,
 FFTW}, which is used for convoling the actual profiles of the stars
 and galaxies with the PSF.
 
 @item 
+@cindex CFITSIO
 @url{http://heasarc.gsfc.nasa.gov/fitsio/fitsio.html, CFITSIO}, which
 is the C library to create and manipulate FITS images.
 
 @item 
+@pindex ds9
 @url{http://ds9.si.edu/, SAOImage DS9} which is not required for MockGals to
 work! It is only a tool to view FITS images.
 @end itemize
 
+@cindex Scientific Linux
+@cindex RHEL
+@cindex Fedora
+@cindex CentOS
+@cindex Installing from source
+@cindex Souce code, installing
+@cindex GNU/Linux operating system
+@cindex Operating system, GNU/Linux
 So far we have only tested the installation of MockGals on a
 Scientific Linux (SL) 6.5 machine. SL is a distribution of Linux based
 on the Red Hat enterprise linux (RHEL). RHEL is also the base for
@@ -1057,12 +1227,16 @@ operating system}.
 
 @node Requirements, MockGals Install, Installation, Installation
 @section Installing requirements
+@cindex un-compress 
+@cindex Download source
+@cindex Source download
 In GNU/Linux operating systems, installing most programs from source
-is extremely easy. Generally, the following three commands have to be
-run in sequence. Lets call the compressed file you download from the
+is very easy. Generally, the following commands have to be run in
+sequence. Lets call the compressed file you download from the
 software's webpage @file{downloaded.tar.gz}. After you un-compress it
 with the first command below, lets suppose you get @file{untared_dir}.
 
+@cindex System-wide installation
 @example
 $ tar zxvf downloaded.tar.gz
 $ cd untared_dir
@@ -1096,31 +1270,38 @@ following flags (those that start with a @command{--}) after the
 $ ./configure --enable-sse2 --prefix=/usr/local --enable-reentrant 
 @end example
 
+@cindex 32bit CPU
+@cindex 64bit CPU
+@cindex Multithread
 @noindent
 The first flag is for increasing the reading and writing speed and
-only works for a 64 bit systems. If you are on a 32 bit system, don't
-include it. The second one says where to put the final compiled
-libraries, the given value is the standard place to put them. The last
-one is if you want to access the fits files in a multithread manner.
+only works for a 64 bit systems. If you are on a 32 bit system (not
+likely if your computer is less than 5 years old), don't include
+it. The second one says where to put the final compiled libraries, the
+given value is the standard place to put them. The last one is if you
+want to access the fits files in a multithread manner.
 
+@cindex Environment variables
+@cindex Include directory
 Both GSL and CFITSIO install their libraries in @file{/usr/local/}
 which is the default directory for user installed programs. To inform
-GCC to look into this directory, put this line in your
-@file{~/.bashrc} file:
+the GNU compiler collection, GCC which compiles MockGals, to look into
+this directory, put these lines in your @file{~/.bashrc} file:
 
 @example
-LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib; export LD_LIBRARY_PATH
+export PATH = /usr/local/bin:$PATH
+export LD_LIBRARY_PATH = /usr/local/lib:$LD_LIBRARY_PATH
+export INCLUDE = /usr/local/include:$INCLUDE
 @end example
 
-You can edit @file{~/.bashrc} through these commands if you are using
-the bash shell (default in GNU/Linux):
+You can edit @file{~/.bashrc} through the following commands:
 
 @example
 $ cd ~
 $ gedit .bashrc
 @end example
 
-Once you have made the changes, you can simply save the changes and
+Once you have added the lines, you can simply save the changes and
 close gedit.
 
 
@@ -1131,8 +1312,15 @@ close gedit.
 
 @node Installing ds9,  , Requirements, Requirements
 @subsection Installing SAOImage ds9
+@cindex ds9
+@cindex ds9, install
+@cindex Instaling ds9
+@cindex Graphic user interface
+@cindex GUI
+@cindex FITS viewer
+@cindex View FITS
 From the webpage ``SAOImage DS9 is an astronomical imaging and data
-visualization application.'' This is actually a very useful, simple
+visualization application.'' ds9 is actually a very useful, simple
 and easy Graphical User Interface (GUI) application for you to view
 the fits images and do simple operations on them. 
 
@@ -1148,12 +1336,14 @@ Copy the ds9 file to a system wide location (as root): @command{# mv
 ds9 /usr/local/bin}.
 @end itemize
 
-By typing ds9 any where in the command line you can begin using it,
-you can also set your GNU/Linux Graphic user interface to open any
-FITS file with ds9, we recommend to define it to open any FITS image
-as a multiextension FITS image, see @ref{Viewing multiextension FITS
-files} for an explanation on how to do that.
+By typing @command{$ ds9} any where in the command line you can begin
+using it, you can also set your GNU/Linux Graphic user interface to
+open any FITS file with ds9, we recommend to define it to open any
+FITS image as a multiextension FITS image, see @ref{Viewing
+multiextension FITS files} for an explanation on how to do that.
 
+@cindex ds9, XPA error
+@cindex XPA error, ds9
 XPA is the ``X Public Access'' mechanism, its a messaging system in
 DS9 that allows e.g. host scripts to load images or control the
 display. After running ds9, if you get an error regarding XPA you can
@@ -1161,7 +1351,6 @@ put this line in @file{~/.bashrc} file, see @ref{Requirements}:
 @example
 export XPA_METHOD=local
 @end example
-
 
 To stop this command when you run ds9 from the Graphic User Interface,
 follow the above procedures on @file{~/.profile} also, if you don't
@@ -1172,13 +1361,18 @@ this change to take effect.
 
 
 
+
 @node MockGals Install,  , Requirements, Installation
 @section Installing MockGals
+@cindex MockGals source code
+@cindex Source code, MockGals
 The source code for MockGals is avilable
 @url{https://github.com/makhlaghi/mockgals, on Github}. As with any
 program that is available there, you have two options to download it.
 
 @itemize
+@cindex MockGals Github download
+@cindex Github download MockGals
 @item 
 In Github's webpage, find the ``Download ZIP'' button on the right
 side of the screen and Download the zip file. This will download
@@ -1188,6 +1382,8 @@ runnnig @command{$ unzip mockgals-master.zip}. This will create the
 directory @command{mockgals-master} in that directory. You can change
 your directory with @command{$ cd mockgals-master}.
 
+@cindex Github clone MockGals
+@cindex Clone MockGals
 @item
 Alternatively, you can simply clone the whole repository with the
 following command in any directory. ``Cloning'' is used in Git to
@@ -1202,12 +1398,22 @@ $ git clone https://github.com/makhlaghi/mockgals.git
 
 @end itemize
 
+@cindex Make MockGals
+@cindex MockGals, @command{make}
+@cindex MockGals, compile
+@cindex MockGals, install
+@cindex Install MockGals
+@cindex Compile MockGals
 The number of requirements for MockGals is currently not too
-much. Therefore we haven't set up the @command{$./configure}
-installing script like the three required programs. So how ever you
-downloaded the source code, once you are in the directory, you can
-simply run @command{$ make} and @command{# make install}, don't forget
-that the second has to be run as root, see @ref{Conventions}.
+much. Therefore we haven't set up the @command{$./configure} (from
+@url{http://www.gnu.org/software/autoconf/, GNU autoconf}) installing
+script like the three required programs. Therefore, which ever method
+you used to download the source code, once you are in the directory,
+you can simply run @command{$ make} and @command{# make install},
+don't forget that the second has to be run as root, see
+@ref{Conventions}. The installation script, copies the compiled
+MockGals file into your @file{/usr/local/bin/} folder. You can then
+call MockGals from anywhere in your system.
 
 
 
@@ -1701,7 +1907,7 @@ program.
 
 
 
-@node How it works, Manual Index, Mock parameters, Top
+@node How it works, GNU General Public License, Mock parameters, Top
 @chapter How mockgals works
 This chapter is for those readers who are interested in knowing how
 MockGals works. As discussed in @ref{Good Science}, we believe it is
@@ -2347,8 +2553,16 @@ the PDF version, in the HTML format, a GIF animation of all the pixles
 is shown..}
 @end float
 
+@node GNU General Public License, GNU Free Documentation License, How it works, Top
+@appendix GNU General Public License
+@include ./docsrc/gpl_v3.texi
 
-@node Manual Index,  , How it works, Top
+@node GNU Free Documentation License, Manual Index, GNU General Public License, Top
+@appendix GNU Free Documentation License
+@include ./docsrc/fdl.texi
+
+
+@node Manual Index,  , GNU Free Documentation License, Top
 @unnumbered Index
 
 @printindex cp
