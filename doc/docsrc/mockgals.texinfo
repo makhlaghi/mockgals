@@ -138,6 +138,7 @@ you are not familiar, you can learn here:
 * Configuring::                 Explanation on how to tell MockGals what to do.
 * Mock parameters::             The parameters that are input into MockGals.
 * How it works::                Detailed explanation of the coding.
+* Manual Index::                Index, to find exact concepts.
 @end menu
 
 
@@ -1700,7 +1701,7 @@ program.
 
 
 
-@node How it works,  , Mock parameters, Top
+@node How it works, Manual Index, Mock parameters, Top
 @chapter How mockgals works
 This chapter is for those readers who are interested in knowing how
 MockGals works. As discussed in @ref{Good Science}, we believe it is
@@ -1839,13 +1840,13 @@ from zero.
 The first element of any array has index (0,0) in this 2D illusion of
 a real 1D array. The second element is located at (0,1).  The third,
 on the third column of the first row (0,2) and so on. Taking
-@mymath{b} as the number of columns in the 2D array, then the
-@mymath{b}th element of the 1D array can be interpreted as being the
+@mymath{b} as the number of columns in the 2D array, then the element
+with index @mymath{b} of the 1D array can be interpreted as being the
 first element of the second row at (1,0). In this fashion, we can
 easily find the element at (x, y) on our hypothetical 2D array by
 finding element number @mymath{x\times b+y} on the real 1D
 array. Recall that we took @mymath{b} to represent the number of
-columns in the hypothetical 2D array. 
+columns in the hypothetical 2D array.
 
 To see the value of the (@code{x},@code{y}) element on the 2D illusion
 we just have to call @code{a[x*b+y]}. Also, supposing a 1D index of
@@ -1864,11 +1865,13 @@ This level of abstraction is not without its costs. First of all you
 have to allocate another array of pointers the size of the number of
 rows in the image. Pointers are 8 bytes or 64 bits on most current
 systems and thus much larger than an @code{int} or @code{float} which
-are usually only 4 bytes. This will take more memory on your system,
-especially if your images become large or numerous. Also, we have to
-consider that the C actually sees @code{a[x][y]} as
-@code{*(*(a+i)+j)}, where @code{*} is the dereference operator, not a
-multiple operator. Therefore we see that calling element (x,y) as
+are usually only 4 bytes. This only applies to all PL64 based
+operating systems like Linux of course. Therefore this level of
+abstraction will take more memory on your system, especially if your
+images become large or numerous. Also, we have to consider that the C
+compiler actually sees @code{a[x][y]} as @code{*(*(a+i)+j)}, where
+@code{*} is the dereference operator, not a multiple
+operator. Therefore we see that calling element (x,y) as
 @code{a[x][y]} is both more CPU and memory intensive than calling it
 with @code{a[x*b+y]}.
 
@@ -2292,6 +2295,7 @@ are completely black, to easily demonstrate the pixels used. }
 
 @node Rest of profile,  , Integrating central, Making the profiles
 @subsubsection Filling profile surface
+@cindex LIFO
 Integration has been accomplished for those pixels that required it,
 see @ref{Integrating central}. The rest of the job is very easy, a
 simple ``last in first out'' (LIFO) queue (linked list) is defined as
@@ -2322,12 +2326,15 @@ The distance of the pixels no longer matters, therefore we just define
 4-connectivity to decrease the number of tests if the pixel has
 already been done. @ref{restpixfill} demonstrates how the rest of the
 pixels are filled for the same profile of
-@ref{integpixfill}. image to
-show all the steps is 7.4 MB. it might take some time to download if
-you have a slow connection., The HTML version of this manual has a GIF
-animation showing the pixel by pixel placement of the pixels of the
-profile.
-
+@ref{integpixfill}. @inlinefmtifelse{html, This GIF image to show all
+the steps is 7.4 MB which might take some time to download if you have
+a slow connection., The
+@url{http://astr.tohoku.ac.jp/~akhlaghi/mockgals/mockgals/, HTML
+version} of this manual has a GIF animation here showing the pixel by
+pixel buildindg of the profile.}
+@c the @inlinefmtifelse{} is a conditional line function, each comma
+@c is significant for it, so don't add any commas to the two sentences
+@c above.
 
 @float Figure, restpixfill
 @center@image{./mockgals-figures/s7_restpixfill,15cm,,./mockgals-figures/s7_restpixfill.gif,.gif}
@@ -2339,5 +2346,11 @@ was impossible in print, only several stages of the steps are shown on
 the PDF version, in the HTML format, a GIF animation of all the pixles
 is shown..}
 @end float
+
+
+@node Manual Index,  , How it works, Top
+@unnumbered Index
+
+@printindex cp
 
 @bye

@@ -11,9 +11,8 @@ main(int argc, char *argv[])
   FILE *in, *out;
   char tmpname[]="purejunk.tmp";
 
-  char initline[]="Next: <a href=\"About.html#About\" accesskey=\"n\" rel=\"next\">About</a>, Previous: <a href=\"../dir/index.html\" accesskey=\"p\" rel=\"prev\">(dir)</a>, Up: <a href=\"../dir/index.html\" accesskey=\"u\" rel=\"up\">(dir)</a> &nbsp; [<a href=\"#SEC_Contents\" title=\"Table of contents\" rel=\"contents\">Contents</a>]</p>\n";
-
-  char changetoline[]="Next: <a href=\"About.html#About\" accesskey=\"n\" rel=\"next\">About</a>, Previous: <a href=\"../index.html\" accesskey=\"p\" rel=\"prev\">(MockGals Home)</a>, Up: <a href=\"../index.html\" accesskey=\"u\" rel=\"up\">(MockGals Home)</a> &nbsp; [<a href=\"#SEC_Contents\" title=\"Table of contents\" rel=\"contents\">Contents</a>]</p>\n";
+  char initline[]="Next: <a href=\"About.html#About\" accesskey=\"n\" rel=\"next\">About</a>, Previous: <a href=\"../dir/index.html\" accesskey=\"p\" rel=\"prev\">(dir)</a>, Up: <a href=\"../dir/index.html\" accesskey=\"u\" rel=\"up\">(dir)</a> &nbsp; [<a href=\"#SEC_Contents\" title=\"Table of contents\" rel=\"contents\">Contents</a>][<a href=\"Manual-Index.html#Manual-Index\" title=\"Index\" rel=\"index\">Index</a>]</p>\n";
+  char changetoline[]="Next: <a href=\"About.html#About\" accesskey=\"n\" rel=\"next\">About</a>, Previous: <a href=\"../index.html\" accesskey=\"p\" rel=\"prev\">(MockGals home)</a>, Up: <a href=\"../index.html\" accesskey=\"u\" rel=\"up\">(MockGals home)</a> &nbsp; [<a href=\"#SEC_Contents\" title=\"Table of contents\" rel=\"contents\">Contents</a>][<a href=\"Manual-Index.html#Manual-Index\" title=\"Index\" rel=\"index\">Index</a>]</p>\n";
 
   in=fopen(argv[1], "r");
   out=fopen(tmpname, "w");

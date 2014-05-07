@@ -3,7 +3,11 @@ The docs:
 
 The sources for making the documentation are in `./docsrc`.
 
-`run.sh` depends on two compiled files (from `docsrc/`):
+To compile the documentation you need to run `run.sh`. But `run.sh' 
+depends on two compiled files (from `docsrc/`), to compile them (only
+once is enough), simply run the `makerunrequirements.sh` that is 
+available in this directory. It will compile these two programs that
+will make two changes to the HTML version of this manual.
 
 * `addscripttohtmlhead`: This program will put a script in the header
    of the HTML file (currently for MathJax to view equations and
