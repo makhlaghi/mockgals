@@ -146,7 +146,7 @@ you are not familiar, you can learn here:
 * Mock parameters::             The parameters that are input into MockGals.
 * How it works::                Detailed explanation of the coding.
 * GNU General Public License::  GNU GPLv3, Licence of MockGals.
-* GNU Free Documentation License:: Licence of this manual.
+* GNU Free Documentation License::  Licence of this manual.
 * Manual Index::                Index, to find exact concepts.
 @end menu
 
@@ -632,6 +632,7 @@ the profiles and then fill this column by its self.
 If you run @command{$mockgals} with the @option{-m} or @option{-n}
 options, the output will be a multi-extention FITS file. Lets assume
 you use SAOImage ds9@footnote{@url{http://ds9.si.edu/}} (from now on,
+
 we'll call it ds9) to view FITS images, see @ref{Installing ds9}. If
 you ordinarily open a multi-extension FITS file with ds9, by double
 clicking on it or running @command{$ds9 foo.fits} for example, ds9
@@ -680,6 +681,7 @@ and click the ``Close'' button.
 @cindex Active experimenter
 @cindex Passive observer
 @cindex Uncertainty in observations.
+
 Once the internal consistencies of theories have been verified, the
 only method scientists have to test their theories is gathering data
 from scientific experiments. For example in Physics and Chemistry
@@ -745,11 +747,12 @@ we plan to apply.
 
 @menu
 * Object profiles::             Various functional profiles used in MockGals.
+* Adding Noise::                Various noise sources in Astronomical images.
 * Why C::                       Why we chose the C langauge to write MockGals.
 * Intro References::            References to the papers mentioned here.
 @end menu
 
-@node Object profiles, Why C, Concepts, Concepts
+@node Object profiles, Adding Noise, Concepts, Concepts
 @section Object profiles
 
 MockGals has been written for extra galactic studies, so the only
@@ -867,8 +870,10 @@ the function to be normalized. So the only important parameter for
 MockGals is the @mymath{\sigma}. In the Gaussian function we have this
 relation between the FWHM and @mymath{\sigma}:
 
+@cindex Gaussian FWHM
 @dispmath{\rm{FWHM}_g=2\sqrt{2\ln{2}}\sigma \approx 2.35482\sigma}.
 
+@cindex Moffat function
 @item Moffat
 The Gaussian profile is much sharper than the images taken from stars
 on photographic plates or CCDs. Therefore in 1969, Moffat proposed
@@ -876,11 +881,13 @@ this functional form for the image of stars:
 
 @dispmath{f(r)=a \left[ 1+\left( r\over \alpha \right)^2 \right]^{-\beta}}
 
+@cindex Moffat @mymath{\beta}
 Again, @mymath{a} is constrained by the normalization, therefore two
 paramters define the shape of the Moffat function: @mymath{\alpha} and
 @mymath{\beta}. The radial parameter is @mymath{\alpha} which is related
 to the FWHM by
 
+@cindex Moffat FWHM
 @dispmath{\rm{FWHM}_m=2\alpha\sqrt{2^{1/\beta}-1})}
 
 @noindent
@@ -999,7 +1006,7 @@ central parts of the profile
 @cindex G@'erard de Vaucouleurs
 @cindex de Vaucouleurs, G@'rard
 @cindex S@'ersic J. L.
-@cindex J. L. Sersic
+@cindex J. L. S@'ersic
 G@'erard de Vaucouleurs (1918-1995) was first to show in 1948 that
 this function best fits the galaxy light profiles, with the only
 difference that he held @mymath{n} fixed to a value of 4. 20 years
@@ -1079,7 +1086,124 @@ over are found for this profile.}
 
 
 
-@node Why C, Intro References, Object profiles, Concepts
+@node Adding Noise, Why C, Object profiles, Concepts
+@section Noise
+@cindex Image noise
+@cindex Noise 
+Deep astronomical images, like those used in extra galactic studies
+seriously suffer from noise in the data. Generally speaking, the
+sources of noise in an astronomical image are:
+
+@table @asis
+@cindex Counting noise, error
+@cindex Noise, counting
+@cindex Error, counting
+@cindex Poisson noise
+@cindex Noise, Poisson
+@item Photon counting noise
+Thanks to the very accurate electronics used in today's CCDs, this
+type of noise is the main cause of concern for extra galactic studies.
+It can generally be associate with the counting error that is known to
+have a Poissonian distribution. The Poisson distribution is about
+counting. But counting is a discrete operation with only positive
+values, for examle we can't count @mymath{3.2} or @mymath{-2} of
+anything. We only count @mymath{0}, @mymath{1}, @mymath{2}, @mymath{3}
+and so on. Therefore the Poisson distribution is also a discrete
+distribution, only applying to whole positive integers.
+
+Lets assume that we know the mean value of counting something, in this
+case electrons that are produced by photons in the CCD, is
+@mymath{\lambda}.  Lets take @mymath{k} to represent the result of
+counting in one particular time we attempt to count. The probability
+denstity function of @mymath{k} can be written as:
+
+@cindex Poisson distribution
+@dispmath{f(k)={\lambda^k \over k!} e^{-\lambda},\quad k\in \{0, 1, 2,
+3, \dots \}}
+
+@cindex Skewed poisson distribution
+Because the Poisson distribution is only applicable to positive
+values, it is by nature very skewed when @mymath{\lambda} is near
+zero. One qualitative way to imagine it is that there simply aren't
+enough integers smaller than @mymath{\lambda}, than there are larger
+integers. Therefore to accomodate all possibilities, it has to be
+skewed when @mymath{\lambda} is small. 
+
+But as @mymath{\lambda} becomes larger and larger, the distribution
+becomes more and more symmetric. One very useful property of the
+Poisson distribution is that the mean value is also its variance.
+When @mymath{\lambda} is very large, say @mymath{\lambda>1000}, then
+the normal (Gaussian) distribution, see @ref{PSF}, is an excellent
+approximation of the poisson distribution with mean
+@mymath{\mu=\lambda} and standard deviation
+@mymath{\sigma=\sqrt{\lambda}}. 
+
+We see that the variance or dispersion of the distribution depends on
+the mean value, and when it is large we can approximate it with a
+Gaussian that only has one free parameter (@mymath{\mu=\lambda} and
+@mymath{\sigma=\sqrt{\lambda}}) instead of two that it originally
+has. 
+
+@cindex Background flux
+@cindex Sky flux
+The astronomical objects after convolution with the PSF of the
+instrument, lie above a certain background flux. This background flux
+is defined to be the average flux of a region in the image that has
+absolutely no objects. The physical origin of this background value is
+the brightness of the atmosphere. It is thus an ideal definition,
+because in practice, we never know what lies deep in the noise far
+lower than our detection criteria. Take another look at the noised
+image of @ref{quickpreview}, you see that a relatively large number of
+the mock objects have been fully buried in the noise. These undetected
+objects will bias our background measurement to slightly larger
+values. We therefore define the sky value to be the average of the
+undetected regions in the image, so in an ideal case where we have
+successfully detected all the objects, the sky value and background
+value are the same.
+
+As we go to longer wavelengths, the background valu becomes more
+significant and also varies larger over a wide image field. Such
+variations are not currently implemented in MockGals, but will be in
+the future. In a mock image, we have the luxuary of setting the
+background value.
+
+In each pixel of the canvas of pixels we have made to build the
+galaxies, we might have contributions from various sources. Also the
+image has been convolved prior to adding noise. Lets name this flux of
+the convolved sum of possibly overlapping objects, @mymath{I_{nn}}.
+@mymath{nn} representing ``no noise''. For now, lets assume the
+background is constant and represented by @mymath{B}. In practice the
+background values are larger than 10,000 counts. Then the flux after
+adding noise is a radom value taken from a Gaussian distribution with
+@mymath{\mu=B+I_{nn}} and @mymath{\sigma=\sqrt{B+I_{nn}}}.
+
+@cindex Readout noise
+@cindex CCD readout noise
+@item Readout noise
+This is noise that is produced by the electronics in the CCD that
+attempt to read the amount of flux that was recorded. In deep
+extra-galactic studies this kind of noise is not a significant source
+of the final noise in the image. Currently MockGals does not simulate
+this type of noise, but it is planned to be simulated in future
+verisons.
+
+@cindex Dark current noise
+@cindex Noise, dark current
+@item Shot noise on dark current
+While taking images with a CCD, a dark current is fed to the pixels,
+the variation of the value of this dark current over the pixels, also
+adds to the final image noise. Although, for deep observations, like
+those used for extra galactic studies, this is not the dominant source
+of noise. Currently MockGals does not simulate this source of noise, but
+it is planned to be added.
+@end table
+
+In MockGals noise is added to the image after convolving the produced
+profiles with the PSF. 
+
+
+
+@node Why C, Intro References, Adding Noise, Concepts
 @section Why C programming language?
 @findex C
 @findex C++
@@ -1436,6 +1560,10 @@ call MockGals from anywhere in your system.
 
 @node Configuring, Mock parameters, Installation, Top
 @chapter Configuring MockGals
+@cindex Configuring MockGals
+@cindex MockGals, configuring
+@cindex Options in MockGals
+@cindex MockGals, options
 The options to configure MockGals can generally be classified as two
 groups. A first group of options are those that are generally applied
 to all the objects or those that relate to the FITS image that acts as
@@ -1447,14 +1575,17 @@ each profile are explained in @ref{Mock parameters}.
 Currently, the only way you can configure MockGals and ask it to do
 various actions is through command line options. MockGals is
 compatible with the
-@url{http://www.gnu.org/software/libc/manual/html_node/Argument-Syntax.html,POSIX
-recommendations for command line arguments}. A summary of the points
-are as follows:
+@url{http://www.gnu.org/software/libc/manual/html_node/Argument-Syntax.html,
+POSIX recommendations for command line arguments}. A summary of the
+points are as follows:
 
 @itemize
+@cindex Hyphen delimiter
 @item
 Arguments are options if they begin with a hyphen delimiter (@option{-}).
 
+@cindex Multiple options
+@cindex Options, multiple
 @item
 Multiple options may follow a hyphen delimiter in a single token if
 the options do not take arguments, see @ref{No argument
@@ -1468,9 +1599,16 @@ An option and its argument may or may not appear as separate
 tokens. (In other words, the whitespace separating them is optional.)
 Thus, @option{-o foo} and @option{-ofoo} are equivalent.
 
+@cindex Options, termination
+@cindex Terminating options list
+@cindex Finishing options
 @item
 The argument @option{--} terminates all options; any following arguments are treated as non-option arguments, even if they begin with a hyphen.
 
+@cindex Options, ordering
+@cindex Order of options
+@cindex Recalling options
+@cindex Options, recall
 @item
 Options may be supplied in any order, or appear multiple times. In
 MockGals, for those options with arguments, this will ignore all
@@ -1482,12 +1620,12 @@ MockGals, those that don't require arguments and those that do. Below
 you can see an explanation for each type. The second two types of
 options have pre-defined default values set for them when MockGals
 begins. Therefore you only need to call MockGals with an option, if
-you want to change its value.
+you want to change its default value.
 
 If you do not supply any options or arguments to MockGals, it will
 make 45 random galaxy profiles and 5 random stars positioned in a
 square fits image of side 200 pixels. This was actually used in
-@ref{Quick start}, where we only added two ON/OFF options. Try
+@ref{Quick start}, where we only added three ON/OFF options. Try
 removing those options to see the output.
 
 @menu
@@ -1501,6 +1639,8 @@ removing those options to see the output.
 
 @node Informative options, No argument options, Configuring, Configuring
 @section Informative options
+@cindex Informative options
+@cindex Options, informative
 Sometimes you don't actually want to run MockGals, you just want to
 know what version it is or you want to see a list of its options and
 their default values and you don't feel like finding this manual to
@@ -1512,12 +1652,20 @@ totally ineffective and MockGals will abort after doing what these
 options ask it to do.
 
 @table @option
+@findex -h
+@cindex Help, list all options
+@cindex List available options
 @item -h
 Running MockGals with this option will print the full list of options
 available to you along with a short explanation and the default value
 of each option.  The type of argument (string, integer or float) is
 also specified to guide you in the values to assign to each option.
 
+@findex -v
+@cindex Version, print
+@cindex Print version
+@cindex Copyright, print
+@cindex Print copyright
 @item -v
 Print the version and copyright  information for MockGals. Here is how
 this looks for its first release.
@@ -1543,7 +1691,8 @@ GNU Public License v3 or later.
 
 @node No argument options, Options with arguments, Informative options, Configuring
 @section Options with no arguments
-
+@cindex On/Off options
+@cindex Options, On/off
 Some of the configurations that can define MockGals behavior can be
 thought of as ON/OFF options. You don't need to give it any value, you
 just turn the switch ON or OFF. These options are listed below.
@@ -1551,16 +1700,27 @@ just turn the switch ON or OFF. These options are listed below.
 By default all these options are switched OFF unless you call them.
 
 @table @option
+@findex -e
+@cindex Verbose
+@cindex Options, verbose
+@cindex MockGals, verbose
 @item -e
 Verbose mode. If this option is called (is switched on), MockGals will
 report every step it takes in making the mock image. 
 
+@findex -p
+@cindex View PSF used
+@cindex Used PSF, view
+@cindex PSF, view used
 @item -p
 View the PSF. This is useful if you have asked MockGals to make a
 functional PSF and you want to see how the PSF its self looks. If this
 option is called, as soon as MockGals makes the PSF, it will save it
 into @file{psf.fits}.
 
+@findex -m
+@cindex Save unconvolved image
+@cindex Unconvolved image, save
 @item -m
 Save the unconvolved mock image as an extention of the output FITS
 image. If this option is activated, MockGals will save a copy of the
@@ -1570,6 +1730,12 @@ extentions, you can see how convolution and noise have affected the
 otherwise perfect initial image. As an example, please see the left
 image of @ref{quickpreview}.
 
+@findex -n
+@cindex Convolved image, save
+@cindex Save convolved image
+@cindex Save image prior to convolution
+@cindex Save no noised image
+@cindex No noise image, save
 @item -n
 Save the convolved mock image as an extention of the output FITS
 image.  If this option is activated, the image is saved right before
@@ -1583,9 +1749,10 @@ noise is added. See the middle image in @ref{quickpreview}.
 
 @node Options with arguments,  , No argument options, Configuring
 @section Options with arguments
-
-Some of the options require arguments. If you don't supply any,
-MockGals will complain and abort. A list of them can be seen below.
+@cindex Options with arguments
+Some of the options require arguments. If you call them but don't
+supply any arguments, MockGals will complain and abort. A list of them
+can be seen below.
 
 In this list, after each option the terms @option{INTEGER},
 @option{FLOAT} or @option{FILENAME} can be seen, these terms show the
@@ -1595,16 +1762,30 @@ cases supplying the wrong type or argument to an option is not defined
 and might result in unexpected outcomes.
 
 @table @option
+@findex -x
+@cindex Width of output in pixels
+@cindex Output, width in pixels
+@cindex Output, horizontal axis size
+@cindex Horizontal axis, output size
 @item -x INTEGER
 The argument to this option will be the number of pixels in the
 horizontal axis of the output image as viewed in ds9. The input to
 this option has to be as positive (@mymath{>0}) integer. The default 
 value for this option is 200.
 
+@findex -y
+@cindex Height of output in pixels
+@cindex Output, height in pixels
+@cindex Output, vertical axis size
+@cindex Vertical axis, output size
 @item -y INTEGER
 Similar to @option{-x} but for the vertical axis of the output
 image. The default value is 200.
 
+@findex -i
+@cindex Option, input table
+@cindex Input table 
+@cindex Idetifying input table
 @item -i FILENAME
 This is the name of the input ASCII text file. It can have any number
 of comments (lines begining with @code{#}). It has to be space
@@ -1612,9 +1793,18 @@ separated table that is composed of @value{INPUTTABLENUMCOLS}
 columns. The default file name is @file{mockinfo.txt}. For a very
 detailed analysis of this file, please see @ref{Mock parameters}.
 
+@findex -o
+@cindex Options, output FITS
+@cindex Output FITS name
+@cindex Name of output FITS
 @item -o FILENAME
 The name of the output FITS image. Default is @file{mock.fits}.
 
+@findex -s
+@cindex Background value
+@cindex Sky value
+@cindex Options, background 
+@cindex Noise, setting background value
 @item -s FLOAT
 The Background value. The main effect of this value is on the noise,
 because the background noise standard deviation is the square root of
@@ -1622,6 +1812,9 @@ this value summed with the object pixel values. A larger argument to
 this option will result in more significant noise. Default is 10000
 counts or electrons.
 
+@findex -t
+@cindex Options, truncation radius
+@cindex Truncation radius 
 @item -t FLOAT
 The mock profiles do not extend to infinity! With this option you can
 set the radial extent of the profile to be made. By default it is set
@@ -1642,6 +1835,10 @@ Half of the FWHM is multiplied to the argument of this function to set
 a limit to the Moffat profile, see @ref{PSF}.
 @end table
 
+@findex -f
+@cindex Save PSF used option
+@cindex PSF used, save
+@cindex Options, save PSF
 @item -f FILENAME
 In case a given FITS image is to be used as the PSF of the image, its
 file name has to be specified with this option. The FITS image has to
@@ -1651,6 +1848,10 @@ all the pixels by the inverse of the sum so that it does become unity.
 If a file is specified, @option{-u}, @option{-a} and @option{-b} will
 be ignored.
 
+@findex -u
+@cindex PSF, functional form
+@cindex Paramteric PSF option
+@cindex Options, PSF functional form
 @item -u INTEGER
 Determine the functional form of a PSF. Any value other than the two
 shown below will be changed to the default value which is 1 (Moffat
@@ -1663,25 +1864,37 @@ Moffat function.
 Gaussian function.
 @end enumerate
 
+@findex -a
+@cindex PSF FWHM option
+@cindex Options, PSF FWHM
 @item -a FLOAT
 PSF FWHM in pixels. Default value is 5.
 
+@findex -b
+@cindex Options, Moffat @mymath{\beta}
+@cindex Moffat options, @mymath{\beta}.
 @item -b FLOAT
 Moffat function's @mymath{\beta}, see @ref{PSF}. In case a Gaussian is
 asked for, this value is ignored. Default is 3.
 
+@findex -g
+@cindex Histogram
+@cindex Options, histogram
+@cindex Image histogram
 @item -g INTEGER
 For Histogram. If the argument to this function is zero, no histogram
 will be calculated. If it is any positive value, the positive value
 will be set as the number of bins of a histogram. A negative value
 will abort, default is 0.
 
+@findex -c
+@cindex Histogram minimum
 @item -c FLOAT
 For Histogram. Minimum histogram value, default: -250.
 
 @item -d FLOAT
+@cindex Histogram maximum
 For Histogram. Maximum histogram value, default: 700.
-
 
 @end table
 
@@ -1700,11 +1913,15 @@ For Histogram. Maximum histogram value, default: 700.
 
 @node Mock parameters, How it works, Configuring, Top
 @chapter Mock parameters
+@cindex Input table
+@cindex ASCII input table
 The parameters of the profiles you want to build into a FITS image are
 fed to it through a table that is saved as an ASCII text file. MockGals
 uses the argument to the @command{-i} option to identify that file, see
 @ref{Options with arguments}.
 
+@cindex Columns, input table
+@cindex White space, input table
 The input ASCII text file has to be composed of columns of data (only
 numerical), separated by any number of @kbd{SPACE} or @kbd{TAB}
 characters. In total it has to have @value{INPUTTABLENUMCOLS} columns
@@ -1730,6 +1947,8 @@ serve both as input and output.
 
 @node Input table comments, Input table columns, Mock parameters, Mock parameters
 @section Comments in the input table.
+@cindex Input table comments
+@cindex Comments in input table
 Any line in the input ASCII file that starts with a @code{#} will be
 considered as a comment and ignored in the production of mock
 galaxies. You can use such lines to add information for your own
@@ -1762,6 +1981,7 @@ generated galaxies, see @ref{Quick start}.
 # 9: Total flux (Sky subtracted).
 @end example
 
+@cindex Column counting
 @noindent
 You might have noticed that the column counting start from zero in the
 output, this is because most programming languages start counting from
