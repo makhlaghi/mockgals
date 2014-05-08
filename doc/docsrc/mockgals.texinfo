@@ -1201,6 +1201,29 @@ it is planned to be added.
 In MockGals noise is added to the image after convolving the produced
 profiles with the PSF. 
 
+@cindex Signal to noise
+@cindex S/N
+@cindex SN
+Now that the sources of noise have been discussed we can define the
+signal-to-noise (S/N or SN are also used). Since noise is defined on a
+per-pixel basis, S/N is also defined on a per-pixel basis. Lets assume
+the object has a total signal of @mymath{T} and an area @mymath{A}
+pixels. Then the average flux of the object per pixel is defined as:
+@mymath{a=T/A}. 
+
+The noise term is defined as the RMS of all noise sources. Currenly
+MockGals only makes photon counting noise, which can be quantified
+with the square root of the total flux in a pixel as discussed above.
+Since the background flux (@mymath{B}) dominates in all the pixels, we
+just consider noise to be @mymath{\sqrt{B}}, therefore, the signal to
+noise that you can set for a profile can be written as:
+
+@dispmath{\rm{S/N}={a \over \sqrt{B}}}
+
+Note that the average flux of a profile seriously depends on the
+profile sharpness, so two S@'ersic profiles with all parameters equal
+except the S@'ersic index will have very different SN values.
+
 
 
 @node Why C, Intro References, Adding Noise, Concepts
@@ -2020,6 +2043,8 @@ from zero).
 
 @table @code
 @item COLUMN 0
+@cindex Input table, profile ID
+@cindex Profile ID, input table
 Your identifier for each profile. You can set an ID for each profile
 in this column. MockGals completely ignores what is in this column,
 the identifier you choose for a galaxy is a purely subjective matter!
@@ -2033,6 +2058,8 @@ alphabetical characters), it will put a @code{-9999} in place of that
 ID. This will be corrected in future updates to keep the same
 alphabetic ID you had set.
 
+@cindex Profile function, input table
+@cindex Input table, profile function
 @item COLUMN 1
 The functional type of profile, see @ref{Object profiles}. In general,
 you can set a profile value from any of the following functions:
@@ -2040,6 +2067,9 @@ S@'ersic, Moffat or Gaussian or Point. The codes for these three are
 respectively 0, 1, 2, 3. Point is used to show a star where only one
 pixel will be filled.
 
+@cindex x axis profile position
+@cindex horizontal axis profile position
+@cindex Input table, axis 0 profile position
 @item COLUMN 2
 The position of the center of the profile along the first axis of the
 FITS image which is the horizontal axis when viewed in ds9. This value
@@ -2049,14 +2079,21 @@ the image within its truncation radius will be ignored. The fractional
 value is very important for sharper profiles, see @ref{Galaxies}.
 
 Note that in the FITS standard, the middle of the first pixel in both
-axes (which is the bottom left pixel when viewed in ds0) is
-considered to have coordinates @code{(1,1)}. So for example the point
+axes (which is the bottom left pixel when viewed in ds0) is considered
+to have coordinates @code{(1,1)}. So for example the point
 @code{(1.51,1)} will be in the pixel positioned on the second column
-and first row of the FITS image. 
+and first row of the FITS image, see @ref{C and FITS arrays} for a
+more detailed discussion.
 
+@cindex y axis profile position
+@cindex vertical axis profile position
+@cindex Input table, axis 1 profile position
 @item COLUMN 3
 Same as @code{COLUMN 2}, but for the vertical axis.
 
+@cindex Setting profile radial paramter
+@cindex Profile radial parameter, setting
+@cindex Input table, profile radial parameter
 @item COLUMN 4
 Radial parameter of profile. Depending on the profile, this value
 determines the radial paramter. In all cases the units are pixels.
@@ -2070,6 +2107,9 @@ Moffat & Gaussian: The FWHM.
 Point: Ignored.
 @end itemize
 
+@cindex Profile sharpness parameter, set
+@cindex Input table, profile sharpness
+@cindex S@'ersic index
 @item COLUMN 5
 Sharpness parameter of the profile. This value will only be used for
 the S@'ersic and Moffat functions that require a second paramter to determine their sharpness, see @ref{Object profiles}.
@@ -2083,20 +2123,27 @@ Moffat: @mymath{\beta}.
 Gaussian & Point: Ignored.
 @end itemize
 
+@cindex Input table, position angle
+@cindex Position angle set
 @item COLUMN 6
 The position angle of the profile, see @ref{Defining an
 ellipse}. Ignored for Point profiles.
 
+@cindex Axis ratio, set
+@cindex Input table, axis ratio
 @item COLUMN 7
 The axis ratio of the profile, see @ref{Defining an ellipse}. Ignored
 for Point profiles.
 
+@cindex Input table SN
+@cindex Signal to noise, set
 @item COLUMN 8
 The total signal to noise (SN) of the profile. SN is defined as the
 average flux in the profile (its total flux divided by its area within
 the truncation radius) divided by the standard deviation of the
 noise.
 
+@cindex Total profile flux
 @item COLUMN 9
 The total flux in the profile. This column is filled in by MockGals,
 it can be filled with any value on the input file, but after MockGals
@@ -2104,6 +2151,7 @@ finishes, this column is filled up.
 
 @end table
 
+@cindex ATTAAVV
 In MockGals, we use the
 @url{https://github.com/makhlaghi/attaavv,ATTAAVV} to read an ASCII
 file to a C array and write a C array to an ASCII file. ATTAAVV is
@@ -2144,11 +2192,15 @@ a good free and transparent tool for every Astronomer to use and learn
 from. Exposing the most intricate details is how we believe we can
 solve any unseen problems.
 
+@cindex MockGals, coding style
+@cindex Coding style, MockGals
 We have tried to be as loyal as possible to the
 @url{http://www.gnu.org/prep/standards/,GNU Coding standards} in
 writing MockGals. This will hopefully help in understanding the coding
 style easily. 
 
+@findex MG/
+@findex SRC/
 Lets assume that you have downloaded and unpacked or cloned MockGals,
 see @ref{MockGals Install} in the @file{MG/} directory. In this
 chapter all the files and folders will be discussed in relation to
@@ -2161,8 +2213,8 @@ it can only be viewed as a simple explanations of the functions in
 English and not in C.
 
 @menu
-* Reading method::              Our recommendation on how to read this chapter.
-* Program flow::                Explanation on the flow and functions in MockGals.
+* Reading method::        Our recommendation on how to read this chapter.
+* Program flow::          Explanation on the flow and functions in MockGals.
 @end menu
 
 
@@ -2179,13 +2231,15 @@ changes and see the changes immediately with the Emacs compile
 command: @kbd{M-x compile} (and on subsequent calls, @kbd{M-x
 recompile}). 
 
+@cindex MockGals, change and compile
 In case you want to compile the code and see the results
-simultaneously, remove the @code{#} from @code{# ./mockgals -mn} in
+simultaneously, remove the @code{#} from @code{# ./mockgals -mne} in
 @file{./MG/Makefile} so MockGals will be called to run as soon as the
 compilation finishes, without requiring any inputs from you! This will
 speed things up for you! You can change the options to any option you
 would like.
 
+@cindex Viewing code
 Alternatively, if you aren't too faimilar with Emacs (in which case we
 strongly recommend to become familiar with it!) or you just want a
 fast preview, Github provides an exellent framework. Go to
@@ -2203,18 +2257,23 @@ fabulous at this job!
 @node Program flow,  , Reading method, How it works
 @section Program flow and functions
 
+@findex main
+@findex mockimg
+@findex SRC/ui.c
+@findex SRC/mock.c
 As in any C/C++ program, @code{main()} is the place to start reading
 MockGals, you can find this function defined in
 @file{SRC/main.c}. In MockGals, @code{main()} is just a connector
 between two main types of functions: the ones that read the user input
-and set the default values that are defined in @code{MG/src/ui.c} and
+and set the default values that are defined in @file{SRC/ui.c} and
 the one that actually makes the mock image: @code{mockimg()} based on
 those input values. @code{mockimg()} is defined in
 @file{SRC/mock.c}.
 
 @menu
 * Defining settings::           Reading input or setting the default values.
-* 2D arrays::                   2D arrays in MockGals(in C) and FITS.
+* 2D arrays::                   2D arrays in MockGals(in C).
+* C and FITS arrays::           FITS and C difference in array indexing.
 * Making the canvas::           Array to build the galaxies on.
 * Making the profiles::         How MockGals builds each profile.
 @end menu
@@ -2244,9 +2303,12 @@ will make sure that the array that goes into the MockGals is a float.
 
 
 
-@node 2D arrays, Making the canvas, Defining settings, Program flow
-@subsection 2D arrays, in C and FITS
-
+@node 2D arrays, C and FITS arrays, Defining settings, Program flow
+@subsection 2D arrays in C
+@cindex 2D arrays
+@cindex Arrays, 2D
+@cindex Arrays, 1D
+@cindex Array indexing, 1D
 Before continuing it is important to mention a very important fact
 about 2D arrays. A 2D array or matrix is a structure composed of a
 certain number of columns and rows, forming a rectangle. It is
@@ -2254,15 +2316,19 @@ customary to label the elements on an array with a pair
 @mymath{(x,y)}, where the first number specifies the row number of
 that element and the second specifies its column number.
 
-In C, an array is a contiguous set of elements (of whatever data
-type, like @code{int} or @code{float}, that you are using). This
-generic 1D array can easily be interpreted as a 2D (or any number of
-dimensions) array. To do that, it must be possible for its length, or
-the number of its elements, to be written as @mymath{a\times b} where
-@mymath{a} & @mymath{b} are both integers. In C the @code{i}th element
-of an array @code{A} is denoted by @code{A[i]} and counting begins
-from zero.
+@cindex 1D array as 2D interpretation
+@cindex Interpreting 1D array as 2D
+In C, an array is a contiguous set of elements, in whatever data type,
+like @code{int} or @code{float}, that you are using. This generic 1D
+array can easily be interpreted as a 2D (or any number of dimensions)
+array. To do that, it must be possible for its length, or the number
+of its elements, to be written as @mymath{a\times b} where @mymath{a}
+& @mymath{b} are both integers. In C the @code{i}th element of an
+array @code{A} is denoted by @code{A[i]} and counting begins from
+zero.
 
+@cindex 2D Array indexing
+@cindex Array indexing, 2D
 The first element of any array has index (0,0) in this 2D illusion of
 a real 1D array. The second element is located at (0,1).  The third,
 on the third column of the first row (0,2) and so on. Taking
@@ -2313,6 +2379,15 @@ Based on these arguments, in MockGals we always find pixel (@code{x},
 @code{y}) on an array (lets name it @code{a}) which consider as having
 @code{b} columns with @code{a[x*b+y]}.
 
+
+
+
+
+@node C and FITS arrays, Making the canvas, 2D arrays, Program flow
+@subsection C and FITS array indexing
+@cindex Array indexing, C and FITS
+@cindex C and FITS array indexing
+@cindex FITS and C array indexing
 Until now we were only considering arrays as defined in C and other
 languages that are based on it for example C++, Java, Python,
 etc. Unfortunately, the FITS standard is defined based on Fortran,
@@ -2320,6 +2395,7 @@ which has two major differences with C that make a difference when we
 want to use the values from the FITS headers or when we want to
 interpret the FITS positions. The two major differences are:
 
+@cindex FITS array indexing
 @itemize
 @item 
 Counting begins from 1 not 0.
@@ -2330,6 +2406,8 @@ the 2D illusion. Recall that in C, this same element was consdiered to
 be positioned at (0,1).
 @end itemize
 
+@cindex Converting C to FITS indexing
+@cindex Array indexing, converting C to FITS
 So in general a point positioned at @mymath{(x,y)} in a FITS image is
 positioned at @mymath{(y-1,x-1)} in the C array. Also the FITS header
 keyword @env{NAXIS1} is actually the number of columns in C and
@@ -2339,6 +2417,7 @@ completely hide this for the outside user such that the inputs and
 outputs are all done in the FITS standard. On ds9, the first element
 of the array is the bottom left pixel.
 
+@pindex fitsarrayvv
 In order to read from and write to a FITS image with relative ease we
 have written a very simple library so that only by calling one
 function, the pixels of one FITS image will be saved into a C array
@@ -2352,7 +2431,7 @@ image.
 
 
 
-@node Making the canvas, Making the profiles, 2D arrays, Program flow
+@node Making the canvas, Making the profiles, C and FITS arrays, Program flow
 @subsection Making the canvas
 
 All the input parameters, possible input table and PSF have been read,
@@ -2363,12 +2442,16 @@ pixel values).
 It might seem to be an easy job: just allocate (with @code{calloc()}
 ofcourse to make a white and clean canvas) an array the size of the
 desired image. But unfortunately things aren't that simple! This is
-because we have to convolve the image with the PSF and the standard
-tool to do that has an unwanted consequence that we should take into
-account, see @ref{DFTdemo}. If we ignore this very serious consequence
-of our convolution method, the galaxies or the parts of galaxies that
-lie on the edges of the images will be affected.
+because after we have made all the profiles, we have to convolve the
+image with the PSF and the standard tool to do that has an unwanted
+consequence that we should take into account, see @ref{DFTdemo}. If we
+ignore this very serious consequence of our convolution method, the
+galaxies or the parts of galaxies that lie on the edges of the images
+will be affected.
 
+@pindex FFTW
+@cindex Discrete fourier transform
+@cindex DFT
 The image is convolved with the PSF using the
 @url{http://www.fftw.org/, FFTW3} package. It provides some functions
 to do very fast and accurate convolutions using discrete fourier
@@ -2379,6 +2462,8 @@ Image Processing by Gonzalez and Woods gives a very nice introductory
 overview of the basic concept behind this facinating application of
 the fourier transform concept in a descrete space.
 
+@cindex DFT, blurring sides
+@cindex Blurring sides, DFT
 The most important consequence of DFT is that the sides of the image
 will not be correctly blurred. To demonstrate this, we manually
 changed half of the pixel values in an input image to MockGals to 0
@@ -2452,7 +2537,9 @@ In order to be able to build the profiles most efficiently and most
 accurately, the canvas is not the only thing we need. In MockGals we
 have created a very simple Graph based approach to building the
 profiles based on the nearest pixel in the image to the profile
-center. Using the closest neighbors of that pixel and their neighbors we can accurately and speedily find the pixels in the image that require integration, see @ref{Integration}.
+center. Using the closest neighbors of that pixel and their neighbors
+we can accurately and speedily find the pixels in the image that
+require integration, see @ref{Integration}.
 
 @menu
 * Graph canvas::                Graph based canvas.
@@ -2471,11 +2558,14 @@ center. Using the closest neighbors of that pixel and their neighbors we can acc
 We want to build the profiles inside-out, in other words, we want to
 begin building the profile from its central pixel or the pixel in the
 image that is most nearest to it if the central pixel is out of the
-image. The reason we want to do this is because we want to integrate
-over the central pixels where it is very important, and stop
+image. See @ref{integpixfill} and @ref{restpixfill} for
+demonstration. The reason we want to do this is because we want to
+integrate over the central pixels where it is very important, and stop
 integrating at a certain point beyond which there is no big difference
 between integration and the central pixel value.
 
+@cindex Graph theory
+@cindex Bredth first search
 So once we find the first pixel to start with (the pixel closest to
 the center of the profile), we have to continuesly look around at its
 neighbors, and the neighbors of those neighbors and so on, until we
@@ -2486,6 +2576,8 @@ tollerance level. This type of searching is called
 @url{http://en.wikipedia.org/wiki/Breadth-first_search, Breadth first
 search} in graph theory.
 
+@cindex Pixel neighbors, searching
+@cindex Searching for pixel neighbors
 But doing this search without knowning the neighbors of a pixel before
 hand is very hard! For every pixel you have to search for all the
 neighbors and for each potential neighbor, you have to check if it is
@@ -2504,6 +2596,12 @@ also want to have the ability to distinguish between such neighbors,
 so in some applications we can only look at the 4 connected neighbors
 and in others at the 8 connected neighbors.
 
+@cindex 4 connectivity
+@cindex Four connectivity
+@cindex Connectivity, four
+@cindex 8 connectivity
+@cindex Eight connectivity
+@cindex Connectivity, eight
 A pixel is four connected to another if it touches the pixel on its
 sides. Therefore a pixel located at (@code{x},@code{y}) is four
 connected to the four pixels at (@code{x-1},@code{y}),
@@ -2513,6 +2611,9 @@ that are diagonally connected or (@code{x-1},@code{y-1}),
 (@code{x-1},@code{y+1}), (@code{x+1},@code{y-1}) and
 (@code{x+1},@code{y+1}), we get to the 8 connected pixels.
 
+@cindex Neighbors array, @code{ngbs[]}
+@cindex ngbs[], Neighbors array
+@findex NGBSCOLS
 The way we propose to achieve this goal is through a simple array
 keeping the positions of the neighbors for each pixel, lets call it
 @code{ngbs[]}.  Assuming the image has @code{s0} rows and @code{s1}
@@ -2521,21 +2622,25 @@ columns, then @code{ngbs[]} will have @code{s0*s1*NGBSCOLS} elements,
 @code{size_t}, which can be thought of as @code{unsigned long} (8
 bytes on 64 bit machines).
 
+@findex NONINDEX
+@findex Impossible index
+@cindex Strings in C
 For each pixel in the image we have a row of @code{NGBSCOLS}
 columns. Column 1 until and including column 8 will contain the
 indexes of the maximum 8 possible neighbors. If there are less
 neighbors, we put a @code{NONINDEX=(size_t)(-1)=18446744073709551615}
 (on 64bit machines) after the last neighbor. This makes our neighbor
 searching tool very similar to how C defines strings (which end with
-the impossible character @code{\0}). In our case, the impossible value
-is @code{NONINDEX}. Since any 4 connected neighbor is also an
-8-connected neighbor, first the indices of the 8-connected neighbors
-are placed in these columns, and then the 4-connected
+the impossible @code{NUL} or @code{\0} character). In our case, the
+impossible value is @code{NONINDEX}. Since any 4 connected neighbor is
+also an 8-connected neighbor, first the indices of the 8-connected
+neighbors are placed in these columns, and then the 4-connected
 neighbors. Column 0 keeps the index of the column where the four
 connected neighbors begin. The last column is reserved for those
 pixels that have all 8 neighbors and will use this to keep
 @code{NONINDEX}. Therefore @code{NGBSCOLS=1+8+1=10}.
 
+@cindex Finding neighbors
 In this fashion, if we want the 8 connected neighbors of a pixel
 located at (@code{x},@code{y}), which has index @code{i=x*s1+y}, then
 a simple loop like the following will do the job:
@@ -2549,7 +2654,7 @@ while(ngbs[i*NGBSCOLS+ ++numngb]!=NONINDEX);
 printf("\b\b.\n");
 @end example
 
-If we want the list of 4 connected indexes to that pixel, we just
+If we want the list of 4 connected indexes to that pixel, we can
 simply change the first line to @code{numngb=n[i*NGBSCOLS];}.  As an
 example, assuming we have @code{s0=4} and @code{s1=4}, then the list
 of four and eight connected neighbors can easily be printed as below
@@ -2580,6 +2685,9 @@ question.
 14: 11, 9, 15, 13, 10.            |    14: 15, 13, 10.
 15: 10, 14, 11.                   |    15: 14, 11.
 @end example
+
+@findex imgngbs
+@findex SRC/pix.c
 @noindent
 In MockGals, @code{ngbs[]} is made and filled in the @code{imgngbs()}
 function which is defined in @code{SRC/pix.c}. @code{imgngbs()} does
@@ -2599,7 +2707,8 @@ efficent.
 
 @node Finding nearest pixel, Integrating central, Graph canvas, Making the profiles
 @subsubsection Finding the closest pixel to profile center
-
+@cindex Nearest pixel to profile center
+@cindex Profile center, nearest pixel
 Now that the graph canvas is built, see @ref{Graph canvas}, building
 the profiles is very easy. @code{mockimg()} (in @file{SRC/mock.c}) now
 begins building the profiles one by one (through
@@ -2609,6 +2718,10 @@ do that it calls @code{findstartingpixel()}. Which does the job based
 on the input coordinates, axis ratio, position angle and truncation
 radius.
 
+@cindex Profile center out of image
+@findex SRC/raddist.c
+@cindex Finding ellipse extremes
+@cindex Ellipse, finding extremes
 If the center of the profile lies within the image boundaries, that
 point, the pixel is returned as the starting pixel. If the center is
 outside of the image boundary, it finds the box that encloses the
@@ -2620,6 +2733,8 @@ parametrically as:
 
 @dispmath{(a\cos(t),b\sin(t))\quad\rm{where}\quad t\in(0,2\pi)}
 
+@cindex Rotating ellipse
+@cindex Ellipse rotation
 @noindent  
 But when we rotate the ellipse by @mymath{\theta}, the points can be
 characterized by:
@@ -2656,6 +2771,10 @@ parameters, the best way to avoid any systematic bias is to find it in
 practice, while building the profile. To do this we have defined a
 very fast process as explained below.
 
+@findex SRC/sll.h
+@cindex Ordered queue (simple linked list)
+@cindex Queue, ordered
+@cindex Simple linked list, ordered
 We define an ordered queue (simple linked list) to begin building the
 profile in the image. The nodes in this ordered queue are defined in
 @file{SRC/sll.h} as:
@@ -2668,6 +2787,7 @@ struct ossll
   struct ossll *next;      /* Pointer to next element in the queue. */
 @};
 @end example
+
 @noindent
 A pixel (a node in the queue) is added to this ordered queue with
 @code{add_to_ossll()}. The new node is positioned in the queue such
@@ -2680,6 +2800,7 @@ We then enter a loop and until the given tolerance is reached, see
 @ref{Integration}, a pixel (which has the smallest @mymath{r_{el}}) is
 popped from the queue and if it has not already been filled, the
 following steps are applied to it:
+
 @enumerate
 @item
 The profile is integrated over that pixel's surface and added
@@ -2698,6 +2819,16 @@ this sorting are very small compared to the total profile's area,
 because the moment the first pixel that passes the tolerance level is
 passed, we break out of this loop.
 
+@cindex Gauss-Kronrod-Patterson abscissae
+@cindex Integration, method
+Integration is done with the GNU Scientific Library (GSL) function
+@code{gsl\_integration\_qng()} which, according to the manual is a
+non-adaptive procedure which uses fixed Gauss-Kronrod-Patterson
+abscissae to sample the integrand at a maximum of 87 points, it is
+provided for fast integration of smooth functions.
+
+@cindex Filling central profile
+@cindex Profile, filling center
 @ref{integpixfill} shows how the process just explained is applied in
 practice. In this figure the mock profile of @ref{pixintegq3} with
 @mymath{n=4}, @mymath{r_e=5}, @mymath{\theta=20^\circ} and
@@ -2722,6 +2853,8 @@ are completely black, to easily demonstrate the pixels used. }
 @node Rest of profile,  , Integrating central, Making the profiles
 @subsubsection Filling profile surface
 @cindex LIFO
+@cindex Last in, first out queue
+@cindex Queue, last in, first out
 Integration has been accomplished for those pixels that required it,
 see @ref{Integrating central}. The rest of the job is very easy, a
 simple ``last in first out'' (LIFO) queue (linked list) is defined as
@@ -2738,7 +2871,8 @@ struct ssll
 @noindent
 First the remaining pixels from the ordered queue of @ref{Integrating
 central} are added to this queue. A pixel is then popped from the
-queue and if the profile has not already been found on it, the following two steps will be taken:
+queue and if the profile has not already been found on it, the
+following two steps will be taken:
 
 @enumerate
 @item 
@@ -2747,6 +2881,7 @@ The profile value for the center of the pixel is found.
 If any of the pixel's four connected neighbors have not already been
 calculated, they are added to the queue.
 @end enumerate
+
 @noindent
 The distance of the pixels no longer matters, therefore we just define
 4-connectivity to decrease the number of tests if the pixel has
@@ -2773,17 +2908,92 @@ the PDF version, in the HTML format, a GIF animation of all the pixles
 is shown..}
 @end float
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @node GNU General Public License, GNU Free Documentation License, How it works, Top
 @appendix GNU General Public License
 @include ./docsrc/gpl_v3.texi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @node GNU Free Documentation License, Manual Index, GNU General Public License, Top
 @appendix GNU Free Documentation License
 @include ./docsrc/fdl.texi
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @node Manual Index,  , GNU Free Documentation License, Top
 @unnumbered Index
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @printindex cp
 
