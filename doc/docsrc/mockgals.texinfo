@@ -631,10 +631,9 @@ the profiles and then fill this column by its self.
 @cindex Opening multiextention FITS
 If you run @command{$mockgals} with the @option{-m} or @option{-n}
 options, the output will be a multi-extention FITS file. Lets assume
-you use SAOImage ds9@footnote{@url{http://ds9.si.edu/}} (from now on,
-
-we'll call it ds9) to view FITS images, see @ref{Installing ds9}. If
-you ordinarily open a multi-extension FITS file with ds9, by double
+you use @url{http://ds9.si.edu/, SAOImage ds9} (from now on, we'll
+call it ds9) to view FITS images, see @ref{Installing ds9}. If you
+ordinarily open a multi-extension FITS file with ds9, by double
 clicking on it or running @command{$ds9 foo.fits} for example, ds9
 will only show you the first extension. To be able to switch between
 the extensions you have to follow these menus in the ds9 window:
@@ -1161,11 +1160,11 @@ undetected regions in the image, so in an ideal case where we have
 successfully detected all the objects, the sky value and background
 value are the same.
 
-As we go to longer wavelengths, the background valu becomes more
-significant and also varies larger over a wide image field. Such
-variations are not currently implemented in MockGals, but will be in
-the future. In a mock image, we have the luxuary of setting the
-background value.
+As we go to longer wavelengths, the background value becomes more
+significant and also varies over a wide image field. Such variations
+are not currently implemented in MockGals, but will be in the
+future. In a mock image, we have the luxuary of setting the background
+value.
 
 In each pixel of the canvas of pixels we have made to build the
 galaxies, we might have contributions from various sources. Also the
@@ -2545,7 +2544,7 @@ require integration, see @ref{Integration}.
 * Graph canvas::                Graph based canvas.
 * Finding nearest pixel::       Nearest pixel to the profile center.
 * Integrating central::         Integrating central regions.
-* Rest of profile::
+* Rest of profile::             How the rest of the profile is built.
 @end menu
 
 
