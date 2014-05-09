@@ -1,7 +1,7 @@
 for i in {0..2}
   do
-    for j in {0..10}
+    for j in {0..7}
        do
-        fitstojpg -l -icentinteg.fits -e$(($i*11+$j)) -o $i\_$j.jpg -f0 -g0 -q500
+        fitstojpg -l -icentinteg.fits -e$(($i*8+$j)) -o $i\_$j.jpg -f0 -g0 -q200
        done
   done

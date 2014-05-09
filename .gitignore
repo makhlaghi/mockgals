@@ -13,3 +13,6 @@ doc/correctindextop
 mock.fits
 mockgals
 mockinfo.txt
+
+doc/MakingPlots/GIFs/IntegPixFill/s7_integpixfill.gif
+doc/MakingPlots/GIFs/RestPixFill/s7_restpixfill.gif

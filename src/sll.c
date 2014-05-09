@@ -387,3 +387,152 @@ ossll_into_ssll(struct ossll *in, struct ssll **out)
       in=tmp;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/****************************************************************
+ ******************   Two way, Ordered SLL   ********************
+ *****************           size_t          ********************
+ ****************************************************************/
+void
+print_tossll(struct tossll *l, struct tossll *s)
+{
+  size_t counter=1;   /* We are not counting array elements :-D ! */
+  while(l!=NULL)
+    {
+      printf("\t%-5lu (%lu, %.4f)  |   (%lu, %.4f)\n", counter++, 
+	     l->v, l->s, s->v, s->s);
+      l=l->next;
+      s=s->prev;
+    }
+}
+
+
+
+
+
+/* Very similar to Ordered SLL, but now it is two way. */
+void
+add_to_tossll_end(struct tossll **largest, size_t value, float tosort)
+{
+  struct tossll *newnode, *tmp=*largest;
+
+  assert(( newnode=malloc(sizeof *newnode) )!=NULL);
+
+  newnode->v=value;
+  newnode->s=tosort;
+  newnode->prev=NULL;
+
+  while(tmp!=NULL)
+    {
+      if(tosort >= tmp->s) break;
+      /* No need for else, it will only come here if the condition
+	 above is not satisfied. */
+      newnode->prev=tmp;
+      tmp=tmp->next;
+    }
+
+  if(tmp==NULL)	     /* This is the smallest value so far.     */
+    {		     /* '*largest' only changes if it is NULL. */
+      newnode->next=NULL;
+      if(newnode->prev)		/* 'prev' is not NULL! */
+	newnode->prev->next=newnode;   
+      else			/* 'prev is NULL, Only first. */
+	*largest=newnode;	
+    }
+  else
+    {
+      if(newnode->prev)
+	{ 
+	  newnode->prev->next->prev=newnode;
+	  newnode->prev->next=newnode;
+	}
+      else
+	{
+	  (*largest)->prev=newnode;
+	  *largest=newnode;       /* 'tosort' is larger than all. */
+	}
+      newnode->next=tmp;
+    }
+}
+
+
+
+
+
+/* Note that start has to be initialized. */
+void
+pop_from_tossll_start(struct tossll **smallest,  size_t *value,
+		      float *tosort)
+{
+  struct tossll *tmp=*smallest;
+
+  *value=tmp->v;
+  *tosort=tmp->s;
+
+  *smallest=tmp->prev;
+  free(tmp);
+  if(*smallest)
+    (*smallest)->next=NULL;
+
+  /*printf("Popped v: %lu, s: %f\n", *value, *tosort);*/
+}
+
+
+
+
+
+void
+smallest_tossll(struct tossll *largest, struct tossll **smallest)
+{
+  struct tossll *tmp=largest;
+
+  while(tmp!=NULL)
+    {
+      if(tmp->next==NULL)
+	{
+	  *smallest=tmp;
+	  break;
+	}
+      tmp=tmp->next;
+    }
+
+  /* If *largest wasn't NULL initially, tmp should not be NULL because
+     the loop terminated before it becomes null. But if it was
+     initiall NULL, it will never enter the loop, and so smallest
+     should also be NULL. */
+  if(tmp==NULL) *smallest=NULL;
+}
+
+
+
+
+void
+tossll_into_ssll(struct tossll *in, struct ssll **out)
+{
+  struct tossll *tmp;
+  while(in!=NULL)
+    {
+      tmp=in->next;
+      add_to_ssll(out, in->v);
+      free(in);
+      in=tmp;
+    }
+}

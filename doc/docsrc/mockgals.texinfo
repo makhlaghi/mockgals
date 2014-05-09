@@ -765,7 +765,7 @@ used for the PSF, stars and galaxies are explained separately.
 * PSF::                         Radial profiles for the PSF.
 * Stars::                       Making mock star profiles.
 * Galaxies::                    Radial profiles for galaxies.
-* Integration::                 How integration is preformed over a pixel.
+* Central profile pixels::      Dealing with central regions of sharp profiles.
 @end menu
 
 @node Defining an ellipse, PSF, Object profiles, Object profiles
@@ -962,7 +962,7 @@ preformed by assuming the shapes of stars to be the PSF of the image.
 
 
  
-@node Galaxies, Integration, Stars, Object profiles
+@node Galaxies, Central profile pixels, Stars, Object profiles
 @subsection Galaxies
 
 @cindex Profile, galaxies
@@ -1016,35 +1016,98 @@ variety of values and does not necessarily have to be 4.
 
 
 
-@node Integration,  , Galaxies, Object profiles
-@subsection Integration over central regions
+@node Central profile pixels,  , Galaxies, Object profiles
+@subsection Central profile pixels
+@cindex Central profile pixel
+@cindex Random points for central pixel
 @cindex Gradient over pixel
 @cindex Pixel, gradient of flux
 @cindex Integrate over pixel
 @cindex Pixel, integrate flux
-All the radial profiles made here become extremely sharp as we
-approach the center of the profiles. This sharp change in the radial
-profile will produce a strong gradient over the central few pixels of
-the object. In those cases we will integrate @mymath{f(r)} over the
-pixel area to find the pixel value. 
+@cindex PCV
+@cindex Pixel center value
+A pixel is the ultimate level of accuracy we have to gather data, we
+call this sampling. But the mathematical profiles that we define have
+infinite accuracy. Generally, the variation in the profiles over the
+area of one pixel is not too significant. If so, we can simply use the
+elliptical radius of the center of the pixel and assign that as the
+final value of the pixel. Lets call this value pixel center value
+(PCV).
 
-The building of the profile begins from its central pixel and
-continues outwards, see @ref{Integrating central}. As we go to larger
-radii, the difference between integration over the pixel area and
-using the central pixel distance as a proxy for the whole pixel will
-become smaller. Therefore to increase the preformance speed of
-MockGals, the user can define a certain tollerance level beyond which
-only the central pixel value will be used and no integration will be
-preformed.
+Unfortunately though, as you saw in @ref{SersicComp}, some of the
+galaxy profiles become very sharp as we approach their center. This
+sharpness increases with smaller effective radius and larger S@'ersic
+values. This sharp change in the radial profile will produce a strong
+gradient over the central few pixels of the object. Thus rendering PCV
+extremely inaccruate. 
+
+The first method that comes to mind for solving this problem is
+integration, we can integrate the functional form of the profile over
+the pixel area in a 2D integration process, as explained
+@ref{Making central}. In MockGals we use the
+Gauss-Kronrod-Patterson abscissae as provided in the GNU scientific
+library. This is certainly far more accurate than PCV but
+unfortunately numerical integration techniques also have their
+limitations and when such sharp profiles are needed they become
+extremely inaccurate.
+
+The most accurate method to try to sample a continues profile on a
+discrete space (sampling) is by choosing a large number of random
+points within the boundaries of the pixel and taking their average
+value. This is also, generally speaking, what happens in practice with
+the photons on the CCD. The problem is this: how many random points
+should be chosen? In order to find out, lets look at an extremely
+sharp S@'ersic profile with @mymath{\theta=22}, @mymath{q=0.3},
+@mymath{n=10} and @mymath{r_e=1} pixel. Although such a sharp profile
+is very rarely found in nature, we have to be prepared. For simplicity
+we will position it exactly in the center of a pixel.
+
+Let @mymath{I_r} represent the flux from the average of a large number
+of randomly positioned points and @mymath{I_i} to be the value after
+integrating the profile over the pixel area. We define the relative
+difference as: @mymath{|I_r-I_i|/I_r}. We then tested this difference
+with @mymath{10^3}, @mymath{10^4}, @mymath{10^5}, @mymath{10^6},
+@mymath{10^7} and @mymath{10^8} random points over the pixel area. The
+differneces were @mymath{580701}, @mymath{525220}, @mymath{500575},
+@mymath{511167}, @mymath{509204} and @mymath{508288}
+respectively. Since this profile is so sharp, only the central pixel
+has such a huge difference, for the rest of the pixels, the
+differences are smaller than 0.01.  
+
+If the center of the profile was off of the center of a pixel, these
+values would change and be shared by the neighboring pixels.  The
+differences between random points and integration is extremely large,
+but we see that the difference between @mymath{10^4} random points and
+@mymath{10^8} random points is only about @mymath{3} percent, while
+the CPU burden, or operation time, is 10,000 times less! Therefore it
+seems reasonable to choose @mymath{10^4} random points to test
+integration.
+
+In MockGals, the building of the profile begins from its central pixel
+and continues outwards, see @ref{Making central}. It would be
+perfectly ideal if we could use the @mymath{10^4} or even larger
+number of random points, to fill all the pixels, to be more accurate
+and also to be closer to what really happens. But unfortunately, such
+a process would be extremely time and CPU consuming. But in order to
+not loose too much accuracy, in MockGals, we build the profile using
+all the three methods explained above. 
+
+We begin building a profile from the pixel in the image that is
+closest to the center. First we try @mymath{10^4} random points, if
+the difference (as defined above) with integration is tollerable,
+MockGals will stop using random points and only use integration. As we
+go to farther regions in the profile, the difference between
+integration and using PCV will also go below a tolerance level and
+beyond that point we only use PCV.
 
 @cindex Comparison, integration over pixels
 @cindex Integration over pixels, comparison
 @cindex Tolerance, integration
 @cindex Integration tolerance
-@ref{pixintegq1}, @ref{pixintegq65} and @ref{pixintegq3} show the
-difference between integration and the central pixel value for the
-first @mymath{\sim2000} pixels in a mock S@'ersic profile with various
-axis ratios (@mymath{q}). Let @mymath{I_i} be the pixel value if
+@ref{pixintegq1} and @ref{pixintegq25} show the difference between
+integration and the central pixel value for the first
+@mymath{\sim2000} pixels in a mock S@'ersic profile with various axis
+ratios (@mymath{q}). Let @mymath{I_i} be the pixel value if
 integration is preformed over it and @mymath{I_c} represent the
 profile value at the pixel center. The tolerance level that the user
 can set is defined as: @mymath{T=|I_i-I_c|/I_i}. The marked pixels in
@@ -1053,30 +1116,24 @@ if the user sets @mymath{T=10^{-2}}. Integration will stop at the
 first pixel that gives a smaller tolerance.
 
 @float Figure, pixintegq1
-@center@image{./mockgals-figures/s7_pixintegq1,15cm,,./mockgals-figures/s7_pixintegq1.pdf,.png}
+@center@image{./mockgals-figures/s3_integq1,15cm,,./mockgals-figures/s3_integq1.pdf,.png}
 
 @caption{Difference between integrating over the pixel area
 (@mymath{I_i}) and using the central pixel value (@mymath{I_c}). Each
 point shows one pixel and is colored based on the logarithm of the
 fraction of the total object flux that is in that pixel. The profile
-used here is a S@'ersic profile with @mymath{n=4}, @mymath{r_e=5}
-pixels, @mymath{\theta=20^\circ} and @mymath{q=1}. The The solid
+used here is a S@'ersic profile with @mymath{n=4}, @mymath{r_e=3}
+pixels, @mymath{\theta=30^\circ} and @mymath{q=1}. The The solid
 horizontal line shows where the fractional difference of the profile
-becomes 1/100. The pixels with a plus (@mymath{+}) sign on them show
-the pixels that integration has been applied to. In total, they
-constitute @mymath{\sim0.68} of the total light. }
+becomes 1/100. The pixels with an asterisk are those that integration
+will be applied to in practice. }
 @end float
 
-@float Figure, pixintegq65
-@center@image{./mockgals-figures/s7_pixintegq65,15cm,,./mockgals-figures/s7_pixintegq65.pdf,.png}
 
-@caption{Same as @ref{pixintegq1} but with @mymath{q=0.65}.}
-@end float
+@float Figure, pixintegq25
+@center@image{./mockgals-figures/s3_integq25,15cm,,./mockgals-figures/s3_integq25.pdf,.png}
 
-@float Figure, pixintegq3
-@center@image{./mockgals-figures/s7_pixintegq3,15cm,,./mockgals-figures/s7_pixintegq3.pdf,.png}
-
-@caption{Same as @ref{pixintegq1} but with @mymath{q=0.3}. See
+@caption{Same as @ref{pixintegq1} but with @mymath{q=0.25}. See
 @ref{integpixfill} for a demonstration on how the pixels to integrate
 over are found for this profile.}
 @end float
@@ -2212,8 +2269,8 @@ it can only be viewed as a simple explanations of the functions in
 English and not in C.
 
 @menu
-* Reading method::        Our recommendation on how to read this chapter.
-* Program flow::          Explanation on the flow and functions in MockGals.
+* Reading method::              Our recommendation on how to read this chapter.
+* Program flow::                Explanation on the flow and functions in MockGals.
 @end menu
 
 
@@ -2538,12 +2595,12 @@ have created a very simple Graph based approach to building the
 profiles based on the nearest pixel in the image to the profile
 center. Using the closest neighbors of that pixel and their neighbors
 we can accurately and speedily find the pixels in the image that
-require integration, see @ref{Integration}.
+require integration, see @ref{Central profile pixels}.
 
 @menu
 * Graph canvas::                Graph based canvas.
 * Finding nearest pixel::       Nearest pixel to the profile center.
-* Integrating central::         Integrating central regions.
+* Making central::              Making the central regions.
 * Rest of profile::             How the rest of the profile is built.
 @end menu
 
@@ -2704,7 +2761,7 @@ efficent.
 
 
 
-@node Finding nearest pixel, Integrating central, Graph canvas, Making the profiles
+@node Finding nearest pixel, Making central, Graph canvas, Making the profiles
 @subsubsection Finding the closest pixel to profile center
 @cindex Nearest pixel to profile center
 @cindex Profile center, nearest pixel
@@ -2760,45 +2817,64 @@ the center of the profile and returns that point.
 
 
 
-@node Integrating central, Rest of profile, Finding nearest pixel, Making the profiles
-@subsubsection Integrating central profile regions
+@node Making central, Rest of profile, Finding nearest pixel, Making the profiles
+@subsubsection Building profile center
 The pixel in the image nearest to the profile center has been found,
-see @ref{Finding nearest pixel}. If the profile is in the image, the
-pixels within an initially unknown radius are going to require
-integration, see @ref{Integration}. This radius depends on various
-parameters, the best way to avoid any systematic bias is to find it in
-practice, while building the profile. To do this we have defined a
-very fast process as explained below.
+see @ref{Finding nearest pixel}. As discussed in @ref{Central profile
+pixels}, if the center of the profile is in the image, accurately
+modeling the central parts of a sharp galaxy is very tricky and simply
+using the pixel center value is inaccurate. Until an initially unknown
+radius, we have to find the average value of a large number of
+randomly positioned points within a pixel. Beyond that we can
+integrate over the pixel area and finally, once the tolerance is
+passed, we can use the central pixel value.
+
+So two radii have to be found. The best way to avoid any systematic
+bias is finding them in practice, while building the
+profile. Fortuantely we are begining from the nearest pixel to the
+center of the profile, we just have to make sure that the pixel that
+is checked after that is the nearest of all the neighbors. This
+process has to continue, such that we can go through the pixels of the
+profile based on their elliptical distance, see @ref{Defining an
+ellipse}. 
 
 @findex SRC/sll.h
 @cindex Ordered queue (simple linked list)
 @cindex Queue, ordered
 @cindex Simple linked list, ordered
-We define an ordered queue (simple linked list) to begin building the
-profile in the image. The nodes in this ordered queue are defined in
-@file{SRC/sll.h} as:
+So our goal is to go through the pixels based on increasing
+@mymath{r_{el}}. In order to be able to do this in a very fast manner,
+we define a two sided (or double ended) ordered queue (simple linked
+list). The nodes in this ordered queue are defined in @file{SRC/sll.h}
+as:
 
 @example
-struct ossll
+struct tossll
 @{
-  size_t v;                /* The pixel index */
-  float s;                 /* The parameter to sort by (radius). */
-  struct ossll *next;      /* Pointer to next element in the queue. */
+  size_t v;                     /* Pixel index.              */
+  float s;                      /* Elliptical radius.        */
+  struct tossll *prev;          /* Pointer to previous node. */
+  struct tossll *next;          /* Pointer to next node.     */
 @};
 @end example
 
 @noindent
 A pixel (a node in the queue) is added to this ordered queue with
-@code{add_to_ossll()}. The new node is positioned in the queue such
-that its next element has a larger @mymath{r_{el}}. In this fashion,
-the first element that is popped from this queue always has the
-smallest @mymath{r_{el}}. The first pixel to go into this queue is the
-central pixel found before, see @ref{Finding nearest pixel}.
+@code{add_to_tossll_end()}. The new node is positioned in the queue
+such that its next element has a smaller @mymath{r_{el}}. In this
+fashion, the top (ending) node always has the largest @mymath{r_{el}}
+and the bottom (starting) node has the smallest @mymath{r_{el}}. Since
+the new nodes comming into the queue generally have larger
+@mymath{r_{el}}, this structure enables us to save a lot of CPU
+energy.
 
-We then enter a loop and until the given tolerance is reached, see
-@ref{Integration}, a pixel (which has the smallest @mymath{r_{el}}) is
-popped from the queue and if it has not already been filled, the
-following steps are applied to it:
+We pop out the starting node, that has the smallest @mymath{r_{el}},
+with @code{pop_from_tossll_start()}. The first pixel to go into this
+queue is the central pixel found before, see @ref{Finding nearest
+pixel}. We then enter a loop and until the given tolerance is reached,
+see @ref{Central profile pixels}, a pixel (which has the smallest
+@mymath{r_{el}}) is popped from the queue and if it has not already
+been filled, the following steps are applied to it:
 
 @enumerate
 @item
@@ -2808,15 +2884,6 @@ to the image.
 The 8-connected neighbors to that pixel which have not already been
 filled are added to the ordered queue.
 @end enumerate
-
-Since @code{add_to_ossll()} puts the pixels in the queue based on
-their @mymath{r_{el}}, it does require some additional CPU power, but
-since we begin from the center and the neighbors of the nearest pixels
-are added first, this ``adding by order'' step does not take too much
-additional CPU power. Also, number of pixels that have to go through
-this sorting are very small compared to the total profile's area,
-because the moment the first pixel that passes the tolerance level is
-passed, we break out of this loop.
 
 @cindex Gauss-Kronrod-Patterson abscissae
 @cindex Integration, method
@@ -2829,33 +2896,40 @@ provided for fast integration of smooth functions.
 @cindex Filling central profile
 @cindex Profile, filling center
 @ref{integpixfill} shows how the process just explained is applied in
-practice. In this figure the mock profile of @ref{pixintegq3} with
-@mymath{n=4}, @mymath{r_e=5}, @mymath{\theta=20^\circ} and
-@mymath{q=0.3} is filled in the center of a small box. It clearly
+practice. In this figure the mock profile of @ref{pixintegq25} with
+@mymath{n=4}, @mymath{r_e=3}, @mymath{\theta=30^\circ} and
+@mymath{q=0.25} is filled in the center of a small box. It clearly
 demonstrates how the pixels with the smallest radius are found and
-filled in order.
+filled in order. The first two pixels of those demonstrated here are
+filled with @mymath{10^4} random points, integration is applied to the
+rest. The relative difference, see @ref{Central profile pixels},
+between random points and integration for the central pixel is
+@mymath{1.17}. For the second pixel, this difference becomes
+@mymath{0.00023}. Therefore beyond the second pixel, integration is
+simply used.
 
 @float Figure, integpixfill
 @center@image{./mockgals-figures/s7_integpixfill,15cm,,./mockgals-figures/s7_integpixfill.gif,.gif}
 
-@caption{Demonstration of how the first 32 pixels of @ref{pixintegq3}
-which require integration are found. The last step shows the full
-profile in the same frame. The pixels are colored based on the
-logarithm of their flux and truncated, such that the central regions
-are completely black, to easily demonstrate the pixels used. }
+@caption{Demonstration of how the first 24 pixels of @ref{pixintegq25}
+which require integration are found in order or increasing elliptical
+radius. The pixels are colored based on the logarithm of their flux
+and truncated, such that the central regions are completely black, to
+easily demonstrate the pixels used. The complete profile can be seen
+in restpixfill. }
 @end float
 
 
 
 
 
-@node Rest of profile,  , Integrating central, Making the profiles
+@node Rest of profile,  , Making central, Making the profiles
 @subsubsection Filling profile surface
 @cindex LIFO
 @cindex Last in, first out queue
 @cindex Queue, last in, first out
 Integration has been accomplished for those pixels that required it,
-see @ref{Integrating central}. The rest of the job is very easy, a
+see @ref{Making central}. The rest of the job is very easy, a
 simple ``last in first out'' (LIFO) queue (linked list) is defined as
 below to keep the pixels that belong to this profile. 
 
@@ -2868,10 +2942,10 @@ struct ssll
 @end example
 
 @noindent
-First the remaining pixels from the ordered queue of @ref{Integrating
-central} are added to this queue. A pixel is then popped from the
-queue and if the profile has not already been found on it, the
-following two steps will be taken:
+First the remaining pixels from the ordered queue of @ref{Making
+central} are added to this queue. The last pixel that is put in the
+queue is then popped from it and the following two steps will be
+taken:
 
 @enumerate
 @item 
@@ -2887,7 +2961,7 @@ The distance of the pixels no longer matters, therefore we just define
 already been done. @ref{restpixfill} demonstrates how the rest of the
 pixels are filled for the same profile of
 @ref{integpixfill}. @inlinefmtifelse{html, This GIF image to show all
-the steps is 7.4 MB which might take some time to download if you have
+the steps is 4.3 MB which might take some time to download if you have
 a slow connection., The
 @url{http://astr.tohoku.ac.jp/~akhlaghi/mockgals/mockgals/, HTML
 version} of this manual has a GIF animation here showing the pixel by
@@ -2899,12 +2973,12 @@ pixel buildindg of the profile.}
 @float Figure, restpixfill
 @center@image{./mockgals-figures/s7_restpixfill,15cm,,./mockgals-figures/s7_restpixfill.gif,.gif}
 
-@caption{Demonstration filling the rest of the profile pixels. Since
-the radial distance no longer matters, pixels are just filled based on
-their position in the LIFO queue. Since putting all the pixel levels
-was impossible in print, only several stages of the steps are shown on
-the PDF version, in the HTML format, a GIF animation of all the pixles
-is shown..}
+@caption{Demonstration of filling the rest of the profile
+pixels. Since the radial distance no longer matters, pixels are just
+filled based on their position in the LIFO queue. Since putting all
+the pixel levels was impossible in print, only several stages of the
+steps are shown on the PDF version, in the HTML format, a GIF
+animation of all the pixles is shown.}
 @end float
 
 

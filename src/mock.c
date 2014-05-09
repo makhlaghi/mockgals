@@ -592,6 +592,45 @@ addnoise(float *array, size_t size, double sky)
 
 
 
+/* Fill pixel with random values */
+#define NUMRANDPOINTS 1e4
+float
+randompoints(struct integparams *p)
+{
+  size_t i;
+  double (*prof)(double, double, double);
+  double r, q, c, s, p1, p2, co, x, y, sum=0;
+
+  gsl_rng * rng;
+  double xrange, yrange;
+  const gsl_rng_type * T;
+
+  prof=p->profile;
+  xrange=p->xh-p->xl;
+  yrange=p->yh-p->yl;
+  p1=p->p1;        p2=p->p2;         co=p->co;
+  c=p->c;          s=p->s;           q=p->q;
+
+  T = gsl_rng_default;
+  rng = gsl_rng_alloc (T);
+  gsl_rng_set(rng,random_seed());
+  
+  for(i=0;i<NUMRANDPOINTS;i++)
+    {
+      x= p->xl + gsl_rng_uniform(rng)*xrange;
+      y= p->yl + gsl_rng_uniform(rng)*yrange;
+      r=sqrt( (x*c+y*s)*(x*c+y*s)+((y*c-x*s)*(y*c-x*s)/q/q) );
+      sum+=prof(r/p1, p2, co);
+    }
+
+  gsl_rng_free(rng);
+
+  return sum/NUMRANDPOINTS;
+}
+
+
+
+
 
 
 
@@ -758,12 +797,14 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
   char profletter;
   struct elraddistp e;
   struct ssll *Q=NULL;
-  struct ossll *oQ=NULL;
   struct integparams ip;
-  double sum=0, suminteg=0, area=0, co;
+  float accurate, approx;
+  double sum=0, area=0, co;
+  float r, truncr, multiple=0;
+  struct tossll *lQ=NULL, *sQ;	/* lQ: Largest. sQ: Smallest in queue */
   double (*func)(double, double, double);
   size_t i, numngb, nrow, counter=0, p, tp;
-  float r, truncr, maxir=0, integ, tmp, multiple=0;
+  int userandpoints=1, outofaccurateloop=0;
   
   e.q=q;
   e.t=M_PI*pa_d/180;
@@ -791,73 +832,94 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
       return 1;			/* Successful. */
     }
 
-  add_to_ossll( &oQ, p, elraddist(&e, p/s1, p%s1) );
+  add_to_tossll_end( &lQ, p, elraddist(&e, p/s1, p%s1) );
+  sQ=lQ;			/* To make sure that the */
+  byt[p]=1;			/* nearest pixel to the center */
+  bytind[counter++]=p;		/* is also marked. */
 
   co=ip.co;
   func=ip.profile;
   p1=ip.p1;
   p2=ip.p2;
 
-  while(oQ!=NULL)
+  while(sQ)
     {
-      pop_from_ossll(&oQ, &p, &r);
+      /* In case you want to see the status of the twosided ordered
+	 queue, increasing and decreasing side by side, uncomment this
+	 line. Note that there will be a lot of lines printed! */
+      /*print_tossll(lQ, sQ);*/
 
-      /* A pixel might be added to this list more than once.
-         check if it has already been checked:*/
-      if(byt[p]==1) continue;
-
-      byt[p]=1;			/* Mark as checked. */
-      bytind[counter++]=p;
+      pop_from_tossll_start(&sQ, &p, &r);
 
       if(r>truncr) continue;
+
+      /* On the first pop and last pop, the queue will become empty,
+	 therefore lQ also has to point to NULL. */
+      if(sQ==NULL) lQ=NULL;
       
       /* Find the value for this pixel: */
-      tmp=func(r/p1, p2, co); 
       t_i=p/s1-x_c;        t_j=p%s1-y_c;
       ip.xl=t_i-0.5;       ip.xh=t_i+0.5;
       ip.yl=t_j-0.5;       ip.yh=t_j+0.5;
-      integ=integ2d(&ip);	  
 
-      img[p]+=integ*multiple;
-
-      suminteg+=integ;
+      if(userandpoints)	       /* See when 10e5 randomly chosen */
+	{		       /* points are no longer needed. */
+	  accurate=randompoints(&ip);	
+	  approx=integ2d(&ip);		
+	  img[p]+=accurate*multiple;
+	  /*printf("%-5d", userandpoints);*/
+	  if (fabs(accurate-approx)/accurate<integaccu) 
+	    userandpoints=0;
+	}
+      else			 /* See when integration is not */
+	{			 /* needed and you can switch */
+	  accurate=integ2d(&ip); /* to the pixel center. */
+	  approx=func(r/p1, p2, co); 
+	  img[p]+=accurate*multiple;
+	  /*printf("%-5d", userandpoints);*/
+	
+	  if (fabs(accurate-approx)/accurate<integaccu) 
+	    outofaccurateloop=1;
+	 
+	}
 
       /*array_to_fits("tmp.fits", NULL, "", FLOAT_IMG, img, s0, s1);*/
-      /*fprintf(fp, "%-10.4f %-10.4f %-10.8f\n", r, fabs(integ-tmp)/integ,
-	log10(integ/sum));*/
+      /*printf("%-10.4f %-12.8f %-10.8f \n", r, 
+	fabs(accurate-approx)/accurate, log10(accurate/sum));*/
       
-      if (fabs(integ-tmp)/integ<integaccu) 
-	{
-	  maxir=r;
-	  break;
-	}
+
+      if(outofaccurateloop) break;
       
       /* It is very important to go over the 8 connected neighbors,
 	 because we are dealing with elliptical radii, not a cartesian
 	 space. So the diagonal neighbor might be closer (in
 	 elliptical radii) then the 4 connected pixels. */
-      numngb=1;	   /* all 8-connected neighbors will be checked.*/
       nrow=p*NGBSCOLS;
+      numngb=1;	   /* all 8-connected neighbors will be checked.*/
       do
 	if(byt[ tp=ngbs[nrow+numngb] ]==0)
-	  add_to_ossll( &oQ, tp, elraddist(&e, tp/s1, tp%s1) );
+	  {
+	    byt[tp]=1;
+	    bytind[counter++]=tp;
+	    add_to_tossll_end( &lQ, tp, elraddist(&e, tp/s1, tp%s1) );
+	  }
       while(ngbs[nrow+ ++numngb]!=NONINDEX);
+
+      /* In its first run (that the queue only has one node), upon
+	 popping from the queue, sQ will become NULL. Without the step
+	 bellow, the loop will never continue! So if sQ is NULL, then
+	 check the loop and find the smallest value. */
+      if(sQ==NULL)
+	smallest_tossll(lQ, &sQ);
     }
 
   /* All the pixels that required integration are now done, so we
      don't need an ordered array any more! */
-  ossll_into_ssll(oQ, &Q);
+  tossll_into_ssll(lQ, &Q);
 
-  while(Q!=NULL)
+  while(Q)
     {
       pop_from_ssll(&Q, &p);
-
-      /* A pixel might be added to this list more than once.
-         check if it has already been checked:*/
-      if(byt[p]==1) continue;
-
-      byt[p]=1;			/* Mark as checked. */
-      bytind[counter++]=p;
 
       r=elraddist(&e, p/s1, p%s1);
       if(r>truncr) continue;
@@ -870,10 +932,14 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
       /* Here it is best to use 4 connectivity, because the 8
       connected ones have most probably been done before. */
       nrow=p*NGBSCOLS;
-      numngb=ngbs[nrow];
+      numngb=ngbs[nrow];	/* Check only 4 connected neighbors */
       do
 	if(byt[ tp=ngbs[nrow+numngb] ]==0)
-	  add_to_ssll(&Q, tp);
+	  {
+	    byt[tp]=1;
+	    bytind[counter++]=tp;
+	    add_to_ssll(&Q, tp);
+	  }
       while(ngbs[nrow+ ++numngb]!=NONINDEX);
     }
 
@@ -1171,9 +1237,9 @@ mockimg(struct mockparams *p)
 		      ss*pp[i*nc+8],	  /* average flux.*/
 		      &pp[i*nc+9]);	  /* Total flux of profile*/ 
       if(p->verb)
-	printf(" -(%-.2f, %-.2f), n=%.2f, re=%.2f, pa=%.2f, q=%.2f\t%s\n",
-	       pp[i*nc+2], pp[i*nc+3], pp[i*nc+5], pp[i*nc+4], pp[i*nc+6],
-	       pp[i*nc+7], suc ? " Y" : "-*-");
+	printf(" -(%-.2f,%-.2f),n=%.2f, re=%.2f, pa=%.2f, q=%.2f\t%s\n",
+	       pp[i*nc+2], pp[i*nc+3], pp[i*nc+5], pp[i*nc+4], 
+	       pp[i*nc+6], pp[i*nc+7], suc ? " Y" : "-*-");
     }
   if(p->verb)
     printf("\n\n");

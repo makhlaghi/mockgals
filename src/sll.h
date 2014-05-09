@@ -109,4 +109,30 @@ void
 ossll_into_ssll(struct ossll *in, struct ssll **out);
 
 
+/******************* Two way ordered size_t: */
+struct tossll
+{
+  size_t v;
+  float s;
+  struct tossll *prev;
+  struct tossll *next;
+};
+
+void
+print_tossll(struct tossll *l, struct tossll *s);
+
+void
+add_to_tossll_end(struct tossll **largest, size_t value, 
+		  float tosort);
+
+void
+pop_from_tossll_start(struct tossll **smallest, size_t *value, 
+		      float *tosort);
+
+void
+smallest_tossll(struct tossll *largest, struct tossll **smallest);
+
+void
+tossll_into_ssll(struct tossll *in, struct ssll **out);
+
 #endif

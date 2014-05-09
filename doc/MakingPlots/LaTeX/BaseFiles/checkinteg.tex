@@ -3,66 +3,46 @@
 
   \begin{tikzpicture}
     \begin{axis}[ymode=log, ymin=0.00001, ymax=1,
-        xmin=0, xmax=50, width=\linewidth, height=0.4\linewidth, 
+        xmin=0, xmax=20, width=\linewidth, height=0.4\linewidth, 
         xlabel=Radius ($r_{el}$), ylabel=$|I_i-I_c|/I_i$, colorbar horizontal,
         colormap/bluered, 
         colorbar style={at={(0.5,1.03)}, anchor=south, xticklabel pos=upper}]
 
       \addplot+ [black, no markers, thick] coordinates {(-1,0.01) (60,0.01)};
 
-      \addplot+[only marks, mark=*, scatter, point meta={\thisrow{f}}, 
-	        solid, very thick]
+      \addplot+[only marks, mark=*, scatter, 
+                point meta={\thisrow{f}}, solid, very thick]
       table [x index=0, y index=1]
-      {./BaseFiles/checkintegcircall.txt};
+      {./BaseFiles/CheckInteg/q1_all.txt};
 
-      \addplot+[only marks, mark=+, mark size=3pt]
+      \addplot+[only marks, mark=asterisk, mark size=3pt]
       table [x index=0, y index=1]
-      {./BaseFiles/checkintegcirccent.txt};
+      {./BaseFiles/CheckInteg/q1_in.txt};
 
     \end{axis}
   \end{tikzpicture}
 
   \begin{tikzpicture}
     \begin{axis}[ymode=log, ymin=0.00001, ymax=1,
-        xmin=0, xmax=50, width=\linewidth, height=0.4\linewidth, 
+        xmin=0, xmax=20, width=\linewidth, height=0.4\linewidth, 
         xlabel=Radius ($r_{el}$), ylabel=$|I_i-I_c|/I_i$, colorbar horizontal,
         colormap/bluered, 
         colorbar style={at={(0.5,1.03)}, anchor=south, xticklabel pos=upper}]
 
       \addplot+ [black, no markers, thick] coordinates {(-1,0.01) (60,0.01)};
 
-      \addplot+[only marks, mark=*, scatter, point meta={\thisrow{f}}, 
-	        solid, very thick]
+      \addplot+[only marks, mark=*, scatter, 
+                point meta={\thisrow{f}}, solid, very thick]
       table [x index=0, y index=1]
-      {./BaseFiles/checkintegq65all.txt};
+      {./BaseFiles/CheckInteg/q25_all.txt};
 
-      \addplot+[only marks, mark=+, mark size=3pt]
+      \addplot+[only marks, mark=asterisk, mark size=3pt]
       table [x index=0, y index=1]
-      {./BaseFiles/checkintegq65cent.txt};
+      {./BaseFiles/CheckInteg/q25_in.txt};
 
     \end{axis}
   \end{tikzpicture}
 
-  \begin{tikzpicture}
-    \begin{axis}[ymode=log, ymin=0.00001, ymax=1,
-        xmin=0, xmax=50, width=\linewidth, height=0.4\linewidth, 
-        xlabel=Radius ($r_{el}$), ylabel=$|I_i-I_c|/I_i$, colorbar horizontal,
-        colormap/bluered, 
-        colorbar style={at={(0.5,1.03)}, anchor=south, xticklabel pos=upper}]
-
-      \addplot+ [black, no markers, thick] coordinates {(-1,0.01) (60,0.01)};
-
-      \addplot+[only marks, mark=*, scatter, point meta={\thisrow{f}}, 
-	        solid, very thick]
-      table [x index=0, y index=1]
-      {./BaseFiles/checkintegall.txt};
-
-      \addplot+[only marks, mark=+, mark size=3pt]
-      table [x index=0, y index=1]
-      {./BaseFiles/checkintegcent.txt};
-
-    \end{axis}
-  \end{tikzpicture}
 
 
 \end{figure}
