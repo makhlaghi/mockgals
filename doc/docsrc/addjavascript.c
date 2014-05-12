@@ -22,14 +22,14 @@ addtexttohtml(char *scriptname, char *htmlname)
   /* Read until you reach the </head> tag. */
   while ((read = getline(&line, &len, in)) != -1)
     {
-      if(strcmp(line, "</head>\n")==0) break;
+      if(strcmp(line, "</body>\n")==0) break;
       fprintf(out, "%s", line);
     }
 
   /* Put in the script from the script file. */
   while ((read = getline(&line, &len, script)) != -1)
     fprintf(out, "%s", line);
-  fprintf(out, "\n\n\n</head>\n\n\n");
+  fprintf(out, "\n\n\n</body>\n\n\n");
 
   /* Continue on with the rest of the file: */
   while ((read = getline(&line, &len, in)) != -1)

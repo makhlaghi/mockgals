@@ -1,12 +1,12 @@
 TEXISRC=./docsrc/mockgals.texinfo
-HTMLHEADERSCRIPT=./docsrc/htmlheaderscript.txt
+JAVASCRIPTS=./docsrc/javascripts.txt
 HTMLINDEX=./mockgals/index.html
 
 #Make the mockgals folder and the HTML:
 rm -rf ./mockgals
 texi2any --html --css-ref=./manualstyle.css  $TEXISRC
 mkdir ./mockgals/mockgals-figures/
-./addscripttohtmlhead $HTMLHEADERSCRIPT ./mockgals/*.html
+./addjavascript $JAVASCRIPTS ./mockgals/*.html
 ./correctindextop $HTMLINDEX
 cp ./docsrc/manualstyle.css ./mockgals/
 cp ./mockgals-figures/*.jpg ./mockgals/mockgals-figures/

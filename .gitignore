@@ -7,9 +7,9 @@ doc/mockgals/
 #Products:
 doc/MakingPlots/LaTeX/Plots.pdf
 doc/MakingPlots/LaTeX/tikzext/
-doc/addscripttohtmlhead
 doc/copytowebpage.sh
 doc/correctindextop
+doc/addjavascript
 mock.fits
 mockgals
 mockinfo.txt
