@@ -189,6 +189,36 @@ oneprofile(float x_c, float y_c, float p1, float p2, float pa_d,
 /****************************************************************
  *****************  Fill in the mock values  ********************
  ****************************************************************/
+/* Until calling this function, findstartingpixel(), looks on a
+   cartesian space. Therefore it will be give a wrong result (by one
+   pixel) when the point is near the boundaries and the profile is
+   extremely elliptical. So this function will search the */
+void
+fsp_checkell(size_t *ngbs, size_t s1, struct elraddistp *e, 
+	     size_t *p)
+{
+  float r, min_r;
+  size_t n, nrow, numngb, min_p;
+
+  min_r=elraddist(e, *p/s1, *p%s1);
+  min_p=*p;
+
+  nrow=*p*NGBSCOLS;
+  numngb=1;
+  do
+    {
+      n=ngbs[nrow+numngb];
+      if( (r=elraddist(e, n/s1, n%s1))<min_r )
+	{
+	  min_r=r;
+	  min_p=n;
+	}
+    }
+  while(ngbs[nrow+ ++numngb]!=NONINDEX);
+
+  *p=min_p;
+}
+
 
 /* Find the first pixel in the image to begin building the profile.
 
@@ -198,7 +228,7 @@ oneprofile(float x_c, float y_c, float p1, float p2, float pa_d,
    the C standard. So by the time they get here, the inputs are
    all in the C standard.*/
 void
-findstartingpixel(size_t s0, size_t s1, float truncr, 
+findstartingpixel(size_t *ngbs, size_t s0, size_t s1, float truncr, 
 		  struct elraddistp *e, size_t *p)
 {
   float rmin, x_c, y_c, fs0, fs1;
@@ -221,6 +251,7 @@ findstartingpixel(size_t s0, size_t s1, float truncr,
   if(x_c>=0 && x_c<fs0 && y_c>=0 && y_c<fs1)
     {
       *p=x*s1+y;
+      fsp_checkell(ngbs, s1, e, p);
       return;
     }
 
@@ -277,6 +308,8 @@ findstartingpixel(size_t s0, size_t s1, float truncr,
 	*p=xmin*s1+ymin;
       else *p=NONINDEX;
     }
+
+  fsp_checkell(ngbs, s1, e, p);
 }
 
 
@@ -350,10 +383,6 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
   setintegparams(s0_m1_g2_p3, p1, p2, pa_d, q, trunc, 
 		 &truncr, &profletter, &ip);
 
-  findstartingpixel(s0, s1, truncr, &e, &p);
-  if(p==NONINDEX)
-    return 0;	      /* Profile is completely out of image. */
-
   if(s0_m1_g2_p3==0)
     {
       sum=totsersic(p2, p1, sersic_b(p2), q);
@@ -368,10 +397,13 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
       return 1;			/* Successful. */
     }
 
-  add_to_tossll_end( &lQ, p, elraddist(&e, p/s1, p%s1) );
-  sQ=lQ;			/* To make sure that the */
-  byt[p]=1;			/* nearest pixel to the center */
-  bytind[counter++]=p;		/* is also marked. */
+  findstartingpixel(ngbs, s0, s1, truncr, &e, &p);
+  if(p==NONINDEX)
+    return 0;	      /* Profile is completely out of image. */
+
+  add_to_tossll_end( &lQ, &sQ, p, elraddist(&e, p/s1, p%s1) );
+  byt[p]=1;
+  bytind[counter++]=p;
 
   co=ip.co;
   func=ip.profile;
@@ -385,13 +417,9 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
 	 line. Note that there will be a lot of lines printed! */
       /*print_tossll(lQ, sQ);*/
 
-      pop_from_tossll_start(&sQ, &p, &r);
+      pop_from_tossll_start(&lQ, &sQ, &p, &r);
 
       if(r>truncr) continue;
-
-      /* On the first pop and last pop, the queue will become empty,
-	 therefore lQ also has to point to NULL. */
-      if(sQ==NULL) lQ=NULL;
       
       /* Find the value for this pixel: */
       t_i=p/s1-x_c;        t_j=p%s1-y_c;
@@ -420,8 +448,8 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
 	}
 
       /*array_to_fits("tmp.fits", NULL, "", FLOAT_IMG, img, s0, s1);*/
-      /*printf("%-10.4f %-12.8f %-10.8f \n", r, 
-	fabs(accurate-approx)/accurate, log10(accurate/sum));*/
+      /*printf(" (%lu, %lu): %-10.4f %-12.8f %-10.8f \n", p%s1+1, p/s1+1, 
+	r, fabs(accurate-approx)/accurate, log10(accurate/sum));*/
       
 
       if(outofaccurateloop) break;
@@ -437,16 +465,10 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
 	  {
 	    byt[tp]=1;
 	    bytind[counter++]=tp;
-	    add_to_tossll_end( &lQ, tp, elraddist(&e, tp/s1, tp%s1) );
+	    add_to_tossll_end( &lQ, &sQ, tp, 
+			       elraddist(&e, tp/s1, tp%s1) );
 	  }
       while(ngbs[nrow+ ++numngb]!=NONINDEX);
-
-      /* In its first run (that the queue only has one node), upon
-	 popping from the queue, sQ will become NULL. Without the step
-	 bellow, the loop will never continue! So if sQ is NULL, then
-	 check the loop and find the smallest value. */
-      if(sQ==NULL)
-	smallest_tossll(lQ, &sQ);
     }
 
   /* All the pixels that required integration are now done, so we
@@ -463,7 +485,7 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
       /* Find the value for this pixel: */
       img[p]+=func(r/p1, p2, co)*multiple; 
 
-      /*array_to_fits("tmp.fits", NULL, "", FLOAT_IMG, img, s0, s1);*/
+      /*array_to_fits("tmp2.fits", NULL, "", FLOAT_IMG, img, s0, s1);*/
 
       /* Here it is best to use 4 connectivity, because the 8
       connected ones have most probably been done before. */

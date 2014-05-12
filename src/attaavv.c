@@ -399,7 +399,7 @@ DoFormatting(int numcols, char **fmt, char *fmt_all, int *int_cols,
 
   /* Define the formating for each kind of data: */
   sprintf(intstr, "%%-%d.0f", space[0]);
-  sprintf(otherstr, "%%-%d.%dlg", space[1], prec[0]);
+  sprintf(otherstr, "%%-%d.%dlf", space[1], prec[0]);
   sprintf(eacustr, "%%-%d.%df", space[2], prec[1]);
 
   /* Initialize the format array: */

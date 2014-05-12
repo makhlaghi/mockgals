@@ -417,11 +417,13 @@ print_tossll(struct tossll *l, struct tossll *s)
   size_t counter=1;   /* We are not counting array elements :-D ! */
   while(l!=NULL)
     {
-      printf("\t%-5lu (%lu, %.4f)  |   (%lu, %.4f)\n", counter++, 
-	     l->v, l->s, s->v, s->s);
+      printf("\t%-5lu (%lu, %.4f) \n", counter++, 
+	     l->v, l->s);
       l=l->next;
+      printf("\t\t\t\t(%lu, %.4f)\n", s->v, s->s);
       s=s->prev;
     }
+  printf("\n");
 }
 
 
@@ -430,7 +432,8 @@ print_tossll(struct tossll *l, struct tossll *s)
 
 /* Very similar to Ordered SLL, but now it is two way. */
 void
-add_to_tossll_end(struct tossll **largest, size_t value, float tosort)
+add_to_tossll_end(struct tossll **largest, struct tossll **smallest, 
+		  size_t value, float tosort)
 {
   struct tossll *newnode, *tmp=*largest;
 
@@ -452,10 +455,11 @@ add_to_tossll_end(struct tossll **largest, size_t value, float tosort)
   if(tmp==NULL)	     /* This is the smallest value so far.     */
     {		     /* '*largest' only changes if it is NULL. */
       newnode->next=NULL;
+      *smallest=newnode;
       if(newnode->prev)		/* 'prev' is not NULL! */
 	newnode->prev->next=newnode;   
       else			/* 'prev is NULL, Only first. */
-	*largest=newnode;	
+	*largest=newnode;
     }
   else
     {
@@ -479,8 +483,8 @@ add_to_tossll_end(struct tossll **largest, size_t value, float tosort)
 
 /* Note that start has to be initialized. */
 void
-pop_from_tossll_start(struct tossll **smallest,  size_t *value,
-		      float *tosort)
+pop_from_tossll_start(struct tossll **largest, struct tossll **smallest,  
+		      size_t *value, float *tosort)
 {
   struct tossll *tmp=*smallest;
 
@@ -491,6 +495,8 @@ pop_from_tossll_start(struct tossll **smallest,  size_t *value,
   free(tmp);
   if(*smallest)
     (*smallest)->next=NULL;
+  else
+    *largest=NULL;
 
   /*printf("Popped v: %lu, s: %f\n", *value, *tosort);*/
 }

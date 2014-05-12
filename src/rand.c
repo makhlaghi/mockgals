@@ -99,7 +99,7 @@ setprflprms(double **prflprms, size_t numprflprms,
 			     0.5,8,       /* n range */
 			     0,360,       /* position angle range */
 			     0.2,1,       /* Axis ration range. */
-			     0.001,0.1}; /* S/N range. */
+			     0.001,0.01}; /* S/N range. */
   randparamranges[1]+=size1;
   randparamranges[3]+=size2;
     

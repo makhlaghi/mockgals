@@ -122,12 +122,12 @@ void
 print_tossll(struct tossll *l, struct tossll *s);
 
 void
-add_to_tossll_end(struct tossll **largest, size_t value, 
-		  float tosort);
+add_to_tossll_end(struct tossll **largest, struct tossll **smallest, 
+		  size_t value, float tosort);
 
 void
-pop_from_tossll_start(struct tossll **smallest, size_t *value, 
-		      float *tosort);
+pop_from_tossll_start(struct tossll **lartest, struct tossll **smallest,  
+		      size_t *value, float *tosort);
 
 void
 smallest_tossll(struct tossll *largest, struct tossll **smallest);

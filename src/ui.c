@@ -20,6 +20,7 @@ You should have received a copy of the GNU General Public License
 along with mockgals. If not, see <http://www.gnu.org/licenses/>.
 
 **********************************************************************/
+#include <math.h>
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
@@ -57,6 +58,7 @@ setdefaultoptions(struct mockparams *p)
   p->s0        =201;
   p->s1        =201;
   p->sky       =10000.0f;
+  p->zeropoint =26;
   p->trunc     =5;
   p->psfname   ="";
   p->psf_mg    =1;
@@ -244,6 +246,9 @@ printmockgalshelp(struct mockparams *p)
   printf(" -s FLOAT:\n\tBackground value of the image.\n");
   printf("\tdefault: %.2f\n\n", p->sky);
 
+  printf(" -z FLOAT:\n\tZeropoint magnitude.\n");
+  printf("\tdefault: %.2f\n\n", p->zeropoint);
+
   printf(" -t FLOAT:\n\tProfile truncation, a multiple of radius.\n");
   printf("\tdefault: %.2f\n\n", p->trunc);
 
@@ -288,7 +293,7 @@ getsaveoptions(struct mockparams *p,
   int c;
   char *tailptr; 
 
-  while( (c=getopt(argc, argv, "pmnevhx:y:i:o:a:b:s:g:c:d:f:t:u:")) 
+  while( (c=getopt(argc, argv, "pmnevhx:y:i:o:a:b:s:g:c:d:f:t:u:z:")) 
 	 != -1 )
     switch(c)
       {
@@ -306,6 +311,9 @@ getsaveoptions(struct mockparams *p,
 	break;
       case 's':			/* Sky value. */
 	p->sky=strtof(optarg, &tailptr);
+	break;
+      case 'z':			/* Zeropoint magnitude. */
+	p->zeropoint=strtof(optarg, &tailptr);
 	break;
       case 't':			/* PSF FWHM.4 */
 	p->trunc=strtof(optarg, &tailptr);
@@ -387,16 +395,28 @@ getsaveoptions(struct mockparams *p,
 void
 savemockinfo(struct mockparams *p)
 {
+  double *pp, z;
   char temp[1000];
   struct ArrayInfo ai;
-  int int_cols[]={0, 1, 6,-1}, accu_cols[]={2,3,8,9,-1};
-  int space[]={6,8,11}, prec[]={2,4};
+  size_t i, nc, nummock;
+  int space[]={6,10,15}, prec[]={2,6};
+  int int_cols[]={0, 1, -1}, accu_cols[]={8,-1};
+
+  nc=p->numppcols;
+  nummock=p->nummock;
 
   ai.c=malloc(MAXALLCOMMENTSLENGTH*sizeof(char));
   assert(ai.c!=NULL);
   ai.s0=p->nummock;
   ai.s1=p->numppcols;
   ai.d=p->profileparams;
+
+  nc=p->numppcols;
+  nummock=p->nummock;
+  z=p->zeropoint;
+  pp=p->profileparams;
+  for(i=0;i<nummock;i++)
+    pp[i*nc+9]=z + -2.5*log10(pp[i*nc+9]);
 
   if(p->initcomments==NULL)
     {
@@ -405,6 +425,8 @@ savemockinfo(struct mockparams *p)
       strcpy(ai.c, temp);
       sprintf(temp, "# The sky valued is assumed to be: %.2f\n", 
 	      p->sky);
+      strcat(ai.c, temp);
+      sprintf(temp, "# The zeropoint magnitude is: %.2f\n", p->zeropoint);
       strcat(ai.c, temp);
       sprintf(temp, "# Truncation at %.2f * radial parameter\n# \n", 
 	      p->trunc);
@@ -420,7 +442,7 @@ savemockinfo(struct mockparams *p)
       strcat(ai.c, "# 7: Axis ratio.\n");    
       strcat(ai.c, "# 8: Signal to noise: ");
       strcat(ai.c, "(average profile flux-sky)/sqrt(sky).\n");    
-      strcat(ai.c, "# 9: Total flux (Sky subtracted).\n\n"); 
+      strcat(ai.c, "# 9: Total magnitude.\n\n"); 
     }
   else ai.c=p->initcomments;
   writeasciitable (p->infoname, &ai, int_cols, 

@@ -1891,6 +1891,14 @@ this value summed with the object pixel values. A larger argument to
 this option will result in more significant noise. Default is 10000
 counts or electrons.
 
+@findex -z
+@cindex Zeropoint magnitude
+@cindex Magnitude, zero point
+@item -z FLOAT
+The zero point magnitude. One of the outputs for each profile is its
+total magnitude. Practically, this is the paramter you can use to
+calibrate your values with realistic values. Default is 26.00.
+
 @findex -t
 @cindex Options, truncation radius
 @cindex Truncation radius 
@@ -2046,6 +2054,7 @@ generated galaxies, see @ref{Quick start}.
 @example
 # Properties of 50 mock profiles.
 # The sky valued is assumed to be: 10000.00
+# The zeropoint magnitude is: 26.00
 # Truncation at 5.00 * radial parameter
 # 
 # 0: ID.
@@ -2057,7 +2066,7 @@ generated galaxies, see @ref{Quick start}.
 # 6: Position angle, degrees.
 # 7: Axis ratio.
 # 8: Signal to noise: (average profile flux-sky)/sqrt(sky).
-# 9: Total flux (Sky subtracted).
+# 9: Total magnitude.
 @end example
 
 @cindex Column counting
@@ -2081,16 +2090,15 @@ the default values.
 As mentioned above, the input table has to have
 @value{INPUTTABLENUMCOLS} columns. In this section we will review how
 each column is interpreted by MockGals. Below is an example showing the
-properties of 5 of the profiles in @ref{quickpreview}.
+properties of 5 random profiles (two stars, three galaxies).
 
 @example
- 4 3  180.4836  198.6706  9.3  7    93   0.23  300.0000  30000.0000 
- 5 3  37.2736   7.9144    9.4  6.5  35   0.77  110.0000  11000.0000 
- 6 0  96.5600   155.6238  10   2.4  62   0.28  0.0006    504.4824   
- 7 0  184.9011  152.5227  9.4  4.1  176  0.21  0.0005    324.7885   
- 8 0  -19.1775  -2.6373   11   1.2  316  0.6   0.0009    2314.0616  
+4  3  22.37    48.96   18.80  0.71  14.71   0.41   300.0000  14.81
+5  3  153.53   188.00  5.19   2.74  83.81   0.71   110.0000  15.90     
+6  0  211.09   60.79   15.20  3.45  304.98  0.85   0.008390  14.21     
+7  0  25.20    27.38   16.16  2.89  264.86  0.57   0.001480  16.40     
+8  0  40.24    206.19  18.45  6.55  11.48   0.57   0.003102  15.31  
 @end example
-
 
 In the table below, each column is explained with the column counting
 beginging from zero. Counting the columns is intentionally started

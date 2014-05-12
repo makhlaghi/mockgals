@@ -35,6 +35,7 @@ struct mockparams
   size_t s0;			/* C standard axis 0 size. */
   size_t s1;			/* C standard axis 1 size. */
   float sky;			/* Sky value in the image. */
+  float zeropoint;		/* Magnitude zero point. */
   float trunc;			/* Truncation radius of the profiles. */
   char *psfname;		/* Name of PSF FITS name. */
   int psf_mg;			/* PSF Moffat or Gaussian. */
