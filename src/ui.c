@@ -21,14 +21,18 @@ along with mockgals. If not, see <http://www.gnu.org/licenses/>.
 
 **********************************************************************/
 #include <stdio.h>
+#include <string.h>
 #include <assert.h>
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "attaavv.h"
 #include "main.h"
 #include "mock.h"
-#include "ui.h"
+#include "stats.h"
+#include "attaavv.h"
+#include "arraymanip.h"
+
+#include "ui.h"			/* Needs mock.h */
 
 
 
@@ -354,4 +358,123 @@ getsaveoptions(struct mockparams *p,
       default:
 	abort();
       }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/****************************************************************
+ *****************  Save mock image and info ********************
+ ****************************************************************/
+/* If the mock image is to be saved, save the information
+   of the galaxies and the actual mock image. */
+void
+savemockinfo(struct mockparams *p)
+{
+  char temp[1000];
+  struct ArrayInfo ai;
+  int int_cols[]={0, 1, 6,-1}, accu_cols[]={2,3,8,9,-1};
+  int space[]={6,8,11}, prec[]={2,4};
+
+  ai.c=malloc(MAXALLCOMMENTSLENGTH*sizeof(char));
+  assert(ai.c!=NULL);
+  ai.s0=p->nummock;
+  ai.s1=p->numppcols;
+  ai.d=p->profileparams;
+
+  if(p->initcomments==NULL)
+    {
+      sprintf(temp, "# Properties of %lu mock profiles.\n", 
+	      p->nummock);
+      strcpy(ai.c, temp);
+      sprintf(temp, "# The sky valued is assumed to be: %.2f\n", 
+	      p->sky);
+      strcat(ai.c, temp);
+      sprintf(temp, "# Truncation at %.2f * radial parameter\n# \n", 
+	      p->trunc);
+      strcat(ai.c, temp);
+      strcat(ai.c, "# 0: ID.\n");
+      strcat(ai.c, "# 1: 0: Sersic, 1: Moffat, 2: Gaussian, ");
+      strcat(ai.c, "3: Point.\n");
+      strcat(ai.c, "# 2: X position (FITS definition).\n");
+      strcat(ai.c, "# 3: Y position (FITS definition).\n");
+      strcat(ai.c, "# 4: Sersic re or Moffat FWHM.\n");    
+      strcat(ai.c, "# 5: Sersic n or Moffat beta.\n");    
+      strcat(ai.c, "# 6: Position angle, degrees.\n");    
+      strcat(ai.c, "# 7: Axis ratio.\n");    
+      strcat(ai.c, "# 8: Signal to noise: ");
+      strcat(ai.c, "(average profile flux-sky)/sqrt(sky).\n");    
+      strcat(ai.c, "# 9: Total flux (Sky subtracted).\n\n"); 
+    }
+  else ai.c=p->initcomments;
+  writeasciitable (p->infoname, &ai, int_cols, 
+		   accu_cols, space, prec);
+}
+
+
+
+
+
+void
+printmockhist(float *img, size_t size, int numbins, float histmin,
+	      float histmax, float *nonoisehist)
+{
+  char temp[1000];
+  double *dallhist;
+  struct ArrayInfo ai;
+  float *noisedhist, *allhist;
+
+  int int_cols[]={1, 2, -1}, accu_cols[]={-1};
+  int space[]={6,8,15}, prec[]={3,4};
+
+  histogram(img, size, numbins, &histmin, &histmax, 
+	    &noisedhist, 1, 0, 0);
+
+  floatvmerge(nonoisehist, noisedhist, numbins+1, &allhist);
+  convertftd(allhist, (numbins+1)*3, &dallhist);
+
+  ai.c=malloc(MAXALLCOMMENTSLENGTH*sizeof(char));
+  assert(ai.c!=NULL);
+  ai.s0=numbins+1;
+  ai.s1=3;
+  ai.d=dallhist;
+
+  sprintf(temp, "# Histogram of noised and no noised mock image.\n");
+  strcpy(ai.c, temp);
+  sprintf(temp, "# Range: %.3f-%.3f\n", histmin, histmax);
+  strcat(ai.c, temp);
+  strcat(ai.c, "# NOTES:\n");  
+  strcat(ai.c, "# \t-One lower bin flux is set to zero.\n");  
+  strcat(ai.c, "# \t because of that, min and max of the\n");  
+  strcat(ai.c, "# \t whole histogram are slightly shifted.\n");  
+  strcat(ai.c, "# \t-There is one extra row (last) with zero\n");  
+  strcat(ai.c, "# \t values. This is to plot with pgfplots.\n#\n");  
+  strcat(ai.c, "# Columns:\n");  
+  strcat(ai.c, "# 0: Left (lower) bin value\n");
+  strcat(ai.c, "# 1: Number of pixels in no-noised image\n");
+  strcat(ai.c, "# 2: Number of pixels in noised image.\n");
+
+  writeasciitable ("mockhist.txt", &ai, int_cols, 
+		   accu_cols, space, prec);  
+  
+  free(allhist);
+  free(dallhist);
+  free(noisedhist); 
+  free(nonoisehist); 
 }

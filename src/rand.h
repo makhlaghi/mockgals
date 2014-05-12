@@ -20,27 +20,21 @@ You should have received a copy of the GNU General Public License
 along with mockgals. If not, see <http://www.gnu.org/licenses/>.
 
 **********************************************************************/
-#ifndef UI_H
-#define UI_H
+
+#ifndef RAND_H
+#define RAND_H
+
+
+#define NUMRANDPOINTS 1e4
 
 void
-setdefaultoptions(struct mockparams *p);
+setprflprms(double **prflprms, size_t numprflprms, 
+	      size_t nummock, int size1, int size2);
 
-void
-readinputinfo(struct mockparams *p);
+void 
+addnoise(float *array, size_t size, double sky);
 
-void
-checkremoveoutimage(char *outname);
-
-void
-getsaveoptions(struct mockparams *p, 
-	       int argc, char *argv[]);
-
-void
-savemockinfo(struct mockparams *p);
-
-void
-printmockhist(float *img, size_t size, int numbins, 
-	      float histmin, float histmax, float *nonoisehist);
+float
+randompoints(struct integparams *p);
 
 #endif

@@ -1,7 +1,8 @@
 src=./src
 
 objects=main.o mock.o stats.o attaavv.o raddist.o freqdomain.o \
-        forqsort.o sll.o arraymanip.o fitsarrayvv.o pix.o ui.o
+	forqsort.o rand.o integtwod.o profiles.o sll.o         \
+	arraymanip.o fitsarrayvv.o pix.o ui.o
 
 vpath %.h $(src)
 vpath %.c $(src)
@@ -14,7 +15,7 @@ LDLIBS=-lcfitsio -lfftw3 -pthread -lgsl -lgslcblas -lm
 mockgals: $(objects) 
 	@$(CC) -o mockgals $(LDFLAGS) $(objects) $(LDLIBS) 
 	@rm *.o
-#	./mockgals -mne
+	./mockgals -mne
 
 .SILENT: $(objects)
 

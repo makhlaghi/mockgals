@@ -20,27 +20,30 @@ You should have received a copy of the GNU General Public License
 along with mockgals. If not, see <http://www.gnu.org/licenses/>.
 
 **********************************************************************/
-#ifndef UI_H
-#define UI_H
 
-void
-setdefaultoptions(struct mockparams *p);
+#ifndef PROFILES_H
+#define PROFILES_H
 
-void
-readinputinfo(struct mockparams *p);
+double
+Gaussian(double r, double junk, double a);
 
-void
-checkremoveoutimage(char *outname);
+double
+moffat_alpha(double fwhm, double beta);
 
-void
-getsaveoptions(struct mockparams *p, 
-	       int argc, char *argv[]);
+double
+Moffat(double rda, double nb, double junk);
 
-void
-savemockinfo(struct mockparams *p);
+double
+sersic_b(double n);
 
-void
-printmockhist(float *img, size_t size, int numbins, 
-	      float histmin, float histmax, float *nonoisehist);
+double
+Sersic(double rdre, double inv_n, double nb);
+
+
+double
+totsersic(double n, double re, double b, double q);
+
+double
+Point(double j1, double j2, double j3);
 
 #endif

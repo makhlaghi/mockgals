@@ -57,33 +57,6 @@ struct mockparams
 
 
 
-/* Inputs into the 2D integration routine: integ2d();
-   The parameters for the various profiles:
-   - Sersic:   p1: re.   p2: n.       trunc*re;
-   - Moffat:   p1: FWHM. p2: beta.    (FWHM/2)*trunc.
-   - Gaussian: p1: FWHM. p2: Nothing. sigma*trunc.    
-   - Point: none matter! */
-struct integparams
-{
-  double   xl;    /* lower  x boundary */
-  double   xh;    /* higher x boundary */
-  double    y;    /* y value when integrating over x.*/
-  double   yl;    /* lower  y boundary */
-  double   yh;    /* higher y boundary */
-  double    c;    /* Cosine of the position angle. */
-  double    s;    /* Sine of the position angle. */
-  double    q;    /* axis ratio of the position angle.*/
-  double pa_r;    /* Profile position angle in radians.*/
-  double   p1;    /* Parameter 1, see above. */
-  double   p2;    /* Parameter 2, see above. */
-  double   co;    /* The constant in any profile. */
-  double (*profile)(double, double, double);
-};
-
-
-
-
-
 /*Inputs of oneprofile(): 
    x_c and y_c: Only the fractional part matter, the 
                 central pixel will be used. 
