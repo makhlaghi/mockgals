@@ -273,7 +273,7 @@ convolve_function(float *f, size_t fsize1, size_t fsize2,
 		"extended to %.2f*sigma\n", p1, trunc);
       array_to_fits("conv.fits", NULL, "CONVFUNC", FLOAT_IMG, 
 		    psf, x_w, y_w);
-      printfarray(psf, x_w, y_w, comment, "conv.txt", 6);
+      printfarray(psf, x_w, y_w, comment, "conv.txt", 6, 'g');
     }
 
   if(conv!=NULL)

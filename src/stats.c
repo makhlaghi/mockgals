@@ -566,7 +566,7 @@ histogram_save(float *arr, unsigned char *mask, size_t size,
       for(i=0;i<numbins+1;i++)
 	hist[i*2+1]*=1000;
       printfarray(hist, numbins+1, 2, "# Histogram\n", 
-		  outname, 3);
+		  outname, 3, 'f');
     }
   else
     printhists(hist, outname, numbins+1, 2);
@@ -612,7 +612,7 @@ savetwohists(float *in1, float *in2, size_t size,
 
   if(n01)
     printfarray(hist, numbins+1, numcols, "# Histogram\n", 
-		filename, 3);
+		filename, 3, 'f');
   else
     printhists(hist, filename, numbins+1, numcols);
 
@@ -738,7 +738,7 @@ cumulativefp_save(float *arr, unsigned char *mask, size_t size,
       for(i=0;i<numbins+1;i++)
 	cum[i*2+1]*=max;
       printfarray(cum, numbins+1, 2, "# Cumulative frequency plot\n", 
-		  outname, 3);
+		  outname, 3, 'f');
     }
   else
     printhists(cum, outname, numbins+1, 2);
@@ -768,7 +768,7 @@ savetwocfp(float *in1, float *in2, size_t size, size_t numbins,
 
   if(n01)
     printfarray(cum, numbins+1, numcols, "# Histogram\n", 
-		filename, 6);
+		filename, 6, 'f');
   else
     printhists(cum, filename, numbins+1, numcols);
 

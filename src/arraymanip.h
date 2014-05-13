@@ -157,6 +157,7 @@ floatvmerge(float *a, float *b, size_t numrows, float **out);
 
 void
 printfarray(float *array, size_t s0, size_t s1, 
-	    char *comment, char *filename, int decimals);
+	    char *comment, char *filename, int decimals, 
+	    char fmttype);
 
 #endif 

@@ -807,14 +807,15 @@ floatvmerge(float *a, float *b, size_t numrows, float **out)
    onelarger than the actual number of columns and number of rows.  */
 void
 printfarray(float *array, size_t s0, size_t s1, 
-	    char *comment, char *filename, int decimals)
+	    char *comment, char *filename, int decimals, 
+	    char fmttype)
 {
   FILE *fp;
   double *d; 
   size_t i,j;
   char fmt[20];
 
-  sprintf(fmt, "%%10.%df", decimals);
+  sprintf(fmt, "%%-15.%d%c", decimals, fmttype);
    
   convertftd(array, s0*s1, &d);	/* For printing larger  */
   fp=fopen(filename, "w"); 	/* than 6 decimals. */

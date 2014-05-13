@@ -538,8 +538,9 @@ readormakepdf(float **psf, size_t *psf_s0, size_t *psf_s1,
   FILE *tmpfile;
   int av0_tot1=1, bitpix;
   float sum=1, integaccu=0.001;
-  char funcpsfname[]="PSF.fits";
-  float q=1, pa=0, trunc=10, psfsum;
+  char fitspsfname[]="PSF.fits";
+  char asciipsfname[]="PSF.conv";
+  float q=1, pa=0, trunc=5, psfsum;
 
   if(strlen(p->psfname))	/* A PSF file name was given. */
     {
@@ -585,15 +586,27 @@ readormakepdf(float **psf, size_t *psf_s0, size_t *psf_s1,
   		 psf, psf_s0, psf_s1, &junk);
       if(p->vpsf)
 	{
-	  if ((tmpfile = fopen(funcpsfname, "r")) != NULL) 
+	  /* Save the PSF in a FITS image: */
+	  if ((tmpfile = fopen(fitspsfname, "r")) != NULL) 
 	    {			/* The file exists! */
 	      fclose(tmpfile);
-	      assert(remove(funcpsfname)==0);
+	      assert(remove(fitspsfname)==0);
 	      printf("\nWARNING:  %s already existed, was deleted\n",
-		     funcpsfname);
+		     fitspsfname);
 	    }
-	  array_to_fits(funcpsfname, NULL, "PSF", FLOAT_IMG, 
+	  array_to_fits(fitspsfname, NULL, "PSF", FLOAT_IMG, 
 			*psf, *psf_s0, *psf_s1);
+
+	  /* Save the PSF as an ASCII .conv file */
+	  if ((tmpfile = fopen(asciipsfname, "r")) != NULL) 
+	    {		       
+	      fclose(tmpfile);
+	      assert(remove(asciipsfname)==0);
+	      printf("\nWARNING:  %s already existed, was deleted\n",
+		     asciipsfname);
+	    }
+	  printfarray(*psf, *psf_s0, *psf_s1, "CONV NONORM\n", 
+		      asciipsfname, 4, 'e');
 	}
     }
 }
