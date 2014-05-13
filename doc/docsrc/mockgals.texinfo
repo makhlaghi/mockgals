@@ -2482,6 +2482,14 @@ completely hide this for the outside user such that the inputs and
 outputs are all done in the FITS standard. On ds9, the first element
 of the array is the bottom left pixel.
 
+This difference in definition also requires another conversion when
+reading mock galaxy properties: the position angle (@mymath{\theta}),
+see @ref{Defining an ellipse}. Based on our definition there, it is
+the angle with the first axis of the array, which is different between
+the two standards. The equation to convert the two is:
+
+@dispmath{\theta_{\rm{C}}=90^\circ-\theta_{\rm{FITS}}}.
+
 @pindex fitsarrayvv
 In order to read from and write to a FITS image with relative ease we
 have written a very simple library so that only by calling one
