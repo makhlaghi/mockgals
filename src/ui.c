@@ -63,7 +63,7 @@ setdefaultoptions(struct mockparams *p)
   p->psfname   ="";
   p->psf_mg    =1;
   p->psf_p1    =5;
-  p->psf_p2    =3;
+  p->psf_p2    =4.765;
   p->histmin   =-250;
   p->histmax   =700;
   p->nummock   =50;

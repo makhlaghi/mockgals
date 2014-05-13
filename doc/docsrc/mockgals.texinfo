@@ -1962,7 +1962,8 @@ PSF FWHM in pixels. Default value is 5.
 @cindex Moffat options, @mymath{\beta}.
 @item -b FLOAT
 Moffat function's @mymath{\beta}, see @ref{PSF}. In case a Gaussian is
-asked for, this value is ignored. Default is 3.
+asked for, this value is ignored. Default is 4.765 as discussed in
+@ref{PSF}.
 
 @findex -g
 @cindex Histogram
