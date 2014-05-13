@@ -684,7 +684,7 @@ mockimg(struct mockparams *p)
 		      pp[i*nc+2]+hs1-1,   /* y_c (C format) */
 		      pp[i*nc+4],	  /* p1: sersic re. */
 		      pp[i*nc+5],	  /* p2: sersic n. */
-		      pp[i*nc+6],	  /* position angle. */
+		      90-pp[i*nc+6],	  /* position angle. */
 		      pp[i*nc+7],	  /* axis ratio. */
 		      ss*pp[i*nc+8],	  /* average flux.*/
 		      &pp[i*nc+9]);	  /* Total flux of profile*/ 
