@@ -51,6 +51,7 @@ setdefaultoptions(struct mockparams *p)
   p->vhist     =0;
   p->verb      =0;
   p->vpsf      =0;
+  p->ovpsf     =0;
   p->vnoconv   =0;
   p->vconv     =0;
 
@@ -222,7 +223,9 @@ printmockgalshelp(struct mockparams *p)
   printf("\n\n###### Options with no argument:\n");
   printf("###### In default, they are all inactive.\n");
   printf(" -e:\n\tVerbose: report all steps.\n\n");
-  printf(" -p:\n\tView the PSF used, no argument necessary.\n\n");
+  printf(" -p:\n\tView the PSF used.\n\n");
+  printf(" -P:\n\tOnly view the PSF used, don't make");
+  printf(" any mock profiles.\n\n");
   printf(" -m:\n\tView unconvolved mock image.\n");
   printf("\tAs a prior extension to main output. \n\n");
   printf(" -n:\n\tView convolved (before adding noise) image.\n");
@@ -293,10 +296,36 @@ getsaveoptions(struct mockparams *p,
   int c;
   char *tailptr; 
 
-  while( (c=getopt(argc, argv, "pmnevhx:y:i:o:a:b:s:g:c:d:f:t:u:z:")) 
+  while( (c=getopt(argc, argv, "pPmnevhx:y:i:o:a:b:s:g:c:d:f:t:u:z:")) 
 	 != -1 )
     switch(c)
       {
+	/* Options that will not run MockGals */
+      case 'v':			/* Print version and copyright. */
+	printversioninfo();
+	exit(EXIT_FAILURE);
+      case 'h':			/* Print help. */
+	printmockgalshelp(p);
+	exit(EXIT_FAILURE);
+
+	/* Optins with no arguments: */
+      case 'e':			/* Verbose mode. */
+	p->verb=1;
+	break;
+      case 'p':			/* View PSF. */
+	p->vpsf=1;
+	break;
+      case 'P':			/* Only view PSF. */
+	p->ovpsf=1;
+	break;
+      case 'm':			/* View not convolved. */
+	p->vnoconv=1;
+	break;
+      case 'n':			/* View no noised image. */
+	p->vconv=1;
+	break;
+
+
       case 'x':			/* NAXIS1 value of output image. */
 	checksize(optarg, &p->s1, c);
 	break;
@@ -342,24 +371,6 @@ getsaveoptions(struct mockparams *p,
       case 'd':			/* Histogram maximum. */
 	p->histmax=strtof(optarg, &tailptr);
 	break;
-      case 'e':			/* Verbose mode. */
-	p->verb=1;
-	break;
-      case 'p':			/* View PSF. */
-	p->vpsf=1;
-	break;
-      case 'm':			/* View not convolved. */
-	p->vnoconv=1;
-	break;
-      case 'n':			/* View no noised image. */
-	p->vconv=1;
-	break;
-      case 'v':			/* Print version and copyright. */
-	printversioninfo();
-	exit(EXIT_FAILURE);
-      case 'h':			/* Print help. */
-	printmockgalshelp(p);
-	exit(EXIT_FAILURE);
       case '?':
 	fprintf(stderr, "Unknown option: '-%c'.\n\n", optopt);
 	exit(EXIT_FAILURE);

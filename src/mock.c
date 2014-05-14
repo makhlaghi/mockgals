@@ -530,7 +530,7 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
  *****************    Read or make the PSF   ********************
  ****************************************************************/
 void
-readormakepdf(float **psf, size_t *psf_s0, size_t *psf_s1, 
+readormakepsf(float **psf, size_t *psf_s0, size_t *psf_s1, 
 	      struct mockparams *p)
 {
   void *tmp;
@@ -584,7 +584,7 @@ readormakepdf(float **psf, size_t *psf_s0, size_t *psf_s1,
       oneprofile(0.0f, 0.0f, p->psf_p1, p->psf_p2, pa, q, 
 		 trunc, integaccu, av0_tot1, sum, p->psf_mg, 
   		 psf, psf_s0, psf_s1, &junk);
-      if(p->vpsf)
+      if(p->vpsf || p->ovpsf)
 	{
 	  /* Save the PSF in a FITS image: */
 	  if ((tmpfile = fopen(fitspsfname, "r")) != NULL) 
@@ -652,7 +652,8 @@ mockimg(struct mockparams *p)
   size_t i, psf_s0, psf_s1, ns0, ns1, *ngbs;
   size_t nc, nsize, size, hs0, hs1, *bytind;
 
-  readormakepdf(&psf, &psf_s0, &psf_s1, p);
+  readormakepsf(&psf, &psf_s0, &psf_s1, p);
+  if(p->ovpsf) {free(psf); return;}
 
   hs0=psf_s0/2;          hs1=psf_s1/2;
   ns0=p->s0+2*hs0;       ns1=p->s1+2*hs1;

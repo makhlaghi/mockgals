@@ -1661,14 +1661,15 @@ points are as follows:
 @itemize
 @cindex Hyphen delimiter
 @item
-Arguments are options if they begin with a hyphen delimiter (@option{-}).
+Arguments are options if they begin with a hyphen delimiter
+(@option{-}).
 
 @cindex Multiple options
 @cindex Options, multiple
 @item
 Multiple options may follow a hyphen delimiter in a single token if
-the options do not take arguments, see @ref{No argument
-options}. Thus, @option{-abc} is equivalent to @option{-a -b -c}.
+the options do not take arguments, see @ref{Options with no
+arguments}. Thus, @option{-abc} is equivalent to @option{-a -b -c}.
 
 @item
 Certain options require an argument, see @ref{Options with arguments}.
@@ -1709,14 +1710,14 @@ removing those options to see the output.
 
 @menu
 * Informative options::         Options that don't run MockGals.
-* No argument options::         Options without arguments.
+* Options with no arguments::   On/Off options, don't need arguments.
 * Options with arguments::      Options that require arguments.
 @end menu
 
 
 
 
-@node Informative options, No argument options, Configuring, Configuring
+@node Informative options, Options with no arguments, Configuring, Configuring
 @section Informative options
 @cindex Informative options
 @cindex Options, informative
@@ -1768,7 +1769,7 @@ GNU Public License v3 or later.
 
 
 
-@node No argument options, Options with arguments, Informative options, Configuring
+@node Options with no arguments, Options with arguments, Informative options, Configuring
 @section Options with no arguments
 @cindex On/Off options
 @cindex Options, On/off
@@ -1796,6 +1797,19 @@ View the PSF. This is useful if you have asked MockGals to make a
 functional PSF and you want to see how the PSF its self looks. If this
 option is called, as soon as MockGals makes the PSF, it will save it
 into @file{psf.fits}.
+
+@findex -P
+@cindex Only view PSF
+@cindex View PSF, only
+@cindex PSF, view only
+@item -P
+Only view the PSF, don't make mock galaxies. Sometimes you just want a
+certain functional PSF and you don't want to create mock
+galaxies. This option is made for such circumstances. If this option
+is called, @option{-p} will be turned on, so there is no need to call
+that option too. You just have to set your desired PSF parameters:
+@option{-u} (function), @option{-a} (FWHM), @option{-b} (Moffat
+@mymath{\beta}), see @ref{Options with arguments}.
 
 @findex -m
 @cindex Save unconvolved image
@@ -1826,7 +1840,7 @@ noise is added. See the middle image in @ref{quickpreview}.
 
 
 
-@node Options with arguments,  , No argument options, Configuring
+@node Options with arguments,  , Options with no arguments, Configuring
 @section Options with arguments
 @cindex Options with arguments
 Some of the options require arguments. If you call them but don't
