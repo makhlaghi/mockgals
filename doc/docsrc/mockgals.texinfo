@@ -1123,7 +1123,7 @@ first pixel that gives a smaller tolerance.
 point shows one pixel and is colored based on the logarithm of the
 fraction of the total object flux that is in that pixel. The profile
 used here is a S@'ersic profile with @mymath{n=4}, @mymath{r_e=3}
-pixels, @mymath{\theta=30^\circ} and @mymath{q=1}. The The solid
+pixels, @mymath{\theta=60^\circ} and @mymath{q=1}. The The solid
 horizontal line shows where the fractional difference of the profile
 becomes 1/100. The pixels with an asterisk are those that integration
 will be applied to in practice. }
@@ -2914,7 +2914,7 @@ provided for fast integration of smooth functions.
 @cindex Profile, filling center
 @ref{integpixfill} shows how the process just explained is applied in
 practice. In this figure the mock profile of @ref{pixintegq25} with
-@mymath{n=4}, @mymath{r_e=3}, @mymath{\theta=30^\circ} and
+@mymath{n=4}, @mymath{r_e=3}, @mymath{\theta=60^\circ} and
 @mymath{q=0.25} is filled in the center of a small box. It clearly
 demonstrates how the pixels with the smallest radius are found and
 filled in order. The first two pixels of those demonstrated here are
@@ -2930,10 +2930,11 @@ simply used.
 
 @caption{Demonstration of how the first 24 pixels of @ref{pixintegq25}
 which require integration are found in order or increasing elliptical
-radius. The pixels are colored based on the logarithm of their flux
-and truncated, such that the central regions are completely black, to
-easily demonstrate the pixels used. The complete profile can be seen
-in restpixfill. }
+radius. The complete profile can be seen as the last frame in
+@ref{restpixfill}. The pixels are colored based on the logarithm of
+their flux and truncated, such that the central regions are completely
+black, to easily demonstrate the pixels used. The complete profile can
+be seen in restpixfill. }
 @end float
 
 
@@ -2990,12 +2991,12 @@ pixel buildindg of the profile.}
 @float Figure, restpixfill
 @center@image{./mockgals-figures/s7_restpixfill,15cm,,./mockgals-figures/s7_restpixfill.gif,.gif}
 
-@caption{Demonstration of filling the rest of the profile
-pixels. Since the radial distance no longer matters, pixels are just
-filled based on their position in the LIFO queue. Since putting all
-the pixel levels was impossible in print, only several stages of the
-steps are shown on the PDF version, in the HTML format, a GIF
-animation of all the pixles is shown.}
+@caption{Demonstration of filling the rest of the profile pixels, see
+@ref{integpixfill}. Since the radial distance no longer matters,
+pixels are just filled based on their position in the LIFO
+queue. Since putting all the pixel levels was impossible in print,
+only several stages of the steps are shown on the PDF version, in the
+HTML format, a GIF animation of all the pixles is shown.}
 @end float
 
 
