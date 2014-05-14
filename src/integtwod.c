@@ -133,8 +133,8 @@ setintegparams(int s0_m1_g2_p3, float p1, float p2, float pa_d,
       *profletter='m';
       break;
     case 2: /* Gaussian: p1: FWHM(input) -> sigma */
+      *trunc_r=(p1/2)*trunc;	/* Truncation in units of FWHM/2. */      
       p1/=2.35482;              /* Convert FWHM to sigma. */
-      *trunc_r=p1*trunc;	/* Truncation in units of sigma */
       p->co=-1.0f/(2.0f*p1*p1);	/* Constant to multiply */
       p->p1=1;			/* r gets divided by p->p1! */
       p->p2=0;			/* Not needed! */

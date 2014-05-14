@@ -1809,7 +1809,8 @@ galaxies. This option is made for such circumstances. If this option
 is called, @option{-p} will be turned on, so there is no need to call
 that option too. You just have to set your desired PSF parameters:
 @option{-u} (function), @option{-a} (FWHM), @option{-b} (Moffat
-@mymath{\beta}), see @ref{Options with arguments}.
+@mymath{\beta}) and @option{-j} (truncation radius), see @ref{Options
+with arguments} for a detailed discussion on these options..
 
 @findex -m
 @cindex Save unconvolved image
@@ -1978,6 +1979,16 @@ PSF FWHM in pixels. Default value is 5.
 Moffat function's @mymath{\beta}, see @ref{PSF}. In case a Gaussian is
 asked for, this value is ignored. Default is 4.765 as discussed in
 @ref{PSF}.
+
+@findex -j
+@cindex PSF truncation 
+@cindex Truncation, PSF
+@item -j FLOAT
+PSF truncation radius. The argument to this option will determine the
+size of the PSF. The PSF will only extend until the radius becomes
+larger than half of the FWHM (or HWHM) multiplied to the argument of
+this option. Note that currently all the PSFs produced by MockGals are
+completely circular.
 
 @findex -g
 @cindex Histogram

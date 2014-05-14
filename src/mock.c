@@ -537,10 +537,10 @@ readormakepsf(float **psf, size_t *psf_s0, size_t *psf_s1,
   size_t junk;
   FILE *tmpfile;
   int av0_tot1=1, bitpix;
+  float q=1, pa=0, psfsum;
   float sum=1, integaccu=0.001;
   char fitspsfname[]="PSF.fits";
   char asciipsfname[]="PSF.conv";
-  float q=1, pa=0, trunc=5, psfsum;
 
   if(strlen(p->psfname))	/* A PSF file name was given. */
     {
@@ -582,7 +582,7 @@ readormakepsf(float **psf, size_t *psf_s0, size_t *psf_s1,
   else
     {
       oneprofile(0.0f, 0.0f, p->psf_p1, p->psf_p2, pa, q, 
-		 trunc, integaccu, av0_tot1, sum, p->psf_mg, 
+		 p->psf_t, integaccu, av0_tot1, sum, p->psf_mg, 
   		 psf, psf_s0, psf_s1, &junk);
       if(p->vpsf || p->ovpsf)
 	{
@@ -602,7 +602,7 @@ readormakepsf(float **psf, size_t *psf_s0, size_t *psf_s1,
 	    {		       
 	      fclose(tmpfile);
 	      assert(remove(asciipsfname)==0);
-	      printf("\nWARNING:  %s already existed, was deleted\n",
+	      printf("\nWARNING:  %s already existed, was deleted\n\n",
 		     asciipsfname);
 	    }
 	  printfarray(*psf, *psf_s0, *psf_s1, "CONV NONORM\n", 

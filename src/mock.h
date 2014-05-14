@@ -41,6 +41,7 @@ struct mockparams
   int psf_mg;			/* PSF Moffat or Gaussian.            */
   float psf_p1;			/* First parameter of PSF.            */
   float psf_p2;			/* Second parameter of PSF.           */
+  float psf_t;			/* Truncation radius.                 */
   int vhist;			/* View histogram (>0) or not(0)?     */
   float histmin;		/* Minimum of histogram.              */
   float histmax;		/* Maximum of histogram.              */

@@ -65,6 +65,7 @@ setdefaultoptions(struct mockparams *p)
   p->psf_mg    =1;
   p->psf_p1    =5;
   p->psf_p2    =4.765;
+  p->psf_t     =5;
   p->histmin   =-250;
   p->histmax   =700;
   p->nummock   =50;
@@ -272,6 +273,10 @@ printmockgalshelp(struct mockparams *p)
   printf("\tNot used for a Gaussian.\n");
   printf("\tdefault: %.2f\n\n", p->psf_p2);
 
+  printf(" -j FLOAT:\n\tPSF truncation radius.\n");
+  printf("\tIn units of HWHM=FWHM/2.\n");
+  printf("\tdefault: %.2f\n\n", p->psf_t);
+
   printf(" -g INTEGER:\n\tIf positive, print histogram.\n");
   printf("\tdefault: %d. Integer (argument) number of bins.\n\n",
 	 p->vhist);
@@ -296,7 +301,7 @@ getsaveoptions(struct mockparams *p,
   int c;
   char *tailptr; 
 
-  while( (c=getopt(argc, argv, "pPmnevhx:y:i:o:a:b:s:g:c:d:f:t:u:z:")) 
+  while( (c=getopt(argc, argv, "pPmnevhx:y:i:o:a:b:j:s:g:c:d:f:t:u:z:")) 
 	 != -1 )
     switch(c)
       {
@@ -325,7 +330,7 @@ getsaveoptions(struct mockparams *p,
 	p->vconv=1;
 	break;
 
-
+	/* Options with arguments: */
       case 'x':			/* NAXIS1 value of output image. */
 	checksize(optarg, &p->s1, c);
 	break;
@@ -360,6 +365,9 @@ getsaveoptions(struct mockparams *p,
 	break;
       case 'b':			/* If Moffat, the beta. */
 	p->psf_p2=strtof(optarg, &tailptr);
+	break;
+      case 'j':			/* PSF truncation radius. */
+	p->psf_t=strtof(optarg, &tailptr);
 	break;
       case 'g':			/* View histogram. */
 	p->vhist=strtol(optarg, &tailptr, 0);

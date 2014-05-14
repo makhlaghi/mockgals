@@ -13,6 +13,8 @@ doc/addjavascript
 mock.fits
 mockgals
 mockinfo.txt
+PSF.fits
+PSF.conv
 
 doc/MakingPlots/GIFs/IntegPixFill/s7_integpixfill.gif
 doc/MakingPlots/GIFs/RestPixFill/s7_restpixfill.gif
