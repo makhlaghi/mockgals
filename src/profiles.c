@@ -44,6 +44,17 @@ Gaussian(double r, double junk, double a)
 
 
 
+/* The integral of the Gaussian from -inf to +inf equals the square
+ root of PI. So from zero to +inf it equals half of that.*/
+double
+totgaussian(double q)
+{
+  return q*sqrt(M_PI)/2;
+}
+
+
+
+
 
 /* This function will find the moffat function alpha value based on
    the explantions here:
@@ -55,7 +66,20 @@ Gaussian(double r, double junk, double a)
 double
 moffat_alpha(double fwhm, double beta)
 {
-    return (fwhm/2)/pow((pow(2, 1/beta)-1), 0.5f);
+  return (fwhm/2)/pow((pow(2, 1/beta)-1), 0.5f);
+}
+
+
+
+
+
+/* Find the total value of the Moffat profile. I am using equation 10
+ from Pengetal 2010 (Galfit). In finding the profiles, I am assuming
+ \Sigma_0=1. So that is what I put here too.*/
+double
+totmoffat(double alpha, double beta, double q)
+{
+  return M_PI*alpha*alpha*q/(beta-1);
 }
 
 

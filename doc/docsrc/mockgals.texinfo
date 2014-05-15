@@ -1945,6 +1945,16 @@ Half of the FWHM is multiplied to the argument of this function to set
 a limit to the Moffat profile, see @ref{PSF}.
 @end table
 
+@findex -I
+@cindex Tolerance level
+@cindex Threshold, breaking
+@item -I FLOAT
+This is the tolerance level discussed in @ref{Central profile
+pixels}. The first time the relative difference of a more accurate
+method (first random points, then integration) with a less accurate
+method (first integration, then the central pixel value) becomes
+smaller than this tolerance, the more accurate method is abandoned.
+
 @findex -f
 @cindex Save PSF used option
 @cindex PSF used, save
@@ -1978,7 +1988,7 @@ Gaussian function.
 @cindex PSF FWHM option
 @cindex Options, PSF FWHM
 @item -a FLOAT
-PSF FWHM in pixels. Default value is 5.
+PSF FWHM in pixels. Default value is 3 pixels.
 
 @findex -b
 @cindex Options, Moffat @mymath{\beta}

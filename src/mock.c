@@ -44,144 +44,6 @@ along with mockgals. If not, see <http://www.gnu.org/licenses/>.
 #include "rand.h"		/* Needs integtwod! */
 #include "ui.h"			/* Needs mock.h */
 
-/****************************************************************
- *****************       One profile:        ********************
- ****************************************************************/
-/* Sometimes (for example in making a PSF) you just want one profile
-   that is fully enclosed in an array. The two functions here, namely
-   oneprofile() and fillmock(). Were made for this purpose. These were
-   the precursors to the currently used makeprofile(), they were
-   called by makeprofile_old(), and the intersection of the profile
-   made here and the image (depending on where the actual image was
-   asked to be) would be added to the main output image. 
-
-   makeprofile_old() was removed from this source code on April 12th,
-   2014. You can see it in the last commit before that.*/
-void
-fillmock(float **mock, float x_c, float y_c, struct integparams *p, 
-        float integaccu, float trunc_r, size_t *x_w, size_t *y_w, 
-        double *totalflux, size_t *numpixs)
-{
-  float *pmock;
-  size_t i, size, stride=1;
-  float *actual_index;  /* Used to sort the mock image twice.        */
-  double integ;         /* To temporarily keep the integrated value. */
-  double point;         /* To compare the integrated value with.     */
-  float t_i, t_j;       /* To read the position from the 1D index.   */
-  float m_i_c, m_j_c;   /* The profile's center relative to its grid.*/
-  double p1=p->p1, p2=p->p2, co=p->co;
-
-  makecanvas(trunc_r, p->q*trunc_r, p->pa_r, x_c, 
-	     y_c, &m_i_c, &m_j_c, x_w, y_w, mock);
-
-  *numpixs=0;
-  *totalflux=0;
-  pmock=*mock; 
-
-  size=(*x_w)*(*y_w);
-  actual_index=malloc(size*sizeof(float));
-  assert(actual_index!=NULL);
-  for(i=0;i<size;i++) actual_index[i]=i;
-  gsl_sort2_float(pmock, stride, 
-		  actual_index, stride, size);
-
-  /* For the points that need integration: */
-  for(i=0;i<size;i++)
-    {
-      t_j=(size_t)actual_index[i]%(*y_w);
-      t_i=(actual_index[i]-t_j)/(*y_w);
-      t_i=t_i-m_i_c; t_j=t_j-m_j_c;
-      p->xl=t_i-0.5; p->xh=t_i+0.5;
-      p->yl=t_j-0.5; p->yh=t_j+0.5;
-      integ=integ2d(p);
-      point=p->profile(pmock[i]/p1, p2, co);
-      *totalflux+=pmock[i]=integ;
-      (*numpixs)++;
-      if (fabs(integ-point)/integ<integaccu) 
-        {
-	  i++;
-	  break;
-        }
-    }
- 
-  /* For the points inner to the truncation radius
-     where the elliptical radius is already calculated. */
-  for(;i<size;i++)
-    {
-      if(pmock[i]>trunc_r) break;
-      else 
-        { 
-          *totalflux+=pmock[i]=p->profile(pmock[i]/p1, p2, co);
-          (*numpixs)++;
-        }
-    }
-
-  /* For those points out of the truncation radius: */
-  for(;i<size;i++) pmock[i]=0;
-
-  gsl_sort2_float(actual_index, stride, pmock, stride, size);
-
-  free(actual_index);
-}
-
-
-
-
-
-/* Make a profile based on the input parameters. */
-#define SHOWONEPROFILE 0
-void
-oneprofile(float x_c, float y_c, float p1, float p2, float pa_d, 
-        float q, float trunc, float integaccu, int av0_tot1, 
-        float flux, float s0_m1_g2_p3, float **mock, size_t *x_w, 
-        size_t *y_w, size_t *numpixs)
-{
-  float trunc_r;
-  char profletter;
-  double totalflux=0;
-  struct integparams p;
-  int is0_m1_g2_p3=s0_m1_g2_p3;
-  static size_t fitscounter=1;
-  char fitsname[100];
-
-  setintegparams(is0_m1_g2_p3, p1, p2, pa_d, q, trunc, &trunc_r, 
-		 &profletter, &p);
-
-  fillmock(mock, x_c, y_c, &p, integaccu, trunc_r, 
-	   x_w, y_w, &totalflux, numpixs);
-
-  /* if av0_tot1==0, flux corresponds to the average flux,
-     so the total flux will be flux*numpixs.  */
-  if(av0_tot1==0)
-    flux *= *numpixs;   
-  /* Set the total flux of the final image. */
-  totalflux=floatsum(*mock, *x_w * *y_w);
-
-  floatarrmwith(*mock, *x_w * *y_w, flux/totalflux);  
-
-  if(SHOWONEPROFILE)
-    {
-      sprintf(fitsname, "%c%lu.fits", profletter, fitscounter++);
-      array_to_fits(fitsname, NULL, "ONEPROFILE", FLOAT_IMG, 
-		    *mock, *x_w, *y_w);
-    }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -387,19 +249,27 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
   if(p==NONINDEX)
     return 0;	      /* Profile is completely out of image. */
 
+  area=M_PI*truncr*truncr*q;
   if(s0_m1_g2_p3==0)
-    {
-      sum=totsersic(p2, p1, sersic_b(p2), q);
-      area=M_PI*truncr*truncr*q;
-      *totflux=avflux*area;
-      multiple=*totflux/sum;
-    }
+    sum=totsersic(p2, p1, sersic_b(p2), q);
+  else if(s0_m1_g2_p3==1)
+    sum=totmoffat(ip.p1, p2, q); /* Note that p->p2=-1/p2!. In Moffat*/
+  else if(s0_m1_g2_p3==2)	 /* we want p2 (beta), not p->p2! */
+    sum=totgaussian(q);
   else if(s0_m1_g2_p3==3)
     {
       img[p]=avflux;
       *totflux=avflux;
       return 1;			/* Successful. */
     }
+  else
+    {
+      printf("\n\ns0_m1_g2_p3=%.0f is not recognized.\n\n", 
+	     s0_m1_g2_p3);
+      exit(EXIT_FAILURE);
+    }
+  *totflux=avflux*area;
+  multiple=*totflux/sum;
 
   add_to_tossll_end( &lQ, &sQ, p, elraddist(&e, p/s1, p%s1) );
   byt[p]=1;
@@ -448,8 +318,9 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
 	}
 
       /*array_to_fits("tmp.fits", NULL, "", FLOAT_IMG, img, s0, s1);*/
-      /*printf(" (%lu, %lu): %-10.4f %-12.8f %-10.8f \n", p%s1+1, p/s1+1, 
-	r, fabs(accurate-approx)/accurate, log10(accurate/sum));*/
+      /*printf(" (%lu, %lu): %-10.4f %-12.8f %-10.8f \n", 
+	     p%s1+1, p/s1+1, r, fabs(accurate-approx)/accurate, 
+	     log10(accurate/sum));*/
       
 
       if(outofaccurateloop) break;
@@ -530,15 +401,54 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
  *****************    Read or make the PSF   ********************
  ****************************************************************/
 void
+makepsf(float **psf, size_t *psf_s0, size_t *psf_s1, 
+	      struct mockparams *p)
+{
+  int suc;
+  double t;
+  float pa_d=0, q=1;
+  unsigned char *byt;
+  float *tpsf, trunc_r;
+  size_t w, *bytind, *ngbs;
+
+  trunc_r=p->psf_t * p->psf_p1/2;
+  w=2*trunc_r+1;
+  if(w%2==0) w--;		/* To make sure the width is odd. */
+
+  assert( (tpsf=calloc(w*w, sizeof *tpsf))!=NULL );
+  assert( (byt=calloc(w*w, sizeof *byt))!=NULL );
+  assert( (bytind=calloc(w*w, sizeof *bytind))!=NULL );
+
+  imgngbs(w, w, &ngbs);
+
+  /* We are going to fix the total flux here, so the average flux is
+     junk! So is t! The total flux comes from integration, which is
+     not what we want. The truncation radius might be too small. */
+  suc=makeprofile(tpsf, byt, bytind, ngbs, w, w, p->psf_t, 
+		  p->integaccu, p->psf_mg, w/2, w/2, p->psf_p1,
+		  p->psf_p2, pa_d, q, 1, &t);
+  
+  floatarrmwith(tpsf, w*w, 1/floatsum(tpsf, w*w));
+
+  free(byt);
+  free(bytind);
+
+  *psf=tpsf;
+  *psf_s0=*psf_s1=w;
+}
+
+
+
+
+
+void
 readormakepsf(float **psf, size_t *psf_s0, size_t *psf_s1, 
 	      struct mockparams *p)
 {
   void *tmp;
-  size_t junk;
+  int  bitpix;
+  float psfsum;
   FILE *tmpfile;
-  int av0_tot1=1, bitpix;
-  float q=1, pa=0, psfsum;
-  float sum=1, integaccu=0.001;
   char fitspsfname[]="PSF.fits";
   char asciipsfname[]="PSF.conv";
 
@@ -581,9 +491,7 @@ readormakepsf(float **psf, size_t *psf_s0, size_t *psf_s1,
     }
   else
     {
-      oneprofile(0.0f, 0.0f, p->psf_p1, p->psf_p2, pa, q, 
-		 p->psf_t, integaccu, av0_tot1, sum, p->psf_mg, 
-  		 psf, psf_s0, psf_s1, &junk);
+      makepsf(psf, psf_s0, psf_s1, p);
       if(p->vpsf || p->ovpsf)
 	{
 	  /* Save the PSF in a FITS image: */
@@ -647,8 +555,8 @@ mockimg(struct mockparams *p)
   double *pp, ss;
   unsigned char *byt;
   int extcounter=0, suc;
+  float *conv, *psf, *img;
   float *nonoisehist, *preconv, trunc=10;
-  float *conv, *psf, *img, integaccu=0.01;
   size_t i, psf_s0, psf_s1, ns0, ns1, *ngbs;
   size_t nc, nsize, size, hs0, hs1, *bytind;
 
@@ -679,7 +587,7 @@ mockimg(struct mockparams *p)
   for(i=0;i<p->nummock;i++)
     {
       suc=makeprofile(img, byt, bytind, ngbs, ns0, 
-		      ns1, trunc, integaccu, 
+		      ns1, trunc, p->integaccu, 
 		      pp[i*nc+1],	  /* Profile function. */
 		      pp[i*nc+3]+hs0-1,   /* x_c (C format) */
 		      pp[i*nc+2]+hs1-1,   /* y_c (C format) */

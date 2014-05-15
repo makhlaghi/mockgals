@@ -61,9 +61,10 @@ setdefaultoptions(struct mockparams *p)
   p->sky       =10000.0f;
   p->zeropoint =26;
   p->trunc     =5;
+  p->integaccu =0.01;
   p->psfname   ="";
   p->psf_mg    =1;
-  p->psf_p1    =5;
+  p->psf_p1    =3;
   p->psf_p2    =4.765;
   p->psf_t     =5;
   p->histmin   =-250;
@@ -256,6 +257,10 @@ printmockgalshelp(struct mockparams *p)
   printf(" -t FLOAT:\n\tProfile truncation, a multiple of radius.\n");
   printf("\tdefault: %.2f\n\n", p->trunc);
 
+  printf(" -I FLOAT:\n\tTolerance level to switch to a less\n");
+  printf("\taccurate method of calculating the pixel value.\n");
+  printf("\tdefault: %.2f\n\n", p->integaccu);
+
   printf(" -f FILENAME:\n\tInput PSF fits file.\n");
   printf("\tIf a file is specified, the other\n");
   printf("\tPSF parameters are ignored.\n\n");
@@ -301,7 +306,8 @@ getsaveoptions(struct mockparams *p,
   int c;
   char *tailptr; 
 
-  while( (c=getopt(argc, argv, "pPmnevhx:y:i:o:a:b:j:s:g:c:d:f:t:u:z:")) 
+  while( (c=getopt(argc, argv, 
+		   "pPmnevhx:y:i:o:a:b:j:s:g:c:d:f:t:u:z:I:")) 
 	 != -1 )
     switch(c)
       {
@@ -349,8 +355,11 @@ getsaveoptions(struct mockparams *p,
       case 'z':			/* Zeropoint magnitude. */
 	p->zeropoint=strtof(optarg, &tailptr);
 	break;
-      case 't':			/* PSF FWHM.4 */
+      case 't':			/* Profile truncation radius */
 	p->trunc=strtof(optarg, &tailptr);
+	break;
+      case 'I':
+	p->integaccu=strtof(optarg, &tailptr);
 	break;
       case 'f':			/* Input PSF name */
 	p->psfname=optarg;
@@ -445,7 +454,8 @@ savemockinfo(struct mockparams *p)
       sprintf(temp, "# The sky valued is assumed to be: %.2f\n", 
 	      p->sky);
       strcat(ai.c, temp);
-      sprintf(temp, "# The zeropoint magnitude is: %.2f\n", p->zeropoint);
+      sprintf(temp, "# The zeropoint magnitude is: %.2f\n", 
+	      p->zeropoint);
       strcat(ai.c, temp);
       sprintf(temp, "# Truncation at %.2f * radial parameter\n# \n", 
 	      p->trunc);

@@ -30,30 +30,31 @@ along with mockgals. If not, see <http://www.gnu.org/licenses/>.
 /* Inputs into mockimg(). */
 struct mockparams
 {
-  char *infoname;		/* Name of file with galaxy info.     */
-  char *outname;		/* Name of output FITS file.          */
-  size_t s0;			/* C standard axis 0 size.            */
-  size_t s1;			/* C standard axis 1 size.            */
-  float sky;			/* Sky value in the image.            */
-  float zeropoint;		/* Magnitude zero point.              */
-  float trunc;			/* Truncation radius of the profiles. */
-  char *psfname;		/* Name of PSF FITS name.             */
-  int psf_mg;			/* PSF Moffat or Gaussian.            */
-  float psf_p1;			/* First parameter of PSF.            */
-  float psf_p2;			/* Second parameter of PSF.           */
-  float psf_t;			/* Truncation radius.                 */
-  int vhist;			/* View histogram (>0) or not(0)?     */
-  float histmin;		/* Minimum of histogram.              */
-  float histmax;		/* Maximum of histogram.              */
-  int verb;			/* Verbatim mode (if ==1).            */
-  int vpsf;			/* View the PSF used.                 */
-  int ovpsf;			/* Only view the PSF.                 */
-  int vnoconv;			/* View the not convolved image.      */
-  int vconv;			/* View the convolved image.          */
-  char *initcomments;		/* Comments of the input table.       */
+  char        *infoname;	/* Name of file with galaxy info.     */
+  char         *outname;	/* Name of output FITS file.          */
+  size_t             s0;        /* C standard axis 0 size.            */
+  size_t             s1;	/* C standard axis 1 size.            */
+  float             sky;	/* Sky value in the image.            */
+  float       zeropoint;	/* Magnitude zero point.              */
+  float           trunc;	/* Truncation radius of the profiles. */
+  float       integaccu;	/* Accuracy to stop integration.      */
+  char         *psfname;	/* Name of PSF FITS name.             */
+  int            psf_mg;	/* PSF Moffat or Gaussian.            */
+  float          psf_p1;	/* First parameter of PSF.            */
+  float          psf_p2;	/* Second parameter of PSF.           */
+  float           psf_t;	/* Truncation radius.                 */
+  int             vhist;	/* View histogram (>0) or not(0)?     */
+  float         histmin;	/* Minimum of histogram.              */
+  float         histmax;	/* Maximum of histogram.              */
+  int              verb;	/* Verbatim mode (if ==1).            */
+  int              vpsf;	/* View the PSF used.                 */
+  int             ovpsf;	/* Only view the PSF.                 */
+  int           vnoconv;        /* View the not convolved image.      */
+  int             vconv;	/* View the convolved image.          */
+  char    *initcomments;	/* Comments of the input table.       */
   double *profileparams;	/* Table of profile parameters.       */
-  size_t numppcols;		/* Number of columns in the above.    */
-  size_t nummock;		/* Number of mock profiles.           */
+  size_t      numppcols;	/* Number of columns in the above.    */
+  size_t        nummock;	/* Number of mock profiles.           */
 };
 
 

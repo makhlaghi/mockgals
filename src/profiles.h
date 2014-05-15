@@ -28,17 +28,22 @@ double
 Gaussian(double r, double junk, double a);
 
 double
-moffat_alpha(double fwhm, double beta);
+totgaussian(double q);
 
 double
 Moffat(double rda, double nb, double junk);
 
 double
-sersic_b(double n);
+moffat_alpha(double fwhm, double beta);
+
+double
+totmoffat(double alpha, double beta, double q);
 
 double
 Sersic(double rdre, double inv_n, double nb);
 
+double
+sersic_b(double n);
 
 double
 totsersic(double n, double re, double b, double q);
