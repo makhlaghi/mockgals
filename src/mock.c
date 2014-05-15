@@ -383,6 +383,10 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
   setintegparams(s0_m1_g2_p3, p1, p2, pa_d, q, trunc, 
 		 &truncr, &profletter, &ip);
 
+  findstartingpixel(ngbs, s0, s1, truncr, &e, &p);
+  if(p==NONINDEX)
+    return 0;	      /* Profile is completely out of image. */
+
   if(s0_m1_g2_p3==0)
     {
       sum=totsersic(p2, p1, sersic_b(p2), q);
@@ -396,10 +400,6 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
       *totflux=avflux;
       return 1;			/* Successful. */
     }
-
-  findstartingpixel(ngbs, s0, s1, truncr, &e, &p);
-  if(p==NONINDEX)
-    return 0;	      /* Profile is completely out of image. */
 
   add_to_tossll_end( &lQ, &sQ, p, elraddist(&e, p/s1, p%s1) );
   byt[p]=1;

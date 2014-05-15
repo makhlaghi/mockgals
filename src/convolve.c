@@ -1,24 +1,24 @@
 /*********************************************************************
-noisechisel - Detect and deblend objects.
-
-Detect and deblend (segment) objects in a noisy image.
+mockgals - Make mock astronomical profiles (galaxy, star, ...) 
+           in a FITS file
 
 Copyright (C) 2014 Mohammad Akhlaghi
 Tohoku University Astronomical Institute, Sendai, Japan.
 http://astr.tohoku.ac.jp/~akhlaghi/
 
-noisechisel is free software: you can redistribute it and/or modify
+mockgals is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-noisechisel is distributed in the hope that it will be useful,
+mockgals is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with noisechisel. If not, see <http://www.gnu.org/licenses/>.
+along with mockgals. If not, see <http://www.gnu.org/licenses/>.
+
 **********************************************************************/
 #include <math.h>
 #include <stdio.h>
@@ -97,14 +97,13 @@ savecomplexasfits(char *name, fftwf_complex *array,
  ****************************************************************/
 /* Prior to convolution, both arrays have to be padded to 
     the same size, that is the job of this function. */
-#define PADDEDCHECK 0
 void
 makepadded(float *f, size_t fs0, size_t fs1, 
            float *h, size_t hs0, size_t hs1, 
            float **tf, float **th, size_t *ps0, size_t *ps1)
 {
   float *ttf, *tth;
-  size_t i, j, num_pix, num_pix1, num_pix2;
+  size_t i, j, pw, num_pix;
 
   *ps0=fs0+hs0-1;
   *ps1=fs1+hs1-1;
@@ -112,23 +111,21 @@ makepadded(float *f, size_t fs0, size_t fs1,
   if (*ps0%2==1) (*ps0)++;
   if (*ps1%2==1) (*ps1)++;
 
+  pw=*ps1;
   num_pix = *ps0 * *ps1;
-  num_pix1=fs0*fs1;
-  num_pix2=hs0*hs1;
-
   assert( (*tf=calloc(num_pix, sizeof **tf))!=NULL );
   assert( (*th=calloc(num_pix, sizeof **th))!=NULL );
-
+ 
   ttf=*tf;
   for(i=0;i<fs0;i++)
     for(j=0;j<fs1;j++)
-      ttf[ i* *ps1 + j ]=f[i*fs1+j];
+      ttf[i*pw+j]=f[i*fs1+j];
 
   tth=*th;
   for(i=0;i<hs0;i++)
     for(j=0;j<hs1;j++)
-      tth[ i* *ps1 + j ]=h[i*hs1+j];
-   
+      tth[i*pw+j]=h[i*hs1+j];
+
   if(PADDEDCHECK)
     {
       array_to_fits("padded.fits", NULL, "Padded Image", 
@@ -180,12 +177,15 @@ convolve(float *f, size_t fs0, size_t fs1,
       exit(EXIT_FAILURE);
     }
 
+  /* Add some blank space to both. */
   makepadded(f, fs0, fs1, h, hs0, hs1, &tf, &th, &ps0, &ps1);
 
+  /* Get the DFT of the input array. */
   cf=fftwf_malloc(sizeof(fftwf_complex)*ps0*(ps1/2+1));
   p=fftwf_plan_dft_r2c_2d(ps0, ps1, tf, cf, FFTW_ESTIMATE);
   fftwf_execute(p); 
 
+  /* Get the DFT of the Kernel. */
   ch=fftwf_malloc(sizeof(fftwf_complex)*ps0*(ps1/2+1));
   p=fftwf_plan_dft_r2c_2d(ps0, ps1, th, ch, FFTW_ESTIMATE);
   fftwf_execute(p);
@@ -196,6 +196,8 @@ convolve(float *f, size_t fs0, size_t fs1,
       savecomplexasfits("dft.fits", ch, ps0, ps1/2+1, 1);
     }
 
+  /* Multiply the two DFTs together (note that it is complex
+     multiplication. Also note that temp here is necessary!*/
   size=ps0*(ps1/2+1);
   for(i=0;i<size;i++)
     {
@@ -207,12 +209,20 @@ convolve(float *f, size_t fs0, size_t fs1,
   if(DFTCHECK)
     savecomplexasfits("dft.fits", cf, ps0, ps1/2+1, 1);
 
+  /* Convert back to spatial coordinates. */
   tout=malloc(ps0*ps1*sizeof *tout);
   p=fftwf_plan_dft_c2r_2d(ps0, ps1, cf, tout, FFTW_ESTIMATE);
   fftwf_execute(p);  
 
+  /* The desired region is in the center of the image, crop out the
+     blank parts surrounding it.*/
   floatshrinkarraytonew(tout, ps0, ps1, hs0/2, hs1/2,
 			fs0+hs0/2, fs1+hs1/2, o);
+
+  /* Because of the DFT, every element is multiplied
+   by the number of elements. So we have to correct
+   for that.*/
+  floatarrmwith(*o, fs0*fs1, 1/((float)ps0*(float)ps1));
 
   free(tf);       
   free(th);      
