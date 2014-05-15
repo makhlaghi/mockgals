@@ -35,8 +35,8 @@ machine, installing them is easy and straightforward.
 
 - [GNU Scientific Library](http://www.gnu.org/software/gsl/).
   For integration and random number generation.
-- [FFTW](http://www.fftw.org/) 3.
-  For convolution
+- [FFTW](http://www.fftw.org/) 3. For convolution, configure with
+  `--enable-float` flag.
 - [cfitsio](http://heasarc.nasa.gov/fitsio/fitsio.html)
   For reading and writing FITS files.
 - [ds9](http://ds9.si.edu/site/Home.html)

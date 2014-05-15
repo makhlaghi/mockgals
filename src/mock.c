@@ -34,9 +34,9 @@ along with mockgals. If not, see <http://www.gnu.org/licenses/>.
 #include "stats.h"
 #include "attaavv.h"
 #include "raddist.h"
+#include "convolve.h"
 #include "profiles.h"
 #include "integtwod.h"
-#include "freqdomain.h"
 #include "arraymanip.h"
 #include "fitsarrayvv.h"
 #include "macrofunctions.h"
@@ -647,8 +647,8 @@ mockimg(struct mockparams *p)
   double *pp, ss;
   unsigned char *byt;
   int extcounter=0, suc;
-  float *psf, *img, integaccu=0.01;
   float *nonoisehist, *preconv, trunc=10;
+  float *conv, *psf, *img, integaccu=0.01;
   size_t i, psf_s0, psf_s1, ns0, ns1, *ngbs;
   size_t nc, nsize, size, hs0, hs1, *bytind;
 
@@ -712,15 +712,15 @@ mockimg(struct mockparams *p)
 	       p->outname, extcounter++);
     }
 
-  convolve(img, ns0, ns1, psf, psf_s0, psf_s1);
+  convolve(img, ns0, ns1, psf, psf_s0, psf_s1, &conv);
 
-  floatshrinkarray(&img, ns0, ns1, hs0, hs1, p->s0+hs0, p->s1+hs1);
+  floatshrinkarray(&conv, ns0, ns1, hs0, hs1, p->s0+hs0, p->s1+hs1);
 
-  floatsetbelowtozero(img, size, MINFLOAT);
+  floatsetbelowtozero(conv, size, MINFLOAT);
 
   if(p->vconv)
     {
-      array_to_fits(p->outname, NULL, "NONOISE", FLOAT_IMG, img, 
+      array_to_fits(p->outname, NULL, "NONOISE", FLOAT_IMG, conv, 
 		    p->s0, p->s1);
       if(p->verb)
 	printf("- Convolved profiles saved in '%s' (ext %d)\n",
@@ -728,12 +728,12 @@ mockimg(struct mockparams *p)
     }
    
   if(p->vhist)
-    histogram(img, size, p->vhist, &p->histmin, 
+    histogram(conv, size, p->vhist, &p->histmin, 
 	      &p->histmax, &nonoisehist, 1, 0, 0);
 
-  addnoise(img, size, p->sky);
+  addnoise(conv, size, p->sky);
 
-  array_to_fits(p->outname, NULL, "WITHNOISE", FLOAT_IMG, img, 
+  array_to_fits(p->outname, NULL, "WITHNOISE", FLOAT_IMG, conv, 
 		p->s0, p->s1);
 
   if(p->verb)
@@ -741,7 +741,7 @@ mockimg(struct mockparams *p)
 	   p->outname, extcounter++);
    
   if(p->vhist)
-    printmockhist(img, size, p->vhist, p->histmin, 
+    printmockhist(conv, size, p->vhist, p->histmin, 
 		  p->histmax, nonoisehist);
 
   savemockinfo(p);
@@ -751,6 +751,7 @@ mockimg(struct mockparams *p)
   free(psf);
   free(img);
   free(byt);
-  free(bytind);
+  free(conv);
   free(ngbs);
+  free(bytind);
 }

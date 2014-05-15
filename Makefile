@@ -1,6 +1,6 @@
 src=./src
 
-objects=main.o mock.o stats.o attaavv.o raddist.o freqdomain.o \
+objects=main.o mock.o stats.o attaavv.o raddist.o convolve.o   \
 	forqsort.o rand.o integtwod.o profiles.o sll.o         \
 	arraymanip.o fitsarrayvv.o pix.o ui.o
 
@@ -9,8 +9,7 @@ vpath %.c $(src)
 
 CC=gcc
 CFLAGS=-Wall -W -O -pedantic -I$(src)
-LDFLAGS=-L/usr/lib64/atlas/
-LDLIBS=-lcfitsio -lfftw3 -pthread -lgsl -lgslcblas -lm
+LDLIBS=-lcfitsio -lfftw3f -pthread -lgsl -lgslcblas -lm
 
 mockgals: $(objects) 
 	@$(CC) -o mockgals $(LDFLAGS) $(objects) $(LDLIBS) 

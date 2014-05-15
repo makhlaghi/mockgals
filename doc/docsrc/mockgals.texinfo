@@ -1436,8 +1436,8 @@ operating system}.
 In GNU/Linux operating systems, installing most programs from source
 is very easy. Generally, the following commands have to be run in
 sequence. Lets call the compressed file you download from the
-software's webpage @file{downloaded.tar.gz}. After you un-compress it
-with the first command below, lets suppose you get @file{untared_dir}.
+software's webpage @file{downloaded.tar.gz}. Lets suppose that after
+uncompressing, first command below, you get @file{untared_dir}.
 
 @cindex System-wide installation
 @example
@@ -1460,14 +1460,22 @@ three packages anywhere in your file system, it is best that you do
 install them system wide by going through all the steps above. The
 last command simply disables the root privileges and returns you back
 to your own user ID. It is best to avoid remaining root for a long
-time, because you might accidentally to something very harmful!
+time, because you might accidentally do something very harmful!
 
-The sequence above is enough for the first two programs in the list,
-namely GSL and FFTW, but CFITSIO needs a slight modification and ds9
-doesn't use this sequence at all, it is available as already compiled
-from the webpage.To install CFITSIO, you just have to add the
+The sequence above, unchanged, is good for installing GSL. But CFITSIO
+and FFTW need a slight modification in the third line. ds9 doesn't use
+this sequence at all, it is available as already compiled from the
+webpage.  To install CFITSIO and FFTW, you just have to add the
 following flags (those that start with a @command{--}) after the
-@command{$./configure} command, so it becomes:
+@command{$ ./configure} command. FFTW is simpler, so we'll start with
+that:
+
+@example
+$ ./configure --enable-threads --enable-float
+@end example
+
+@noindent
+For CFITSIO it should be run with these options:
 
 @example
 $ ./configure --enable-sse2 --prefix=/usr/local --enable-reentrant 
@@ -1477,12 +1485,12 @@ $ ./configure --enable-sse2 --prefix=/usr/local --enable-reentrant
 @cindex 64bit CPU
 @cindex Multithread
 @noindent
-The first flag is for increasing the reading and writing speed and
-only works for a 64 bit systems. If you are on a 32 bit system (not
-likely if your computer is less than 5 years old), don't include
-it. The second one says where to put the final compiled libraries, the
-given value is the standard place to put them. The last one is if you
-want to access the fits files in a multithread manner.
+The first flag (for CFITSIO) is for increasing the reading and writing
+speed and only works for a 64 bit systems. If you are on a 32 bit
+system (not likely if your computer is less than 5 years old), don't
+include it. The second one says where to put the final compiled
+libraries, the given value is the standard place to put them. The last
+one is if you want to access the fits files in a multithread manner.
 
 @cindex Environment variables
 @cindex Include directory
@@ -2601,7 +2609,7 @@ The resulting array (after turning it to a binary image) before
 convolution can be seen on the left of @ref{DFTdemo}. To save the
 convolved image, we just run the @code{array_to_fits()} line, after
 calling @code{convolve()} (which is defined in
-@file{SRC/freqdomain.c}).
+@file{SRC/convolve.c}).
 
 @float Figure, DFTdemo
 @center@image{./mockgals-figures/s7_dft1,5cm,,./mockgals-figures/s7_dft1.jpg,.jpg}@image{./mockgals-figures/s7_dft2, 5cm,,./mockgals-figures/s7_dft2.jpg,.jpg}
