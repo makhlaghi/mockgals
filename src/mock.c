@@ -220,7 +220,7 @@ findstartingpixel(size_t *ngbs, size_t s0, size_t s1, float truncr,
 int
 makeprofile(float *img, unsigned char *byt, size_t *bytind, 
 	    size_t *ngbs, size_t s0, size_t s1, float trunc, 
-	    float integaccu, float s0_m1_g2_p3, float x_c, float y_c, 
+	    float integaccu, int s0_m1_g2_p3, float x_c, float y_c, 
 	    double p1, double p2, float pa_d, float q, float avflux, 
 	    double *totflux)
 {
@@ -264,7 +264,7 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
     }
   else
     {
-      printf("\n\ns0_m1_g2_p3=%.0f is not recognized.\n\n", 
+      printf("\n\ns0_m1_g2_p3=%d is not recognized.\n\n", 
 	     s0_m1_g2_p3);
       exit(EXIT_FAILURE);
     }
@@ -299,7 +299,7 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
       if(userandpoints)	       /* See when 10e5 randomly chosen */
 	{		       /* points are no longer needed. */
 	  accurate=randompoints(&ip);	
-	  approx=integ2d(&ip);		
+	  approx=integ2d(&ip);
 	  img[p]+=accurate*multiple;
 	  /*printf("%-5d", userandpoints);*/
 	  if (fabs(accurate-approx)/accurate<integaccu) 
@@ -538,6 +538,39 @@ readormakepsf(float **psf, size_t *psf_s0, size_t *psf_s1,
 /****************************************************************
  *****************     Main output program   ********************
  ****************************************************************/
+void
+reportcreated(double *pp, size_t nc, size_t i, int suc)
+{
+  if(pp[i*nc+1]==0)
+    printf(" - Sersic: (%-.2f,%-.2f),n=%.2f, re=%.2f, "
+	   "pa=%.2f, q=%.2f\t%s\n",
+	   pp[i*nc+2], pp[i*nc+3], pp[i*nc+5], pp[i*nc+4], 
+	   pp[i*nc+6], pp[i*nc+7], suc ? " Y" : "-*-");
+  else if(pp[i*nc+1]==1)
+    printf(" - Moffat: (%-.2f,%-.2f),beta=%.2f, FWHM=%.2f, "
+	   "pa=%.2f, q=%.2f\t%s\n",
+	   pp[i*nc+2], pp[i*nc+3], pp[i*nc+5], pp[i*nc+4], 
+	   pp[i*nc+6], pp[i*nc+7], suc ? " Y" : "-*-");
+  else if(pp[i*nc+1]==2)
+    printf(" - Gaussian: (%-.2f,%-.2f), FWHM=%.2f, "
+	   "pa=%.2f, q=%.2f\t%s\n",
+	   pp[i*nc+2], pp[i*nc+3], pp[i*nc+4], 
+	   pp[i*nc+6], pp[i*nc+7], suc ? " Y" : "-*-");
+  else if(pp[i*nc+1]==3)
+    printf(" - Point source: (%-.2f,%-.2f)\t\t\t%s\n",
+	   pp[i*nc+2], pp[i*nc+3], suc ? " Y" : "-*-");
+  else
+    {
+      printf("\n\nProfile code (%.0f) not recognized!\n\n", 
+	     pp[i*nc+1]);
+      exit(EXIT_FAILURE);
+    }
+}
+
+
+
+
+
 /* Put one or more mock profiles into and image, convolve it and add
    noise to the final result.  The convolution is going to make the
    sides darker.  So the actual image where the galaxies will be
@@ -598,9 +631,7 @@ mockimg(struct mockparams *p)
 		      ss*pp[i*nc+8],	  /* average flux.*/
 		      &pp[i*nc+9]);	  /* Total flux of profile*/ 
       if(p->verb)
-	printf(" -(%-.2f,%-.2f),n=%.2f, re=%.2f, pa=%.2f, q=%.2f\t%s\n",
-	       pp[i*nc+2], pp[i*nc+3], pp[i*nc+5], pp[i*nc+4], 
-	       pp[i*nc+6], pp[i*nc+7], suc ? " Y" : "-*-");
+	reportcreated(pp, nc, i, suc);
     }
   if(p->verb)
     printf("\n\n");

@@ -70,12 +70,13 @@ main(int argc, char *argv[])
   if(p.initcomments!=NULL) 	/* The input table might have had */
     free(p.initcomments);	/* comments, free the space.      */
 
+
+  gettimeofday(&t1, NULL);
+  printf("mockgals finished in %.4f (seconds)\n",
+	 ((double)t1.tv_sec+(double)t1.tv_usec/1e6) - 
+	 ((double)t0.tv_sec+(double)t0.tv_usec/1e6));
   if(p.verb)
     {
-      gettimeofday(&t1, NULL);
-      printf("mockgals finished in %.4f (seconds)\n",
-	     ((double)t1.tv_sec+(double)t1.tv_usec/1e6) - 
-	     ((double)t0.tv_sec+(double)t0.tv_usec/1e6));
       printf("--------------------------\n\n");
     }
 
