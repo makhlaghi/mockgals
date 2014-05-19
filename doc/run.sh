@@ -1,6 +1,19 @@
+#! /bin/bash
+
 TEXISRC=./docsrc/mockgals.texinfo
 JAVASCRIPTS=./docsrc/javascripts.txt
+MACROSFILE=./docsrc/generalmacros.texi
 HTMLINDEX=./mockgals/index.html
+
+#Fix the version information:
+rm $MACROSFILE
+cat > $MACROSFILE <<EOF
+@set UPDATED $(date +"%B %d, %Y")
+@set EDITION 0.1
+@set VERSION 0.1
+
+@set INPUTTABLENUMCOLS 10
+EOF
 
 #Make the mockgals folder and the HTML:
 rm -rf ./mockgals
@@ -26,5 +39,3 @@ mv mockgals.info mockgals.txt mockgals.xml ./mockgals/
 
 #Also copy the source file:
 cp ./docsrc/mockgals.texinfo ./mockgals/
-
-

@@ -296,7 +296,7 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
       ip.xl=t_i-0.5;       ip.xh=t_i+0.5;
       ip.yl=t_j-0.5;       ip.yh=t_j+0.5;
 
-      if(userandpoints)	       /* See when 10e5 randomly chosen */
+      if(userandpoints)	       /* See when 10e4 randomly chosen */
 	{		       /* points are no longer needed. */
 	  accurate=randompoints(&ip);	
 	  approx=integ2d(&ip);

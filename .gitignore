@@ -4,15 +4,18 @@
 #Output of documentation:
 doc/mockgals/
 
+#Not needed files:
+doc/copytowebpage.sh
+
 #Products:
 doc/MakingPlots/LaTeX/Plots.pdf
 doc/MakingPlots/LaTeX/tikzext/
-doc/copytowebpage.sh
+doc/docsrc/generalmacros.texi
 doc/correctindextop
 doc/addjavascript
+mockinfo.txt
 mock.fits
 mockgals
-mockinfo.txt
 PSF.fits
 PSF.conv
 

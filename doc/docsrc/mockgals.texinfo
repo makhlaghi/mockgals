@@ -29,9 +29,9 @@
 
 
 @copying
-This manual is for MockGals (version @value{VERSION},
-@value{UPDATED}), a program to make mock astronomical objects in a
-FITS image and add the appropriate noise.
+Manual (edition @value{EDITION}, @value{UPDATED}) for MockGals,
+version @value{VERSION}. MockGals is a program to make mock
+astronomical objects in a FITS image and add the appropriate noise.
 
 Copyright @copyright{} 2014 Mohammad Akhlaghi.
 @email{akhlaghi@@astr.tohoku.ac.jp}
@@ -53,7 +53,7 @@ Documentation License}.
 @titlepage
 @title MockGals
 @subtitle Make mock stars and galaxies in a FITS image with noise.
-@subtitle Manual for MockGals version @value{VERSION}, @value{UPDATED}.
+@subtitle Manual (edition @value{EDITION}, @value{UPDATED}) for MockGals version @value{VERSION}.
 @author Mohammad Akhlaghi
 
 @page
@@ -80,9 +80,8 @@ input catalog, or randomly, into a FITS image, which is the standard
 format to store astronomical data, of any given size. All paramters to
 define mock galaxies and to define background noise are easily
 configurable. We have tried to give a very complete overview of how to
-install, understand and use MockGals version @value{VERSION}
-(@value{UPDATED}) for your scientific research. We sincerely hope it
-can be useful.
+install, understand and use MockGals version for your scientific
+research. We sincerely hope it can be useful.
 
 Like the program, this manual will be constantly upgraded, so there
 might always be unwanted errors or parts of the text that can be
@@ -161,6 +160,12 @@ you are not familiar, you can learn here:
 Copyright notice:
 @insertcopying
 @end ifplaintext
+
+@ifhtml
+
+Copyright notice:
+@insertcopying
+@end ifhtml
 
 
 
