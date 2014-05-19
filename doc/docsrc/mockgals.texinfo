@@ -66,7 +66,21 @@ Documentation License}.
 Anticipations are a ground sufficiently firm for consent, for even if
 men went mad all after the same fashion, they might agree one with
 another well enough.
-@author Francis Bacon, Novum Organum Scientiarum, 1620.
+@author Francis Bacon, Novum Organum Scientiarum, 1620 A.D.
+@end quotation
+
+@vskip 2cm
+
+@quotation
+For in and out, above, about, below,
+
+'Tis nothing but a Magic Shadow-show,
+
+Play'd in a Box whose Candle is the Sun,
+
+Round which we Phantom Figures come and go.
+
+@author Omar Khayy@'am, 1048-1141 A.D. In English by Edward Fitzgerald, 1859 A.D.
 @end quotation
 
 @end titlepage
