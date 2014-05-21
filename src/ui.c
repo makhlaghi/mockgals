@@ -492,7 +492,7 @@ printmockhist(float *img, size_t size, int numbins, float histmin,
   float *noisedhist, *allhist;
 
   int int_cols[]={1, 2, -1}, accu_cols[]={-1};
-  int space[]={6,8,15}, prec[]={3,4};
+  int space[]={10,15,20}, prec[]={3,4};
 
   histogram(img, size, numbins, &histmin, &histmax, 
 	    &noisedhist, 1, 0, 0);

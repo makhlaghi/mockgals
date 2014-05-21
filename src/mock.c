@@ -581,7 +581,7 @@ reportcreated(double *pp, size_t nc, size_t i, int suc)
    Note on MINFLOAT: We are using float values here, due to roundoff
    errors, after convolution we might have pixel values less than
    NUMMOCK, which are pure error, so they will all be set to zero. */
-#define MINFLOAT 1e-8f
+#define MINFLOAT 1e-6f
 void
 mockimg(struct mockparams *p)
 {
