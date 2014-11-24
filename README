@@ -1,0 +1,134 @@
+MockGals
+=========
+
+Make mock astronomical profiles (galaxy, star, ...) in a FITS file.
+This README is just a short summary, please see the full documentation
+on the page below for the full documentation:
+
+http://astr.tohoku.ac.jp/~akhlaghi/mockgals
+
+
+
+Description:
+------------
+
+MockGals is a tool to make a pre-defined or random set of mock
+galaxies in a simple `C` array or a FITS image.  The unique aspect of
+MockGals is the three levels of accuracy used to approximate the
+pixel value in the center of a profile: average of 10^4 random points,
+integration and finally value from the profile center.
+
+All extended profiles will be built with the first method for the
+centeral pixel, as the difference between each method becomes smaller
+than a tolerance level, the less accurate but faster method will be
+used. It will also convolve the image of the raw profiles and add
+noise to it. The parameters for the image PSF can also be provided.
+The noise for every pixel is a random value taken from a Gaussian
+distribution with sigma=sqrt(sky+pixel value) and mean=sky+pixel
+value.
+
+
+Prerequisits:
+------------
+MockGals requires several packages to be installed on your
+machine, installing them is easy and straightforward. 
+
+- [GNU Scientific Library](http://www.gnu.org/software/gsl/).
+  For integration and random number generation.
+- [FFTW](http://www.fftw.org/) 3. For convolution, configure with
+  `--enable-float` flag.
+- [cfitsio](http://heasarc.nasa.gov/fitsio/fitsio.html)
+  For reading and writing FITS files.
+- [ds9](http://ds9.si.edu/site/Home.html)
+  To view the resulting Multiextension FITS files.
+
+Installing and running:
+------------
+
+To install MockGals, after downloading or cloning it, all you have to
+do is to run the standard configuring, compiling and installing
+commands that are common to all GNU applications. In the downloaded
+directory (`$` as user and `#` as root):
+
+    $ ./configure
+    $ make
+    $ make check
+    # make install
+
+See `./INSTALL` for a standard review of the GNU build and install
+methods.
+
+MockGals uses the standard GNU/Linux commandline options for
+configuration, run `mockgals --help` for a complete list of options
+and a short explanation.
+
+
+
+
+Future updates:
+------------
+
+The list below is the list of things I can think of now that can make
+MockGals a much more workable tool. I plan to work on these in the
+future, when ever I get time. If you are interested in coding and would
+want to help in adding these functionalities to it, it would be great,
+please contact me and we can put them into action.
+
+My final aim is to be able to completely simulate an observation night
+at any telescope and make artifitial data so that we can test our
+observational methods with it.
+
+1. Add more functionality:
+   - Positioning of stars.
+   - 2D fits to galaxy light profiles.
+   - Make 3D objects projected on a 2D surface.
+   - Add a library of real objects from HST images to use.
+   - Include instrumental defects: distortions, 
+     various noise properties and varing sky among many.
+   - Read positional paramters of each mock object in RA 
+     and Dec. The user has to define the image center in RA 
+     and Dec also and size in angular scales. With this 
+     option physical criteria like extinction laws can also 
+     come into play making it more realistic.
+2. Work on a better user experience.
+   - Read and write to FITS tables.
+   - Keep the comments and IDs (possibly with letters) of the 
+     original input table.
+   - Add a form for users to provide their experience.
+3. Fix any bugs I have not found yet!
+
+Comments and suggestions:
+----------------------------------------
+
+I hope MockGals will be useful for you. If you find any problems in
+this program please contact me so I can correct them. I would also be
+very glad to hear any suggestions or comments you might have, thank
+you.
+
+makhlaghi@gmail.com 
+
+akhlaghi@astr.tohoku.ac.jp
+
+http://astr.tohoku.ac.jp/~akhlaghi/
+
+----------------------------------------
+Copyright:
+----------------------------------------
+Copyright (C) 2014 Mohammad Akhlaghi
+
+Tohoku University Astronomical Institute
+
+http://astr.tohoku.ac.jp/~akhlaghi/
+
+MockGals is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+MockGals is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with MockGals.  If not, see <http://www.gnu.org/licenses/>.

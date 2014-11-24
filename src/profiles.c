@@ -1,23 +1,22 @@
 /*********************************************************************
-mockgals - Make mock astronomical profiles (galaxy, star, ...) 
-           in a FITS file
+MockGals - Make mock galaxies and stars from a catalog.
 
 Copyright (C) 2014 Mohammad Akhlaghi
 Tohoku University Astronomical Institute, Sendai, Japan.
 http://astr.tohoku.ac.jp/~akhlaghi/
 
-mockgals is free software: you can redistribute it and/or modify
+MockGals is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-mockgals is distributed in the hope that it will be useful,
+MockGals is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with mockgals. If not, see <http://www.gnu.org/licenses/>.
+along with MockGals. If not, see <http://www.gnu.org/licenses/>.
 **********************************************************************/
 #include <math.h>
 #include <stdio.h>
@@ -36,7 +35,7 @@ along with mockgals. If not, see <http://www.gnu.org/licenses/>.
 double
 Gaussian(double r, double junk, double a)
 {
-  junk=1;
+  junk+=1;
   return exp( a*r*r );
 }
 
@@ -152,6 +151,6 @@ totsersic(double n, double re, double b, double q)
 double
 Point(double j1, double j2, double j3)
 {
-  j1=j2=j3;
+  j1+=j2+=j3;
   return 1;
 }

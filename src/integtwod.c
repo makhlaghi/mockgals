@@ -1,26 +1,23 @@
 /*********************************************************************
-mockgals - Make mock astronomical profiles (galaxy, star, ...) 
-           in a FITS file
+MockGals - Make mock galaxies and stars from a catalog.
 
 Copyright (C) 2014 Mohammad Akhlaghi
 Tohoku University Astronomical Institute, Sendai, Japan.
 http://astr.tohoku.ac.jp/~akhlaghi/
 
-mockgals is free software: you can redistribute it and/or modify
+MockGals is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-mockgals is distributed in the hope that it will be useful,
+MockGals is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with mockgals. If not, see <http://www.gnu.org/licenses/>.
-
+along with MockGals. If not, see <http://www.gnu.org/licenses/>.
 **********************************************************************/
-
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -54,9 +51,10 @@ rot_ell(double x, struct integparams *p)
 double
 twod_over_x(double x, void *params)
 {
+  /*
   struct integparams *p;
   p=(struct integparams *)params;
-
+  */
   return rot_ell(x, params);
 }
 
@@ -111,33 +109,33 @@ integ2d(struct integparams *params)
    p1 is the parameter that the radius is divided by. */
 void
 setintegparams(int s0_m1_g2_p3, float p1, float p2, float pa_d, 
-	       float q, float trunc, float *trunc_r, char *profletter, 
-	       struct integparams *p)
+	       float q, float truncation, float *trunc_r,
+	       char *profletter, struct integparams *p)
 {
   switch(s0_m1_g2_p3)
     {
     case 0: /* Sersic: p1: re, p2: n */
-      *trunc_r=p1*trunc;	/* Trunctation in units of re. */
-      p->p1=p1; 		/* re. */
-      p->p2=1/p2;		/* n is used as 1/n in Sersic. */
-      p->co=-1*sersic_b(p2);	/* Constant in the power. */
+      *trunc_r=p1*truncation;	  /* Trunctation in units of re. */
+      p->p1=p1;			  /* re. */
+      p->p2=1/p2;		  /* n is used as 1/n in Sersic. */
+      p->co=-1*sersic_b(p2);	  /* Constant in the power. */
       p->profile=&Sersic;
       *profletter='s';
       break;
     case 1: /* Moffat: p1: fwhm(input) -> alpha. p2: beta*/
-      *trunc_r=(p1/2)*trunc;	/* Truncation in units of FWHM/2. */
+      *trunc_r=(p1/2)*truncation; /* Truncation in units of FWHM/2. */
       p->p1=moffat_alpha(p1, p2);
-      p->p2=-1*p2;              /* Beta is always negative!  */
-      p->co=0;	                /* No constant terms needed */
+      p->p2=-1*p2;                /* Beta is always negative!  */
+      p->co=0;	                  /* No constant terms needed */
       p->profile=&Moffat;
       *profletter='m';
       break;
     case 2: /* Gaussian: p1: FWHM(input) -> sigma */
-      *trunc_r=(p1/2)*trunc;	/* Truncation in units of FWHM/2. */      
-      p1/=2.35482;              /* Convert FWHM to sigma. */
-      p->co=-1.0f/(2.0f*p1*p1);	/* Constant to multiply */
-      p->p1=1;			/* r gets divided by p->p1! */
-      p->p2=0;			/* Not needed! */
+      *trunc_r=(p1/2)*truncation; /* Truncation in units of FWHM/2. */      
+      p1/=2.35482;                /* Convert FWHM to sigma. */
+      p->co=-1.0f/(2.0f*p1*p1);	  /* Constant to multiply */
+      p->p1=1;			  /* r gets divided by p->p1! */
+      p->p2=0;			  /* Not needed! */
       p->profile=&Gaussian;   
       *profletter='g';
       break;

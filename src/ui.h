@@ -1,46 +1,57 @@
 /*********************************************************************
-mockgals - Make mock astronomical profiles (galaxy, star, ...) 
-           in a FITS file
+MockGals - Make mock galaxies and stars from a catalog.
 
 Copyright (C) 2014 Mohammad Akhlaghi
 Tohoku University Astronomical Institute, Sendai, Japan.
 http://astr.tohoku.ac.jp/~akhlaghi/
 
-mockgals is free software: you can redistribute it and/or modify
+MockGals is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-mockgals is distributed in the hope that it will be useful,
+MockGals is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with mockgals. If not, see <http://www.gnu.org/licenses/>.
-
+along with MockGals. If not, see <http://www.gnu.org/licenses/>.
 **********************************************************************/
 #ifndef UI_H
 #define UI_H
 
+#include <time.h>
+#include <sys/time.h>
+
+
+
+
+/* Functions called by argpparser.h*/
 void
-setdefaultoptions(struct mockparams *p);
+floatl0(char *optarg, float *var, char *lo, char so);
 
 void
-readinputinfo(struct mockparams *p);
+floatel0(char *optarg, float *var, char *lo, char so);
 
 void
-checkremoveoutimage(char *outname);
+sizetlzero(char *optarg, size_t *var, char *lo, char so);
 
 void
-getsaveoptions(struct mockparams *p, 
-	       int argc, char *argv[]);
+anyfloat(char *optarg, float *var, char *lo, char so);
+
+
+
+
+
+
+/* Functions called by main.c */
+void
+setparams(struct mockparams *p, int argc, char *argv[],
+	  time_t *rawtime);
 
 void
-savemockinfo(struct mockparams *p);
+freeandreporttime(struct mockparams *p, struct timeval *t0);
 
-void
-printmockhist(float *img, size_t size, int numbins, 
-	      float histmin, float histmax, float *nonoisehist);
 
 #endif

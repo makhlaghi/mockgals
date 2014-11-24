@@ -1,0 +1,28 @@
+# Default values for MockGals. 
+#
+# You can set the default values prior to running `./configure` by
+# editing the values in this file. The names of the parameters are the
+# same as their long option names and should not be altered.
+#
+# Note that since this is a shell script, no space should exist
+# between the option name, the equal sign and the given value.
+
+#Profiles:
+truncation=5.00
+tolerance=0.01
+
+#PSF:
+psf=
+psffunction=moffat
+psffwhm=3.00
+moffatbeta=4.76
+psftrunc=5.00
+
+# Output image:
+naxis1=200
+naxis2=200
+background=10000
+zeropoint=0.00
+
+# Operating modes:
+#numthreads=2         # Uncomment to set to a fixed number.

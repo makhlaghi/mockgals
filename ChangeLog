@@ -1,0 +1,11 @@
+2014-11-24  Mohammad Akhlaghi  <makhlaghi@gmail.com>
+
+	Version 0.2:
+
+	Most files changed to fit GNU autoconf and automake along with
+	argp.h
+
+2014-11-22  Mohammad Akhlaghi  <makhlaghi@gmail.com>
+
+	* configure.ac: File added.
+

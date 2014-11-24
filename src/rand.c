@@ -1,24 +1,22 @@
 /*********************************************************************
-mockgals - Make mock astronomical profiles (galaxy, star, ...) 
-           in a FITS file
+MockGals - Make mock galaxies and stars from a catalog.
 
 Copyright (C) 2014 Mohammad Akhlaghi
 Tohoku University Astronomical Institute, Sendai, Japan.
 http://astr.tohoku.ac.jp/~akhlaghi/
 
-mockgals is free software: you can redistribute it and/or modify
+MockGals is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-mockgals is distributed in the hope that it will be useful,
+MockGals is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with mockgals. If not, see <http://www.gnu.org/licenses/>.
-
+along with MockGals. If not, see <http://www.gnu.org/licenses/>.
 **********************************************************************/
 #include <math.h>
 #include <stdio.h>
@@ -95,11 +93,11 @@ setprflprms(double **prflprms, size_t numprflprms,
   double starSN[5]={400, 150, 1000, 300, 110};
   float randparamranges[14]={-20,+20,     /* x axis range. */
 			     -20,+20,     /* y axis range. */
-			     8,12,        /* re range. */
+			     5,15,        /* re range. */
 			     0.5,8,       /* n range */
 			     -90,90,      /* position angle range */
 			     0.2,1,       /* Axis ration range. */
-			     0.001,0.01}; /* S/N range. */
+			     0.002,0.005}; /* S/N range. */
   randparamranges[1]+=size1;
   randparamranges[3]+=size2;
     
@@ -138,7 +136,7 @@ setprflprms(double **prflprms, size_t numprflprms,
    filled with random Gaussians, with mode of zero and standard
    deviation of sigma. */
 void 
-addnoise(float *array, size_t size, double sky)
+addnoise(float *array, size_t size, double background)
 {
   size_t i;
   gsl_rng * r;
@@ -149,7 +147,7 @@ addnoise(float *array, size_t size, double sky)
   gsl_rng_set(r,random_seed());
 
   for(i=0;i<size;i++)
-    array[i]+=gsl_ran_gaussian(r,sqrt(sky+array[i]));
+    array[i]+=gsl_ran_gaussian(r,sqrt(background+array[i]));
   
   gsl_rng_free(r);
 }

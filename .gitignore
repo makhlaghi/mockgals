@@ -1,6 +1,21 @@
-*.[oa]
 *~
+*.log
+*.trs
+*.[oa]
+*.fits
+Makefile
 
+#Source code:
+stamp-h1
+config.h
+config.log
+src/.deps/
+config.status
+autom4te.cache/
+src/testinfo_cat.txt
+
+
+#Documentation:
 #Output of documentation:
 doc/mockgals/
 

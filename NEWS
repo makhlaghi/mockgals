@@ -1,0 +1,29 @@
+MockGals NEWS                                    -*- outline -*-
+
+* Noteworthy changes in release 0.6 (2014-11-17) [stable]
+
+** Bug fixes
+
+** New features
+
+  Compiling with GNU standards.
+
+** Changes in behavior
+
+  These short options have changed:
+     `-b` was for the moffat beta, now for background.
+     Tolerance is now `-l`, was `-I`.
+     `-p` was for viewpsf, but now it is for the PSF FITS file.
+     `-f` was psf fits file, now it is psf function.
+     PSF FWHM is now `-w`, was `-a`.
+     Moffat beta is now `-B`, was `-b`.
+     PSF truncation is now `r`, was `-j`.
+
+  By default all the directory information of the output name is
+  stipped off.
+
+  `mockgals --help` is now the standard GNU help.
+
+  `info mockgals` will now open the full documentation.
+
+  Long command line options.

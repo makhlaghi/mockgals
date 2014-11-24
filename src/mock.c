@@ -1,26 +1,24 @@
 /*********************************************************************
-mockgals - Make mock astronomical profiles (galaxy, star, ...) 
-           in a FITS file
+MockGals - Make mock galaxies and stars from a catalog.
 
 Copyright (C) 2014 Mohammad Akhlaghi
 Tohoku University Astronomical Institute, Sendai, Japan.
 http://astr.tohoku.ac.jp/~akhlaghi/
 
-mockgals is free software: you can redistribute it and/or modify
+MockGals is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-mockgals is distributed in the hope that it will be useful,
+MockGals is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with mockgals. If not, see <http://www.gnu.org/licenses/>.
-
+along with MockGals. If not, see <http://www.gnu.org/licenses/>.
 **********************************************************************/
-#include <math.h> 
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -42,7 +40,7 @@ along with mockgals. If not, see <http://www.gnu.org/licenses/>.
 #include "macrofunctions.h"
 
 #include "rand.h"		/* Needs integtwod! */
-#include "ui.h"			/* Needs mock.h */
+#include "ui.h"			/* Needs mock.h, time.h */
 
 
 
@@ -219,8 +217,8 @@ findstartingpixel(size_t *ngbs, size_t s0, size_t s1, float truncr,
  */
 int
 makeprofile(float *img, unsigned char *byt, size_t *bytind, 
-	    size_t *ngbs, size_t s0, size_t s1, float trunc, 
-	    float integaccu, int s0_m1_g2_p3, float x_c, float y_c, 
+	    size_t *ngbs, size_t s0, size_t s1, float truncation, 
+	    float tolerance, int s0_m1_g2_p3, float x_c, float y_c, 
 	    double p1, double p2, float pa_d, float q, float avflux, 
 	    double *totflux)
 {
@@ -242,7 +240,7 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
   e.xc=x_c;          e.yc=y_c;
   e.cos=cos(e.t);    e.sin=sin(e.t);
 
-  setintegparams(s0_m1_g2_p3, p1, p2, pa_d, q, trunc, 
+  setintegparams(s0_m1_g2_p3, p1, p2, pa_d, q, truncation, 
 		 &truncr, &profletter, &ip);
 
   findstartingpixel(ngbs, s0, s1, truncr, &e, &p);
@@ -302,7 +300,7 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
 	  approx=integ2d(&ip);
 	  img[p]+=accurate*multiple;
 	  /*printf("%-5d", userandpoints);*/
-	  if (fabs(accurate-approx)/accurate<integaccu) 
+	  if (fabs(accurate-approx)/accurate<tolerance) 
 	    userandpoints=0;
 	}
       else			 /* See when integration is not */
@@ -312,7 +310,7 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
 	  img[p]+=accurate*multiple;
 	  /*printf("%-5d", userandpoints);*/
 	
-	  if (fabs(accurate-approx)/accurate<integaccu) 
+	  if (fabs(accurate-approx)/accurate<tolerance) 
 	    outofaccurateloop=1;
 	 
 	}
@@ -401,10 +399,8 @@ makeprofile(float *img, unsigned char *byt, size_t *bytind,
  *****************    Read or make the PSF   ********************
  ****************************************************************/
 void
-makepsf(float **psf, size_t *psf_s0, size_t *psf_s1, 
-	      struct mockparams *p)
+makepsf(struct mockparams *p)
 {
-  int suc;
   double t;
   float pa_d=0, q=1;
   unsigned char *byt;
@@ -414,109 +410,34 @@ makepsf(float **psf, size_t *psf_s0, size_t *psf_s1,
   trunc_r=p->psf_t * p->psf_p1/2;
   w=2*trunc_r+1;
   if(w%2==0) w--;		/* To make sure the width is odd. */
+  p->psf_s0=p->psf_s1=w;
 
-  assert( (tpsf=calloc(w*w, sizeof *tpsf))!=NULL );
   assert( (byt=calloc(w*w, sizeof *byt))!=NULL );
   assert( (bytind=calloc(w*w, sizeof *bytind))!=NULL );
+  assert( (p->psf=tpsf=calloc(w*w, sizeof *tpsf))!=NULL );
 
   imgngbs(w, w, &ngbs);
 
   /* We are going to fix the total flux here, so the average flux is
      junk! So is t! The total flux comes from integration, which is
      not what we want. The truncation radius might be too small. */
-  suc=makeprofile(tpsf, byt, bytind, ngbs, w, w, p->psf_t, 
-		  p->integaccu, p->psf_mg, w/2, w/2, p->psf_p1,
-		  p->psf_p2, pa_d, q, 1, &t);
+  makeprofile(tpsf, byt, bytind, ngbs, w, w, p->psf_t, 
+	      p->tolerance, p->psffunction, w/2, w/2, p->psf_p1,
+	      p->psf_p2, pa_d, q, 1, &t);
   
   floatarrmwith(tpsf, w*w, 1/floatsum(tpsf, w*w));
 
-  free(byt);
+  if(p->outpsfname)
+    array_to_fits(p->outpsfname, NULL, "PSF", FLOAT_IMG, tpsf, w, w);
+
+  /* Save the PSF as an ASCII .conv file */
+  if(p->sepsfname) 
+    printfarray(tpsf, w, w, "CONV NONORM\n", p->sepsfname, 4, 'e');
+
+  if(p->verb) printf(" - PSF created.\n");
+
   free(bytind);
-
-  *psf=tpsf;
-  *psf_s0=*psf_s1=w;
-}
-
-
-
-
-
-void
-readormakepsf(float **psf, size_t *psf_s0, size_t *psf_s1, 
-	      struct mockparams *p)
-{
-  void *tmp;
-  int  bitpix;
-  float psfsum;
-  FILE *tmpfile;
-  char fitspsfname[]="PSF.fits";
-  char asciipsfname[]="PSF.conv";
-
-  if(strlen(p->psfname))	/* A PSF file name was given. */
-    {
-      if ((tmpfile = fopen(p->psfname, "r")) != NULL) 
-	{			/* The file exists! */
-	  fclose(tmpfile);
-	  fits_to_array(p->psfname, 0, &bitpix, &tmp, psf_s0, psf_s1);
-
-          /* Check if the sides are odd */
-	  if(*psf_s0%2==0)
-	    {
-	      printf("\n\n\tError: NAXIS2 of %s (PSF) must be odd!\n\n",
-		     p->psfname);
-	      exit(EXIT_FAILURE);
-	    }
-	  if(*psf_s1%2==0)
-	    {
-	      printf("\n\n\tError: NAXIS1 of %s (PSF) must be odd!\n\n",
-		     p->psfname);
-	      exit(EXIT_FAILURE);
-	    }
-
-	  /* Everything is fine, make sure the output is in float. */
-	  convertanytofloat(tmp, *psf_s0 * *psf_s1, bitpix, psf,
-			    BYTE_IMG, SHORT_IMG, LONG_IMG, FLOAT_IMG, 
-			    DOUBLE_IMG);
-
-	  /* Check if the sum of the PSF is unity. */
-	  psfsum=floatsum(*psf, *psf_s0 * *psf_s1);
-          if(psfsum!=1)
-	    floatarrmwith(*psf, *psf_s0 * *psf_s1, 1/psfsum);
-	}
-      else
-	{
-	  printf("\n\n\tError: %s could not be opened\n\n",p->psfname);
-	  exit(EXIT_FAILURE);
-	}
-    }
-  else
-    {
-      makepsf(psf, psf_s0, psf_s1, p);
-      if(p->vpsf || p->ovpsf)
-	{
-	  /* Save the PSF in a FITS image: */
-	  if ((tmpfile = fopen(fitspsfname, "r")) != NULL) 
-	    {			/* The file exists! */
-	      fclose(tmpfile);
-	      assert(remove(fitspsfname)==0);
-	      printf("\nWARNING:  %s already existed, was deleted\n",
-		     fitspsfname);
-	    }
-	  array_to_fits(fitspsfname, NULL, "PSF", FLOAT_IMG, 
-			*psf, *psf_s0, *psf_s1);
-
-	  /* Save the PSF as an ASCII .conv file */
-	  if ((tmpfile = fopen(asciipsfname, "r")) != NULL) 
-	    {		       
-	      fclose(tmpfile);
-	      assert(remove(asciipsfname)==0);
-	      printf("\nWARNING:  %s already existed, was deleted\n\n",
-		     asciipsfname);
-	    }
-	  printfarray(*psf, *psf_s0, *psf_s1, "CONV NONORM\n", 
-		      asciipsfname, 4, 'e');
-	}
-    }
+  free(byt);
 }
 
 
@@ -542,18 +463,18 @@ void
 reportcreated(double *pp, size_t nc, size_t i, int suc)
 {
   if(pp[i*nc+1]==0)
-    printf(" - Sersic: (%-.2f,%-.2f),n=%.2f, re=%.2f, "
-	   "pa=%.2f, q=%.2f\t%s\n",
+    printf("%.0f - Sersic: (%-.2f,%-.2f),n=%.2f, re=%.2f, "
+	   "pa=%.2f, q=%.2f\t%s\n", pp[i*nc],
 	   pp[i*nc+2], pp[i*nc+3], pp[i*nc+5], pp[i*nc+4], 
 	   pp[i*nc+6], pp[i*nc+7], suc ? " Y" : "-*-");
   else if(pp[i*nc+1]==1)
-    printf(" - Moffat: (%-.2f,%-.2f),beta=%.2f, FWHM=%.2f, "
-	   "pa=%.2f, q=%.2f\t%s\n",
+    printf("%.0f - Moffat: (%-.2f,%-.2f),beta=%.2f, FWHM=%.2f, "
+	   "pa=%.2f, q=%.2f\t%s\n", pp[i*nc],
 	   pp[i*nc+2], pp[i*nc+3], pp[i*nc+5], pp[i*nc+4], 
 	   pp[i*nc+6], pp[i*nc+7], suc ? " Y" : "-*-");
   else if(pp[i*nc+1]==2)
-    printf(" - Gaussian: (%-.2f,%-.2f), FWHM=%.2f, "
-	   "pa=%.2f, q=%.2f\t%s\n",
+    printf("%.0f - Gaussian: (%-.2f,%-.2f), FWHM=%.2f, "
+	   "pa=%.2f, q=%.2f\t%s\n", pp[i*nc],
 	   pp[i*nc+2], pp[i*nc+3], pp[i*nc+4], 
 	   pp[i*nc+6], pp[i*nc+7], suc ? " Y" : "-*-");
   else if(pp[i*nc+1]==3)
@@ -571,6 +492,64 @@ reportcreated(double *pp, size_t nc, size_t i, int suc)
 
 
 
+/* If the mock image is to be saved, save the information
+   of the galaxies and the actual mock image. */
+void
+savemockinfo(struct mockparams *p)
+{
+  double *pp, z;
+  struct ArrayInfo ai;
+  size_t i, nc, nummock;
+  int space[]={6,10,15}, prec[]={2,6};
+  int int_cols[]={0, 1, -1}, accu_cols[]={8,-1};
+
+  nc=p->numppcols;
+  nummock=p->nummock;
+
+  assert( (ai.c=malloc(MAXALLCOMMENTSLENGTH*sizeof(char)))!=NULL );
+  ai.s0=p->nummock;
+  ai.s1=p->numppcols;
+  ai.d=p->profileparams;
+  
+  nc=p->numppcols;
+  nummock=p->nummock;
+  z=p->zeropoint;
+  pp=p->profileparams;
+
+  /* Set the magnitudes */
+  for(i=0;i<nummock;i++)
+    pp[i*nc+9]=z + -2.5*log10(pp[i*nc+9]);
+
+  /* Write the comments: */
+  sprintf(ai.c,
+	  "# Properties of %lu mock profiles.\n"
+	  "# The background valued is: %.2f\n"
+	  "# The zeropoint magnitude is: %.2f\n"
+	  "# Truncation at %.2f * radial parameter\n# \n"
+	  "# 0: ID.\n"
+	  "# 1: 0: Sersic, 1: Moffat, 2: Gaussian, 3: Point.\n"
+	  "# 2: X position (FITS definition).\n"
+	  "# 3: Y position (FITS definition).\n"
+	  "# 4: Sersic re or Moffat FWHM.\n"  
+	  "# 5: Sersic n or Moffat beta.\n"
+	  "# 6: Position angle, degrees.\n"
+	  "# 7: Axis ratio.\n"
+	  "# 8: Signal to noise.\n"
+	  "# 9: Total magnitude.\n\n",
+	  p->nummock, p->background, p->zeropoint, p->truncation);
+
+  /* Write the table: */
+  writeasciitable(p->catname, &ai, int_cols, accu_cols, space, prec);
+
+  /* Report it if desired: */
+  if(p->verb)
+    printf("- Profile info saved in '%s'\n\n", p->catname);
+}
+
+
+
+
+
 /* Put one or more mock profiles into and image, convolve it and add
    noise to the final result.  The convolution is going to make the
    sides darker.  So the actual image where the galaxies will be
@@ -581,46 +560,47 @@ reportcreated(double *pp, size_t nc, size_t i, int suc)
    Note on MINFLOAT: We are using float values here, due to roundoff
    errors, after convolution we might have pixel values less than
    NUMMOCK, which are pure error, so they will all be set to zero. */
-#define MINFLOAT 1e-6f
+#define MINFLOAT 1e-3f
 void
 mockimg(struct mockparams *p)
 {
   double *pp, ss;
+  float *preconv;
+  float *conv, *img;
   unsigned char *byt;
   int extcounter=0, suc;
-  float *conv, *psf, *img;
-  float *nonoisehist, *preconv, trunc=10;
-  size_t i, psf_s0, psf_s1, ns0, ns1, *ngbs;
+  size_t i, ns0, ns1, *ngbs;
   size_t nc, nsize, size, hs0, hs1, *bytind;
 
-  readormakepsf(&psf, &psf_s0, &psf_s1, p);
-  if(p->ovpsf) {free(psf); return;}
+  /* Make the psf and exit if this is the only job required. */
+  if(p->psf==NULL)
+    makepsf(p);
+  if(p->onlypsf)
+    exit(EXIT_SUCCESS);
 
-  hs0=psf_s0/2;          hs1=psf_s1/2;
+  hs0=p->psf_s0/2;       hs1=p->psf_s1/2;
   ns0=p->s0+2*hs0;       ns1=p->s1+2*hs1;
-  size=p->s0*p->s1;	 /* Shorter name ;-). */
-  nsize=ns0*ns1;	 /* Shorter name ;-). */
-  nc=p->numppcols;	 /* Shorter name ;-). */
-  pp=p->profileparams;	 /* Shorter name ;-). */
-  ss=sqrt(p->sky);	 /* Shorter name ;-). */
+  size=p->s0*p->s1;	  /* Shorter name ;-). */
+  nsize=ns0*ns1;	  /* Shorter name ;-). */
+  nc=p->numppcols;	  /* Shorter name ;-). */
+  pp=p->profileparams;	  /* Shorter name ;-). */
+  ss=sqrt(p->background); /* Shorter name ;-). */
 
-  assert( (img=calloc(nsize,sizeof *img))!=NULL );
-  assert( (byt=calloc(nsize,sizeof *byt))!=NULL );
+  assert( (img=calloc(nsize, sizeof *img))!=NULL );
+  assert( (byt=calloc(nsize, sizeof *byt))!=NULL );
   assert( (bytind=malloc(nsize*sizeof *bytind))!=NULL );
 
   imgngbs(ns0, ns1, &ngbs);
 
   if(p->verb)
-    {
-      printf("(x,y): profile position.\n");
-      printf("\t Y : At least part of it was in the image.\n");
-      printf("\t-*-: Profile was not in the image.\n");
-    }
-
+    printf("(x,y): profile position.\n"
+	   "\t Y : At least part of it was in the image.\n"
+	   "\t-*-: Profile was not in the image.\n");
+  
   for(i=0;i<p->nummock;i++)
     {
       suc=makeprofile(img, byt, bytind, ngbs, ns0, 
-		      ns1, trunc, p->integaccu, 
+		      ns1, p->truncation, p->tolerance, 
 		      pp[i*nc+1],	  /* Profile function. */
 		      pp[i*nc+3]+hs0-1,   /* x_c (C format) */
 		      pp[i*nc+2]+hs1-1,   /* y_c (C format) */
@@ -629,7 +609,7 @@ mockimg(struct mockparams *p)
 		      90-pp[i*nc+6],	  /* position angle. */
 		      pp[i*nc+7],	  /* axis ratio. */
 		      ss*pp[i*nc+8],	  /* average flux.*/
-		      &pp[i*nc+9]);	  /* Total flux of profile*/ 
+		      &pp[i*nc+9]);	  /* Total flux of profile*/
       if(p->verb)
 	reportcreated(pp, nc, i, suc);
     }
@@ -639,58 +619,48 @@ mockimg(struct mockparams *p)
   /* The user wants to see the unconvoved image. Since the image to
      convolve is larger than the final image, first crop out the
      sides, then save that central part. */
-  if(p->vnoconv)
+  if(p->viewnoconv)
     {
       floatshrinkarraytonew(img, ns0, ns1, hs0, hs1, 
 			    p->s0+hs0, p->s1+hs1, &preconv);
-      array_to_fits(p->outname, NULL, "NOCONV", FLOAT_IMG, 
+      array_to_fits(p->fitsname, NULL, "NOCONV", FLOAT_IMG, 
 		    preconv, p->s0, p->s1);
       free(preconv);
       if(p->verb)
 	printf("- Pre-convolved profiles saved in '%s' (ext %d)\n",
-	       p->outname, extcounter++);
+	       p->fitsname, extcounter++);
     }
 
-  convolve(img, ns0, ns1, psf, psf_s0, psf_s1, &conv);
+  convolve(img, ns0, ns1, p->psf, p->psf_s0, p->psf_s1, &conv);
 
   floatshrinkarray(&conv, ns0, ns1, hs0, hs1, p->s0+hs0, p->s1+hs1);
 
   floatsetbelowtozero(conv, size, MINFLOAT);
 
-  if(p->vconv)
+  if(p->viewconv)
     {
-      array_to_fits(p->outname, NULL, "NONOISE", FLOAT_IMG, conv, 
+      array_to_fits(p->fitsname, NULL, "NONOISE", FLOAT_IMG, conv, 
 		    p->s0, p->s1);
       if(p->verb)
 	printf("- Convolved profiles saved in '%s' (ext %d)\n",
-	       p->outname, extcounter++);
+	       p->fitsname, extcounter++);
     }
-   
-  if(p->vhist)
-    histogram(conv, size, p->vhist, &p->histmin, 
-	      &p->histmax, &nonoisehist, 1, 0, 0);
 
-  addnoise(conv, size, p->sky);
+  addnoise(conv, size, p->background);
 
-  array_to_fits(p->outname, NULL, "WITHNOISE", FLOAT_IMG, conv, 
+  array_to_fits(p->fitsname, NULL, "WITHNOISE", FLOAT_IMG, conv, 
 		p->s0, p->s1);
 
   if(p->verb)
     printf("- Noised image saved in '%s' (ext %d)\n",
-	   p->outname, extcounter++);
-   
-  if(p->vhist)
-    printmockhist(conv, size, p->vhist, p->histmin, 
-		  p->histmax, nonoisehist);
+	   p->fitsname, extcounter++);
 
   savemockinfo(p);
-  if(p->verb)
-    printf("- Profile info saved in '%s'\n\n", p->infoname);
 
-  free(psf);
   free(img);
   free(byt);
   free(conv);
   free(ngbs);
+  free(p->psf);
   free(bytind);
 }
