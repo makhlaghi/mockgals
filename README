@@ -1,6 +1,16 @@
 MockGals
 =========
 
+MockGals is discontinued. Its core algorithms are now implemented in 
+MakeProfiles and the other tools in GNU Astronomy Utilities:
+
+https://www.gnu.org/software/gnuastro/
+
+Please visit there for a much better user experience and more accurate
+programs.
+
+Old introduction
+================
 Make mock astronomical profiles (galaxy, star, ...) in a FITS file.
 This README is just a short summary, please see the full documentation
 on the page below for the full documentation:
